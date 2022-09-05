@@ -6,7 +6,7 @@
 torchapp
 ===================================
 
-.. image:: https://raw.githubusercontent.com/rbturnbull/torchapp/main/docs/images/torchapp-banner.svg
+.. image:: https://raw.githubusercontent.com/rbturnbull/torchapp/master/docs/images/torchapp-banner.svg
 
 .. include:: ../README.rst
    :start-after: start-badges
