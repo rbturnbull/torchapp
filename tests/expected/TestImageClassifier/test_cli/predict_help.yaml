@@ -1,0 +1,10 @@
+params:
+- predict
+- --help
+output:
+  exit_code: 2
+  stdout: |
+    Usage: base-callback [OPTIONS] COMMAND [ARGS]...
+    Try 'base-callback --help' for help.
+
+    Error: No such command 'predict'.

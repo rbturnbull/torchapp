@@ -1,0 +1,6 @@
+[run]
+source = torchapp
+
+[report]
+precision = 2
+

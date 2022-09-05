@@ -1,0 +1,23 @@
+﻿torchapp
+=======
+
+.. automodule:: torchapp
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

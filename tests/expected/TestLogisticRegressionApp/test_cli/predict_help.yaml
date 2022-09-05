@@ -1,0 +1,16 @@
+params:
+- infer
+- --help
+output:
+  exit_code: 0
+  stdout: |
+    Usage: base-callback infer [OPTIONS]
+
+    Options:
+      --gpu / --no-gpu        Whether or not to use a GPU for processing if
+                              available.  [default: gpu]
+      --pretrained TEXT       The location (URL or filepath) of a pretrained model.
+      --reload / --no-reload  Should the pretrained model be downloaded again if it
+                              is online and already present locally.  [default: no-
+                              reload]
+      --help                  Show this message and exit.

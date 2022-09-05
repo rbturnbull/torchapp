@@ -1,0 +1,2 @@
+params: {}
+output: Linear(in_features=1, out_features=1, bias=True)

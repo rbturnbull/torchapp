@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "torchapp-cookiecutter"
+version = "0.1.0"
+description = "A cookiecutter project for generating torchapp projects. For more information see https://github.com/rbturnbull/torchapp."
+authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+cookiecutter = "^2.1.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]

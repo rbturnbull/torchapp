@@ -1,0 +1,62 @@
+params:
+- train
+- --help
+output:
+  exit_code: 0
+  stdout: |
+    Usage: base-callback train [OPTIONS]
+
+    Options:
+      --distributed / --no-distributed
+                                      If the learner is distributed.  [default: no-
+                                      distributed]
+      --fp16 / --no-fp16              Whether or not the floating-point precision of
+                                      learner should be set to 16 bit.  [default:
+                                      fp16]
+      --output-dir PATH               The location of the output directory.
+                                      [default: ./outputs]
+      --weight-decay FLOAT            The amount of weight decay. If None then it
+                                      uses the default amount of weight decay in
+                                      fastai.
+      --csv PATH                      The path to a CSV file with the data.
+      --x TEXT                        The column name of the independent variable.
+                                      [default: x]
+      --y TEXT                        The column name of the dependent variable.
+                                      [default: y]
+      --validation-proportion FLOAT   The proportion of the dataset to use for
+                                      validation.  [default: 0.2]
+      --batch-size INTEGER            The number of items to use in each batch.
+                                      [default: 32]
+      --epochs INTEGER                The number of epochs.  [default: 20]
+      --freeze-epochs INTEGER         The number of epochs to train when the learner
+                                      is frozen and the last layer is trained by
+                                      itself. Only if `fine_tune` is set on the app.
+                                      [default: 3]
+      --learning-rate FLOAT           The base learning rate (when fine tuning) or
+                                      the max learning rate otherwise.  [default:
+                                      0.0001]
+      --project-name TEXT             The name for this project for logging
+                                      purposes.
+      --run-name TEXT                 The name for this particular run for logging
+                                      purposes.
+      --run-id TEXT                   A unique ID for this particular run for
+                                      logging purposes.
+      --notes TEXT                    A longer description of the run for logging
+                                      purposes.
+      --tag TEXT                      A tag for logging purposes. Multiple tags can
+                                      be added each introduced with --tag.
+      --wandb / --no-wandb            Whether or not to use 'Weights and Biases' for
+                                      logging.  [default: no-wandb]
+      --wandb-mode TEXT               The mode for 'Weights and Biases'.  [default:
+                                      online]
+      --wandb-dir PATH                The location for 'Weights and Biases' output.
+      --wandb-entity TEXT             An entity is a username or team name where
+                                      you're sending runs.
+      --wandb-group TEXT              Specify a group to organize individual runs
+                                      into a larger experiment.
+      --wandb-job-type TEXT           Specify the type of run, which is useful when
+                                      you're grouping runs together into larger
+                                      experiments using group.
+      --mlflow / --no-mlflow          Whether or not to use MLflow for logging.
+                                      [default: no-mlflow]
+      --help                          Show this message and exit.

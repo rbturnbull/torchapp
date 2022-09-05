@@ -1,0 +1,14 @@
+params:
+  csv: mice.csv
+  batch_size: 4
+  x: weight
+  y: obese
+  validation_proportion: 0.2
+output:
+  type: DataLoaders
+  train_size: 60
+  validation_size: 15
+  batch_x_type: Tensor
+  batch_y_type: Tensor
+  batch_x_shape: torch.Size([4, 1])
+  batch_y_shape: torch.Size([4, 1])

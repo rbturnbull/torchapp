@@ -1,0 +1,2 @@
+params: {}
+output: torch.Size([32, 3])
