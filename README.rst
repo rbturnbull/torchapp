@@ -1,6 +1,4 @@
-=======================
-torchapp
-=======================
+.. image:: https://raw.githubusercontent.com/rbturnbull/torchapp/main/docs/images/torchapp-banner.svg
 
 .. start-badges
 
@@ -23,7 +21,7 @@ torchapp
 
 .. end-badges
 
-A wrapper for fastai projects to create easy command-line inferfaces and manage hyper-parameter tuning
+A wrapper for PyTorch projects to create easy command-line inferfaces and manage hyper-parameter tuning.
 
 Documentation at https://rbturnbull.github.io/torchapp/
 

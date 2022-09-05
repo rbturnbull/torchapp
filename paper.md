@@ -8,9 +8,6 @@ authors:
   - name: Robert Turnbull
     orcid: 0000-0003-1274-6750
     affiliation: 1
-  - name: Jonathan Garber
-    orcid: 0000-0001-6754-4748
-    affiliation: 1
 affiliations:
  - name: Melbourne Data Analytics Platform, University of Melbourne
    index: 1
