@@ -1,18 +1,18 @@
 from pathlib import Path
 from torch import nn
 from fastai.data.core import DataLoaders
-import torchapp as fa
+import torchapp as ta
 from rich.console import Console
 console = Console()
 
-class {{ cookiecutter.app_name }}(fa.TorchApp):
+class {{ cookiecutter.app_name }}(ta.TorchApp):
     """
     {{ cookiecutter.description }}
     """
     def dataloaders(
         self,
-        inputs:Path = fa.Param(help="The input file."), 
-        batch_size:int = fa.Param(default=32, help="The batch size."),
+        inputs:Path = ta.Param(help="The input file."), 
+        batch_size:int = ta.Param(default=32, help="The batch size."),
     ) -> DataLoaders:
         """
         Creates a FastAI DataLoaders object which {{ cookiecutter.app_name }} uses in training and prediction.

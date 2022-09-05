@@ -4,10 +4,10 @@ import numpy as np
 from fastai.tabular.data import TabularDataLoaders
 from fastai.tabular.all import tabular_learner, accuracy, error_rate
 from sklearn.datasets import load_iris
-import torchapp as fa
+import torchapp as ta
 
 
-class IrisApp(fa.TorchApp):
+class IrisApp(ta.TorchApp):
     """
     A classification app to predict the type of iris from sepal and petal lengths and widths.
 
@@ -19,7 +19,7 @@ class IrisApp(fa.TorchApp):
 
     def dataloaders(
         self,
-        batch_size: int = fa.Param(default=32, tune_min=8, tune_max=128, log=True, tune=True),
+        batch_size: int = ta.Param(default=32, tune_min=8, tune_max=128, log=True, tune=True),
     ):
         df = load_iris(as_frame=True)
 

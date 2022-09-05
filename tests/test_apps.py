@@ -3,13 +3,13 @@ from unittest.mock import patch
 from fastai.learner import Learner
 import pytest
 from click.testing import CliRunner
-import torchapp as fa
+import torchapp as ta
 from torchapp.apps import TorchAppInitializationError
 
 
 def test_model_defaults_change():
-    class DummyApp(fa.TorchApp):
-        def model(self, size: int = fa.Param(default=2)):
+    class DummyApp(ta.TorchApp):
+        def model(self, size: int = ta.Param(default=2)):
             assert size == 2
 
     DummyApp().model()
@@ -17,16 +17,16 @@ def test_model_defaults_change():
 
 def test_model_unimplemented_error():
     with pytest.raises(NotImplementedError):
-        fa.TorchApp().model()
+        ta.TorchApp().model()
 
 
 def test_dataloaders_unimplemented_error():
     with pytest.raises(NotImplementedError):
-        fa.TorchApp().dataloaders()
+        ta.TorchApp().dataloaders()
 
 
 def test_assert_initialized():
-    class DummyApp(fa.TorchApp):
+    class DummyApp(ta.TorchApp):
         def __init__(self):
             pass
 
@@ -35,7 +35,7 @@ def test_assert_initialized():
 
 
 def test_click():
-    cli = fa.TorchApp.click()
+    cli = ta.TorchApp.click()
     runner = CliRunner()
     result = runner.invoke(cli, ['--help'])
     assert result.exit_code == 0
@@ -43,7 +43,7 @@ def test_click():
 
 
 def test_str():
-    class DummyApp(fa.TorchApp):
+    class DummyApp(ta.TorchApp):
         pass
 
     app = DummyApp()
@@ -52,12 +52,12 @@ def test_str():
 
 def test_pretrained_local_path_default():
     with pytest.raises(FileNotFoundError):
-        fa.TorchApp().pretrained_local_path()
+        ta.TorchApp().pretrained_local_path()
 
 
 @patch.object(Path, 'is_file', lambda x: True)
 def test_pretrained_local_path():
-    class DummyApp(fa.TorchApp):
+    class DummyApp(ta.TorchApp):
         def pretrained_location(self):
             return "model.h5"
 
@@ -71,7 +71,7 @@ def test_pretrained_local_path():
 
 @patch.object(Path, 'is_file', lambda x: True)
 def test_pretrained_local_path_override():
-    path = fa.TorchApp().pretrained_local_path("model2.h5")
+    path = ta.TorchApp().pretrained_local_path("model2.h5")
     assert path.is_absolute()
     assert path.name == "model2.h5"
     assert path.parent == Path.cwd()
@@ -79,15 +79,15 @@ def test_pretrained_local_path_override():
 
 def test_pretrained_local_path_not_found():
     with pytest.raises(FileNotFoundError):
-        fa.TorchApp().pretrained_local_path("model3.h5")
+        ta.TorchApp().pretrained_local_path("model3.h5")
 
 
 def test_build_learner_func():
-    assert Learner in fa.TorchApp().build_learner_func().__mro__
+    assert Learner in ta.TorchApp().build_learner_func().__mro__
 
 
 def test_goal_empty():
-    class DummyApp(fa.TorchApp):
+    class DummyApp(ta.TorchApp):
         def monitor(self):
             return None
 

@@ -4,25 +4,25 @@ import pandas as pd
 from torch import nn
 from fastai.data.block import DataBlock, TransformBlock
 from fastai.data.transforms import ColReader, RandomSplitter
-import torchapp as fa
+import torchapp as ta
 from torchapp.blocks import BoolBlock
 from torchapp.metrics import logit_accuracy, logit_f1
 
 
-class LogisticRegressionApp(fa.TorchApp):
+class LogisticRegressionApp(ta.TorchApp):
     """
     Creates a basic app to do logistic regression.
     """
 
     def dataloaders(
         self,
-        csv: Path = fa.Param(help="The path to a CSV file with the data."),
-        x: str = fa.Param(default="x", help="The column name of the independent variable."),
-        y: str = fa.Param(default="y", help="The column name of the dependent variable."),
-        validation_proportion: float = fa.Param(
+        csv: Path = ta.Param(help="The path to a CSV file with the data."),
+        x: str = ta.Param(default="x", help="The column name of the independent variable."),
+        y: str = ta.Param(default="y", help="The column name of the dependent variable."),
+        validation_proportion: float = ta.Param(
             default=0.2, help="The proportion of the dataset to use for validation."
         ),
-        batch_size: int = fa.Param(
+        batch_size: int = ta.Param(
             default=32,
             tune=True,
             tune_min=8,

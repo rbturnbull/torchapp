@@ -1,4 +1,4 @@
-import torchapp as fa
+import torchapp as ta
 import numpy as np
 
 MOCK_METRIC = "metric"
@@ -19,15 +19,15 @@ class MockLearner:
         self.recorder = MockRecorder(value=value)
 
 
-class TuningTestApp(fa.TorchApp):
+class TuningTestApp(ta.TorchApp):
     def monitor(self):
         return MOCK_METRIC
 
     def train(
         self,
-        x: float = fa.Param(default=0.0, tune=True, min=-10.0, max=10.0, help="A real parameter in [-10.0,10.0]."),
-        a: int = fa.Param(default=2, tune=True, min=1, max=12, help="An integer parameter in [1,12]."),
-        string: str = fa.Param(
+        x: float = ta.Param(default=0.0, tune=True, min=-10.0, max=10.0, help="A real parameter in [-10.0,10.0]."),
+        a: int = ta.Param(default=2, tune=True, min=1, max=12, help="An integer parameter in [1,12]."),
+        string: str = ta.Param(
             default="baby",
             tune=True,
             tune_choices=categorical_choices,
