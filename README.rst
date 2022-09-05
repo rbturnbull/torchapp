@@ -6,7 +6,11 @@ torchapp
 
 .. start-badges
 
-|testing badge| |coverage badge| |docs badge| |black badge| |git3moji badge|
+|torchapp badge| |testing badge| |coverage badge| |docs badge| |black badge| |git3moji badge|
+
+
+.. |torchapp badge| image:: https://raw.githubusercontent.com/rbturnbull/torchapp/master/docs/images/torchapp-badge.svg
+    :target: https://rbturnbull.github.io/torchapp/
 
 .. |testing badge| image:: https://github.com/rbturnbull/torchapp/actions/workflows/testing.yml/badge.svg
     :target: https://github.com/rbturnbull/torchapp/actions
