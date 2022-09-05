@@ -1,1 +1,0 @@
-from .apps import {{ cookiecutter.app_name }}

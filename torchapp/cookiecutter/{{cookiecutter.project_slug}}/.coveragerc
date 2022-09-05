@@ -1,5 +1,0 @@
-[run]
-source = {{cookiecutter.project_slug}}
-
-[report]
-precision = 2

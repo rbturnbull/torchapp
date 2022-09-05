@@ -1,3 +1,0 @@
-[submodule "torchapp/cookiecutter"]
-	path = torchapp/cookiecutter
-	url = https://github.com/rbturnbull/torchapp-cookiecutter
