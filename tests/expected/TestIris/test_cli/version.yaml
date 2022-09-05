@@ -1,6 +1,5 @@
 params:
 - -v
 output:
-  exit_code: 0
-  stdout: |
-    0.1.29
+  exit_code: 1
+  stdout: ""
