@@ -36,7 +36,7 @@ The file for testing the model is in ``tests/expected/TestLogisticRegressionApp/
    :language: yaml
 
 TorchAppTestCase Reference
-=========================
+==========================
 
 .. autoclass:: torchapp.testing.TorchAppTestCase
     :members:

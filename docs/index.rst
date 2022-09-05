@@ -21,14 +21,14 @@ torchapp is a tool for jumpstarting the creation of deep learning projects with 
 
    quickstart
    setup
-   parameters
-   training
-   tuning
+   .. parameters
+   .. training
+   .. tuning
    testing
    vision
    examples
-   .. modules
    contributing
+   credits
 
 
 
