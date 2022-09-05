@@ -1,3 +1,7 @@
+==========
+torchapp
+==========
+
 .. image:: https://raw.githubusercontent.com/rbturnbull/torchapp/master/docs/images/torchapp-banner.svg
 
 .. start-badges
