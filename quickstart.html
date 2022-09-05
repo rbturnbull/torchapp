@@ -124,25 +124,25 @@ You can add parameter values with typing hints in the function signature and the
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">fastai.data.block</span> <span class="kn">import</span> <span class="n">DataBlock</span><span class="p">,</span> <span class="n">TransformBlock</span>
 <span class="kn">from</span> <span class="nn">fastai.data.transforms</span> <span class="kn">import</span> <span class="n">ColReader</span><span class="p">,</span> <span class="n">RandomSplitter</span>
-<span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">fa</span>
+<span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
 <span class="kn">from</span> <span class="nn">torchapp.blocks</span> <span class="kn">import</span> <span class="n">BoolBlock</span>
 <span class="kn">from</span> <span class="nn">torchapp.metrics</span> <span class="kn">import</span> <span class="n">logit_accuracy</span><span class="p">,</span> <span class="n">logit_f1</span>
 
 
-<span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">fa</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a basic app to do logistic regression.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">dataloaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">csv</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">fa</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to a CSV file with the data.&quot;</span><span class="p">),</span>
-        <span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">fa</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the independent variable.&quot;</span><span class="p">),</span>
-        <span class="n">y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">fa</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the dependent variable.&quot;</span><span class="p">),</span>
-        <span class="n">validation_proportion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">fa</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+        <span class="n">csv</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to a CSV file with the data.&quot;</span><span class="p">),</span>
+        <span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the independent variable.&quot;</span><span class="p">),</span>
+        <span class="n">y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the dependent variable.&quot;</span><span class="p">),</span>
+        <span class="n">validation_proportion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The proportion of the dataset to use for validation.&quot;</span>
         <span class="p">),</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fa</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
             <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">tune_min</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
