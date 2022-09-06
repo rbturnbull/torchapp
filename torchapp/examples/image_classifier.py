@@ -109,7 +109,6 @@ class ImageClassifier(VisionApp):
                 console.print(f"'{item}': '{prediction}'")
             data.append( [item,prediction] + probabilities.tolist() )
 
-        breakpoint()
         df = pd.DataFrame(data, columns=["path","prediction"]+list(vocab))
         if output_csv:
             df.to_csv(output_csv)
