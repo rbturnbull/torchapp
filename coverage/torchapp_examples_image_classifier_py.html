@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for torchapp/examples/image_classifier.py: 42.37%</title>
+    <title>Coverage for torchapp/examples/image_classifier.py: 43.10%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,13 +18,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>torchapp/examples/image_classifier.py</b> :
-            <span class="pc_cov">42.37%</span>
+            <span class="pc_cov">43.10%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            59 statements &nbsp;
+            58 statements &nbsp;
             <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">25 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">34 missing</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">33 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -163,25 +163,24 @@
     <p id="t109" class="mis show_mis"><span class="n"><a href="#t109">109</a></span><span class="t">                <span class="nam">console</span><span class="op">.</span><span class="nam">print</span><span class="op">(</span><span class="str">f"'{item}': '{prediction}'"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t110" class="mis show_mis"><span class="n"><a href="#t110">110</a></span><span class="t">            <span class="nam">data</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span> <span class="op">[</span><span class="nam">item</span><span class="op">,</span><span class="nam">prediction</span><span class="op">]</span> <span class="op">+</span> <span class="nam">probabilities</span><span class="op">.</span><span class="nam">tolist</span><span class="op">(</span><span class="op">)</span> <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t111" class="pln"><span class="n"><a href="#t111">111</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t112" class="mis show_mis"><span class="n"><a href="#t112">112</a></span><span class="t">        <span class="nam">breakpoint</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t113" class="mis show_mis"><span class="n"><a href="#t113">113</a></span><span class="t">        <span class="nam">df</span> <span class="op">=</span> <span class="nam">pd</span><span class="op">.</span><span class="nam">DataFrame</span><span class="op">(</span><span class="nam">data</span><span class="op">,</span> <span class="nam">columns</span><span class="op">=</span><span class="op">[</span><span class="str">"path"</span><span class="op">,</span><span class="str">"prediction"</span><span class="op">]</span><span class="op">+</span><span class="nam">list</span><span class="op">(</span><span class="nam">vocab</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t114" class="mis show_mis"><span class="n"><a href="#t114">114</a></span><span class="t">        <span class="key">if</span> <span class="nam">output_csv</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t115" class="mis show_mis"><span class="n"><a href="#t115">115</a></span><span class="t">            <span class="nam">df</span><span class="op">.</span><span class="nam">to_csv</span><span class="op">(</span><span class="nam">output_csv</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t116" class="pln"><span class="n"><a href="#t116">116</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t117" class="mis show_mis"><span class="n"><a href="#t117">117</a></span><span class="t">        <span class="key">if</span> <span class="nam">verbose</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t118" class="mis show_mis"><span class="n"><a href="#t118">118</a></span><span class="t">            <span class="nam">console</span><span class="op">.</span><span class="nam">print</span><span class="op">(</span><span class="nam">df</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t119" class="pln"><span class="n"><a href="#t119">119</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t120" class="mis show_mis"><span class="n"><a href="#t120">120</a></span><span class="t">        <span class="key">return</span> <span class="nam">df</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t112" class="mis show_mis"><span class="n"><a href="#t112">112</a></span><span class="t">        <span class="nam">df</span> <span class="op">=</span> <span class="nam">pd</span><span class="op">.</span><span class="nam">DataFrame</span><span class="op">(</span><span class="nam">data</span><span class="op">,</span> <span class="nam">columns</span><span class="op">=</span><span class="op">[</span><span class="str">"path"</span><span class="op">,</span><span class="str">"prediction"</span><span class="op">]</span><span class="op">+</span><span class="nam">list</span><span class="op">(</span><span class="nam">vocab</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t113" class="mis show_mis"><span class="n"><a href="#t113">113</a></span><span class="t">        <span class="key">if</span> <span class="nam">output_csv</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t114" class="mis show_mis"><span class="n"><a href="#t114">114</a></span><span class="t">            <span class="nam">df</span><span class="op">.</span><span class="nam">to_csv</span><span class="op">(</span><span class="nam">output_csv</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t115" class="pln"><span class="n"><a href="#t115">115</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t116" class="mis show_mis"><span class="n"><a href="#t116">116</a></span><span class="t">        <span class="key">if</span> <span class="nam">verbose</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t117" class="mis show_mis"><span class="n"><a href="#t117">117</a></span><span class="t">            <span class="nam">console</span><span class="op">.</span><span class="nam">print</span><span class="op">(</span><span class="nam">df</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t118" class="pln"><span class="n"><a href="#t118">118</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p id="t119" class="mis show_mis"><span class="n"><a href="#t119">119</a></span><span class="t">        <span class="key">return</span> <span class="nam">df</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t120" class="pln"><span class="n"><a href="#t120">120</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t121" class="pln"><span class="n"><a href="#t121">121</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t122" class="pln"><span class="n"><a href="#t122">122</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t123" class="run"><span class="n"><a href="#t123">123</a></span><span class="t"><span class="key">if</span> <span class="nam">__name__</span> <span class="op">==</span> <span class="str">"__main__"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t124" class="mis show_mis"><span class="n"><a href="#t124">124</a></span><span class="t">    <span class="nam">ImageClassifier</span><span class="op">.</span><span class="nam">main</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t122" class="run"><span class="n"><a href="#t122">122</a></span><span class="t"><span class="key">if</span> <span class="nam">__name__</span> <span class="op">==</span> <span class="str">"__main__"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t123" class="mis show_mis"><span class="n"><a href="#t123">123</a></span><span class="t">    <span class="nam">ImageClassifier</span><span class="op">.</span><span class="nam">main</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2022-09-06 03:27 +0000
+            created at 2022-09-06 05:35 +0000
         </p>
     </div>
 </div>
