@@ -117,6 +117,7 @@ class TorchApp(Citable):
         # Store a bool to let the app know later on (in self.assert_initialized)
         # that __init__ has been called on this parent class
         self.torchapp_initialized = True
+        self.learner_obj = None
 
     def __str__(self):
         return self.__class__.__name__
@@ -236,11 +237,16 @@ class TorchApp(Citable):
         return result
 
     def __call__(
-        self, gpu: bool = Param(True, help="Whether or not to use a GPU for processing if available."), **kwargs
+        self, 
+        gpu: bool = Param(True, help="Whether or not to use a GPU for processing if available."), 
+        **kwargs
     ):
+        # Check if CUDA is available
+        gpu = gpu and torch.cuda.is_available()
+
         # Open the exported learner from a pickle file
         path = call_func(self.pretrained_local_path, **kwargs)
-        learner = load_learner(path, cpu=not gpu)
+        learner = self.learner_obj = load_learner(path, cpu=not gpu)
 
         # Create a dataloader for inference
         dataloader = call_func(self.inference_dataloader, learner, **kwargs)
@@ -248,7 +254,8 @@ class TorchApp(Citable):
         results = learner.get_preds(dl=dataloader, reorder=False, with_decoded=False, act=self.activation())
 
         # Output results
-        return call_func(self.output_results, results, **kwargs) or results
+        output_results = call_func(self.output_results, results, **kwargs)
+        return output_results if output_results is not None else results
 
     @classmethod
     def main(cls):
@@ -471,6 +478,9 @@ class TorchApp(Citable):
         if fp16:
             console.print("Setting floating-point precision of learner to 16 bit", style="red")
             learner = learner.to_fp16()
+
+        # Save a pointer to the learner
+        self.learner_obj = learner
 
         return learner
 

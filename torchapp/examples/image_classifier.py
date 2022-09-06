@@ -1,4 +1,6 @@
+from typing import List
 from pathlib import Path
+import torch
 from fastai.data.block import DataBlock, CategoryBlock
 from fastai.data.transforms import ColReader, RandomSplitter, DisplayedTransform, ColSplitter
 from fastai.metrics import accuracy
@@ -8,6 +10,8 @@ import pandas as pd
 import torchapp as ta
 
 from torchapp.vision import VisionApp
+from rich.console import Console
+console = Console()
 
 
 class PathColReader(DisplayedTransform):
@@ -74,6 +78,46 @@ class ImageClassifier(VisionApp):
 
     def monitor(self):
         return "accuracy"
+
+    def inference_dataloader(
+        self, 
+        learner, 
+        items:List[Path] = None, 
+        **kwargs
+    ):
+        if not items:
+            items = []
+        if isinstance(items, (Path, str)):
+            items = [items]
+
+        items = [Path(item) for item in items]
+        self.items = items
+        return learner.dls.test_dl(items, **kwargs)
+
+    def output_results(
+        self, 
+        results, 
+        output_csv:Path = ta.Param(None, help="Path to write predictions in CSV format"), 
+        verbose:bool = True, 
+        **kwargs
+    ):
+        data = []
+        vocab = self.learner_obj.dls.vocab
+        for item, probabilities in zip(self.items, results[0]):            
+            prediction = vocab[torch.argmax(probabilities)]
+            if verbose:
+                console.print(f"'{item}': '{prediction}'")
+            data.append( [item,prediction] + probabilities.tolist() )
+
+        breakpoint()
+        df = pd.DataFrame(data, columns=["path","prediction"]+list(vocab))
+        if output_csv:
+            df.to_csv(output_csv)
+
+        if verbose:
+            console.print(df)
+
+        return df
 
 
 if __name__ == "__main__":
