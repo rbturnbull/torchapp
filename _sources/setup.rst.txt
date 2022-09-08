@@ -68,9 +68,9 @@ Then in your code (perhaps in a file named ``apps.py``) subclass TorchApp and im
 
 .. code:: python
 
-    import torchapp as fa
+    import torchapp as ta
 
-    class MyApp(fa.TorchApp):
+    class MyApp(ta.TorchApp):
         def dataloaders(self):
             ...
 

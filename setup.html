@@ -282,9 +282,9 @@ Then to install the dependencies, run:</p>
 </pre></div>
 </div>
 <p>Then in your code (perhaps in a file named <code class="docutils literal notranslate"><span class="pre">apps.py</span></code>) subclass TorchApp and implement at least the <code class="docutils literal notranslate"><span class="pre">dataloaders</span></code> and the <code class="docutils literal notranslate"><span class="pre">model</span></code> methods.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">fa</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
 
-<span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">fa</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">dataloaders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="o">...</span>
 
