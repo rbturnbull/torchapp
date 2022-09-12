@@ -6,7 +6,7 @@ torchapp
 
 .. start-badges
 
-|torchapp badge| |testing badge| |coverage badge| |docs badge| |black badge| |git3moji badge|
+|testing badge| |coverage badge| |docs badge| |black badge| |git3moji badge| |torchapp badge|
 
 
 .. |torchapp badge| image:: https://img.shields.io/badge/MLOpps-torchapp-B1230A.svg

@@ -258,20 +258,27 @@ class TorchApp(Citable):
         return output_results if output_results is not None else results
 
     @classmethod
-    def main(cls):
+    def main(cls, inference_only:bool=False):
         """
         Creates an instance of this class and runs the command-line interface.
         """
-        cli = cls.click()
+        cli = cls.click(inference_only=inference_only)
         return cli()
 
     @classmethod
-    def click(cls):
+    def inference_only_main(cls):
+        """
+        Creates an instance of this class and runs the command-line interface for only the inference command.
+        """
+        return cls.main(inference_only=True)
+
+    @classmethod
+    def click(cls, inference_only:bool=False):
         """
         Creates an instance of this class and returns the click object for the command-line interface.
         """
         self = cls()
-        cli = self.cli()
+        cli = self.cli(inference_only=inference_only)
         return cli
 
     def assert_initialized(self):
@@ -328,7 +335,7 @@ class TorchApp(Citable):
 
             raise typer.Exit()
 
-    def cli(self):
+    def cli(self, inference_only:bool=False):
         """
         Returns a 'Click' object which defines the command-line interface of the app.
         """
@@ -351,13 +358,24 @@ class TorchApp(Citable):
 
         typer_click_object = typer.main.get_command(cli)
 
+        params, _, _ = get_params_convertors_ctx_param_name_from_function(self.infer_cli)
+        command = click.Command(
+            name="infer",
+            callback=self.infer_cli,
+            params=params,
+        )
+        if inference_only:
+            return command
+        typer_click_object.add_command(command)
+
+
         train_params, _, _ = get_params_convertors_ctx_param_name_from_function(self.train_cli)
         train_command = click.Command(
             name="train",
             callback=self.train_cli,
             params=train_params,
         )
-        typer_click_object.add_command(train_command, "train")
+        typer_click_object.add_command(train_command)
 
         show_batch_params, _, _ = get_params_convertors_ctx_param_name_from_function(self.show_batch_cli)
         command = click.Command(
@@ -365,7 +383,7 @@ class TorchApp(Citable):
             callback=self.show_batch_cli,
             params=show_batch_params,
         )
-        typer_click_object.add_command(command, "show-batch")
+        typer_click_object.add_command(command)
 
         params, _, _ = get_params_convertors_ctx_param_name_from_function(self.tune_cli)
         tuning_params = self.tuning_params()
@@ -377,7 +395,7 @@ class TorchApp(Citable):
             callback=self.tune_cli,
             params=params,
         )
-        typer_click_object.add_command(command, "tune")
+        typer_click_object.add_command(command)
 
         params, _, _ = get_params_convertors_ctx_param_name_from_function(self.validate_cli)
         command = click.Command(
@@ -385,7 +403,7 @@ class TorchApp(Citable):
             callback=self.validate_cli,
             params=params,
         )
-        typer_click_object.add_command(command, "validate")
+        typer_click_object.add_command(command)
 
         params, _, _ = get_params_convertors_ctx_param_name_from_function(self.lr_finder_cli)
         command = click.Command(
@@ -393,27 +411,19 @@ class TorchApp(Citable):
             callback=self.lr_finder_cli,
             params=params,
         )
-        typer_click_object.add_command(command, "lr-finder")
-
-        params, _, _ = get_params_convertors_ctx_param_name_from_function(self.infer_cli)
-        command = click.Command(
-            name="infer",
-            callback=self.infer_cli,
-            params=params,
-        )
-        typer_click_object.add_command(command, "infer")
+        typer_click_object.add_command(command)
 
         command = click.Command(
             name="bibliography",
             callback=self.print_bibliography,
         )
-        typer_click_object.add_command(command, "bibliography")
+        typer_click_object.add_command(command)
 
         command = click.Command(
             name="bibtex",
             callback=self.print_bibtex,
         )
-        typer_click_object.add_command(command, "bibtex")
+        typer_click_object.add_command(command)
 
         return typer_click_object
 
