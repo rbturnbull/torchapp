@@ -130,7 +130,7 @@ Typically it contains one dataloader for training and another for testing. For m
 You can add parameter values with typing hints in the function signature and these will be automatically added to the train and show_batch methods.</p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">model</span></code> method requires that you return a pytorch module. Parameters in the function signature will be added to the train method.</p>
 <p>Here’s an example for doing logistic regression:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
@@ -138,7 +138,6 @@ You can add parameter values with typing hints in the function signature and the
 <span class="kn">from</span> <span class="nn">fastai.data.transforms</span> <span class="kn">import</span> <span class="n">ColReader</span><span class="p">,</span> <span class="n">RandomSplitter</span>
 <span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
 <span class="kn">from</span> <span class="nn">torchapp.blocks</span> <span class="kn">import</span> <span class="n">BoolBlock</span>
-<span class="kn">from</span> <span class="nn">torchapp.metrics</span> <span class="kn">import</span> <span class="n">logit_accuracy</span><span class="p">,</span> <span class="n">logit_f1</span>
 
 
 <span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
@@ -156,10 +155,6 @@ You can add parameter values with typing hints in the function signature and the
         <span class="p">),</span>
         <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
-            <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">tune_min</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-            <span class="n">tune_max</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
-            <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of items to use in each batch.&quot;</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">):</span>
@@ -180,12 +175,6 @@ You can add parameter values with typing hints in the function signature and the
 
     <span class="k">def</span> <span class="nf">loss_func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">logit_accuracy</span><span class="p">,</span> <span class="n">logit_f1</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;logit_f1&quot;</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
