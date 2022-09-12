@@ -29,7 +29,7 @@ jobs:
         poetry run coverage run -m pytest
         echo "COVERAGE=$(poetry run coverage report --precision 2 | grep TOTAL | tr -s ' ' | cut -f 4 -d " ")" >> $GITHUB_ENV
         poetry run coverage html --directory gh-pages/coverage
-        rm gh-pages/coverage/.gitignore
+        rm -f gh-pages/coverage/.gitignore
     - name: Build draft PDF
       uses: openjournals/openjournals-draft-action@master
       with:
