@@ -44,6 +44,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#writing-an-app">Writing an App</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#programmatic-interface">Programmatic Interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command-Line Interface</a></li>
@@ -109,6 +110,17 @@
 </style>
 <section id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<p>The software can be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install torchapp
+</pre></div>
+</div>
+<p>To install the latest version from the repository, you can use this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/rbturnbull/torchapp.git
+</pre></div>
+</div>
+</section>
 <section id="writing-an-app">
 <h2>Writing an App<a class="headerlink" href="#writing-an-app" title="Permalink to this headline"></a></h2>
 <p>Inherit a class from <code class="code docutils literal notranslate"><span class="pre">TorchApp</span></code> to make an app. The parent class includes several methods for training and hyper-parameter tuning.
