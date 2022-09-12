@@ -21,9 +21,9 @@ def test_int_log():
     config = get_parameter_config(param)
 
     assert isinstance(config, dict)
-    assert config["min"] == math.log(1)
-    assert config["max"] == math.log(100)
-    assert config["distribution"] == "q_log_uniform"
+    assert config["min"] == 1
+    assert config["max"] == 100
+    assert config["distribution"] == "q_log_uniform_values"
 
 
 def test_float_log():
@@ -31,9 +31,9 @@ def test_float_log():
     config = get_parameter_config(param)
 
     assert isinstance(config, dict)
-    assert config["min"] == math.log(1)
-    assert config["max"] == math.log(100)
-    assert config["distribution"] == "log_uniform"
+    assert config["min"] == 1
+    assert config["max"] == 100
+    assert config["distribution"] == "log_uniform_values"
 
 
 def test_float():
