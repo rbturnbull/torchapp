@@ -3,6 +3,8 @@ from pathlib import Path
 from types import MethodType
 from typing import List, Optional, Union, Dict
 import inspect
+import hashlib
+from appdirs import user_cache_dir
 import torch
 from torch import nn
 from fastai.learner import Learner, load_learner
@@ -27,6 +29,7 @@ from .citations import Citable
 from .util import copy_func, call_func, change_typer_to_defaults, add_kwargs
 from .params import Param
 from .callbacks import TorchAppWandbCallback, TorchAppMlflowCallback
+from .download import cached_download
 
 bibtex_dir = Path(__file__).parent / "bibtex"
 
@@ -183,8 +186,17 @@ class TorchApp(Citable):
         # Check if needs to be downloaded
         location = str(location)
         if location.startswith("http"):
-            # TODO get user cache dir
-            cached_download(location, user_cache_dir, reload)
+            name = location.split("/")[-1]
+            extension_location = name.rfind(".")
+            if extension_location:
+                name_stem = name[:extension_location]
+                extension = name[extension_location:]
+            else:
+                name_stem = name
+                extension = ".dat"
+            url_hash = hashlib.md5(location.encode()).hexdigest()
+            path = self.cache_dir()/f"{name_stem}-{url_hash}{extension}"
+            cached_download(location, path, force=reload)
         else:
             path = Path(location)
             if not path.is_absolute():
@@ -858,3 +870,9 @@ class TorchApp(Citable):
         console.print(table)
 
         return result
+
+    def cache_dir(self) -> Path:
+        """ Returns a path to a directory where data files for this app can be cached. """
+        cache_dir = Path(user_cache_dir("torchapps"))/self.__class__.__name__
+        cache_dir.mkdir(exist_ok=True, parents=True)
+        return cache_dir
