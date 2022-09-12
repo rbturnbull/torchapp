@@ -3,4 +3,4 @@ params:
 output:
   exit_code: 0
   stdout: |
-    0.2.2
+    0.2.3
