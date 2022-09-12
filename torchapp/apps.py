@@ -293,6 +293,13 @@ class TorchApp(Citable):
         cli = self.cli(inference_only=inference_only)
         return cli
 
+    @classmethod
+    def inference_only_click(cls):
+        """
+        Creates an instance of this class and returns the click object for the command-line interface.
+        """
+        return cls.click(inference_only=True)
+
     def assert_initialized(self):
         """
         Asserts that this app has been initialized.
