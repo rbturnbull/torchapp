@@ -25,5 +25,6 @@ class Param(OptionInfo):
         self.annotation = annotation
         self.distribution = distribution
         self.tune_choices = tune_choices
+        
         if distribution:
             raise NotImplementedError("Distribution for parameters not implemented yet")

@@ -25,6 +25,9 @@ def get_optimizer(method):
 
 
 def get_param_search_space(param):
+    if param.annotation == bool:
+        param.tune_choices = [False, True]
+
     if param.tune_choices:
         return Categorical(categories=param.tune_choices)
 

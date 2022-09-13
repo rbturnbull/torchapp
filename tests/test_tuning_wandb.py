@@ -62,6 +62,7 @@ def test_get_sweep_config():
             'x': {'distribution': 'uniform', 'min': -10.0, 'max': 10.0},
             'a': {'distribution': 'q_uniform', 'min': 1, 'max': 12},
             'string': {'distribution': 'categorical', 'values': ['abcdefghij', 'baby', 'c']},
+            'switch': {'distribution': 'categorical', 'values': [False, True]},
         },
         'metric': {'name': 'metric', 'goal': 'maximize'},
     }
@@ -77,6 +78,7 @@ def test_get_sweep_config_min_iter():
             'x': {'distribution': 'uniform', 'min': -10.0, 'max': 10.0},
             'a': {'distribution': 'q_uniform', 'min': 1, 'max': 12},
             'string': {'distribution': 'categorical', 'values': ['abcdefghij', 'baby', 'c']},
+            'switch': {'distribution': 'categorical', 'values': [False, True]},
         },
         'metric': {'name': 'metric', 'goal': 'maximize'},
         'early_terminate': {'type': 'hyperband', 'min_iter': 10},
@@ -93,15 +95,15 @@ def mock_agent(sweep_id, function, count, project):
     assert sweep_id == "sweep_id"
     with patch('wandb.config', dict()) as mock_config:
         learner = function()
-        assert learner.recorder.values[-1][-1] == -4.0
+        assert learner.recorder.values[-1][-1] == -9.0
 
     with patch('wandb.config', dict(x=-1.0)) as mock_config:
         learner = function()
-        assert learner.recorder.values[-1][-1] == -14.0
+        assert learner.recorder.values[-1][-1] == -19.0
 
     with patch('wandb.config', dict(x=2.0, string="abcdefghij")) as mock_config:
         learner = function()
-        assert learner.recorder.values[-1][-1] == 10.0
+        assert learner.recorder.values[-1][-1] == -1.0
 
 
 @patch('wandb.sweep', lambda *args, **kwargs: "sweep_id")

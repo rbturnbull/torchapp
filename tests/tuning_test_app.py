@@ -33,6 +33,7 @@ class TuningTestApp(ta.TorchApp):
             tune_choices=categorical_choices,
             help="An string parameter which is either 'abcdefghij', 'baby', or 'c'.",
         ),
+        switch: bool = ta.Param(default=False, tune=True, help="A bool that can be true or false."),
         **kwargs,
     ):
         assert isinstance(x, float)
@@ -41,8 +42,9 @@ class TuningTestApp(ta.TorchApp):
         assert 1 <= a <= 12
         assert isinstance(string, str)
         assert string in categorical_choices
+        assert switch in [True, False]
 
         c = len(string)
 
-        value = c - a * (x - 2.0) ** 2
+        value = c * switch - a * (x - 2.0) ** 2 - a + 1
         return MockLearner(value=value)

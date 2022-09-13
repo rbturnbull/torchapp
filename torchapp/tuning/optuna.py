@@ -27,6 +27,9 @@ def get_sampler(method, seed=0):
 
 
 def suggest(trial, name, param):
+    if param.annotation == bool:
+        param.tune_choices = [False, True]
+        
     if param.tune_choices:
         return trial.suggest_categorical(name, param.tune_choices)
     elif param.annotation == float:

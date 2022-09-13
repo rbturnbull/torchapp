@@ -1,89 +1,72 @@
 import pytest
 from numpy.testing import assert_allclose
-from .tuning_test_app import TuningTestApp
 import skopt
 from torchapp.tuning.skopt import get_optimizer
+from .tuning_test_app import TuningTestApp
 
+TOLERANCE = 0.1
 
 def test_skopt_tune_random():
     app = TuningTestApp()
     runs = 100
     result = app.tune(engine="skopt", method="random", runs=runs, seed=42)
     assert len(result.func_vals) == runs
-    assert result.fun < -9.9
-    assert result.space.n_dims == 3
+    assert result.fun < -8
+    assert result.space.n_dims == 4
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
     assert type(result.space[2][1]).__name__ == 'Categorical'
-    for found, desired in zip(result.x, [1.9370031589297412, 10, 'abcdefghij']):
-        if isinstance(found, float):
-            assert_allclose(found, desired)
-        else:
-            assert found == desired
+    assert type(result.space[3][1]).__name__ == 'Categorical'
 
 
 def test_skopt_tune_bayes():
     app = TuningTestApp()
-    runs = 30
+    runs = 10
     result = app.tune(engine="skopt", method="bayes", runs=runs, seed=42)
     assert len(result.func_vals) == runs
-    assert result.fun < -9.97
-    assert result.space.n_dims == 3
+    assert result.fun < -9.9
+    assert result.space.n_dims == 4
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
     assert type(result.space[2][1]).__name__ == 'Categorical'
-    for found, desired in zip(result.x, [1.9370031589297412, 6, 'abcdefghij']):
-        if isinstance(found, float):
-            assert_allclose(found, desired)
-        else:
-            assert found == desired
+    assert type(result.space[3][1]).__name__ == 'Categorical'
 
 
 def test_skopt_tune_bayes_2param():
     app = TuningTestApp()
-    runs = 40
-    result = app.tune(engine="skopt", method="bayes", runs=runs, seed=42, x=4.0)
+    runs = 10
+    result = app.tune(engine="skopt", method="bayes", runs=runs, switch=True, seed=42, x=4.0)
     assert len(result.func_vals) == runs
-    assert result.fun < -5.999
+    assert result.fun < 1
     assert result.space.n_dims == 2
     assert type(result.space[0][1]).__name__ == 'Integer'
     assert type(result.space[1][1]).__name__ == 'Categorical'
-    for found, desired in zip(result.x, [1, 'abcdefghij']):
-        assert found == desired
 
 
 def test_skopt_tune_forest():
     app = TuningTestApp()
-    runs = 30
+    runs = 10
     result = app.tune(engine="skopt", method="forest", runs=runs, seed=42)
     assert len(result.func_vals) == runs
-    assert result.fun < -9.96
-    assert result.space.n_dims == 3
+    assert result.fun < 10
+    assert result.space.n_dims == 4
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
     assert type(result.space[2][1]).__name__ == 'Categorical'
-    for found, desired in zip(result.x, [1.9370031589297412, 10, 'abcdefghij']):
-        if isinstance(found, float):
-            assert_allclose(found, desired)
-        else:
-            assert found == desired
+    assert type(result.space[3][1]).__name__ == 'Categorical'
 
 
 def test_skopt_tune_gradientboost():
     app = TuningTestApp()
-    runs = 30
+    runs = 10
     result = app.tune(engine="skopt", method="gradientboost", runs=runs, seed=42)
     assert len(result.func_vals) == runs
-    assert result.fun < -9.97
-    assert result.space.n_dims == 3
+    assert result.fun < 10
+    assert result.space.n_dims == 4
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
     assert type(result.space[2][1]).__name__ == 'Categorical'
-    for found, desired in zip(result.x, [1.9535076154752264, 10, 'abcdefghij']):
-        if isinstance(found, float):
-            assert_allclose(found, desired)
-        else:
-            assert found == desired
+    assert type(result.space[3][1]).__name__ == 'Categorical'
 
 
 def test_get_optimizer():

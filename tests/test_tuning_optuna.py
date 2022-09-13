@@ -6,43 +6,44 @@ from .tuning_test_app import TuningTestApp
 
 def test_optuna_tune_default():
     app = TuningTestApp()
-    runs = 120
+    runs = 10
     result = app.tune(engine="optuna", runs=runs, seed=42)
     assert len(result.trials) == runs
     assert result.best_value > 9.93
-    assert result.best_trial.number == 104
     assert isinstance(result.sampler, samplers.RandomSampler)
     df = result.trials_dataframe()
     assert "params_a" in df.columns
     assert "params_x" in df.columns
     assert "params_string" in df.columns
+    assert "params_switch" in df.columns
 
 
 def test_optuna_tune_cmaes():
     app = TuningTestApp()
-    result = app.tune(engine="optuna", method="cmaes", runs=15, seed=42, string="abcdefghij")
-    assert len(result.trials) == 15
-    assert result.best_value > 9.8
-    assert result.best_trial.number == 6
+    runs = 10
+    result = app.tune(engine="optuna", method="cmaes", runs=runs, seed=42, string="abcdefghij")
+    assert len(result.trials) == runs
+    assert result.best_value > 6
     assert isinstance(result.sampler, samplers.CmaEsSampler)
     df = result.trials_dataframe()
     assert "params_a" in df.columns
     assert "params_x" in df.columns
     assert "params_string" not in df.columns
+    assert "params_switch" in df.columns
 
 
 def test_optuna_tune_tpe():
     app = TuningTestApp()
-    runs = 100
+    runs = 10
     result = app.tune(engine="optuna", method="tpe", runs=runs, seed=42)
     assert len(result.trials) == runs
-    assert result.best_value > 9.9999
-    assert result.best_trial.number == 72
+    assert result.best_value > 9.9
     assert isinstance(result.sampler, samplers.TPESampler)
     df = result.trials_dataframe()
     assert "params_a" in df.columns
     assert "params_x" in df.columns
     assert "params_string" in df.columns
+    assert "params_switch" in df.columns
 
 
 def test_get_sampler():
