@@ -73,6 +73,9 @@ def optuna_tune(
 
     if not storage:
         storage = None
+    elif "://" not in storage:
+        storage = f"sqlite:///{storage}.sqlite3"
+
     study = optuna.create_study(
         study_name=name,
         storage=storage,
