@@ -126,7 +126,10 @@ class TorchApp(Citable):
         return self.__class__.__name__
 
     def get_bibtex_files(self):
-        return [bibtex_dir / "fastai.bib", bibtex_dir / "torchapp.bib"]
+        return [
+            bibtex_dir / "fastai.bib", 
+            bibtex_dir / "torchapp.bib",
+        ]
 
     def copy_method(self, method):
         return MethodType(copy_func(method.__func__), self)

@@ -18,7 +18,8 @@ class Citable:
         if not self.bibtex_files:
             self.set_bibtext_files()
 
-        self.bibtex_files.append(file)
+        if file not in self.bibtex_files:
+            self.bibtex_files.append(file)
 
     def set_bibtex_files(self):
         self.bibtex_files = self.get_bibtex_files()
