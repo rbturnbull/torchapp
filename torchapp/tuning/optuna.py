@@ -47,6 +47,7 @@ def optuna_tune(
     **kwargs,
 ):
     output_dir = Path(kwargs.get("output_dir", "."))
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     def objective(trial: optuna.Trial):
         run_kwargs = dict(kwargs)
