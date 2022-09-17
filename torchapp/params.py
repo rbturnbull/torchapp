@@ -1,7 +1,5 @@
-import math
 from typer.models import OptionInfo
-from typing import NamedTuple, List
-from numbers import Number
+from .enums import Activation
 
 
 class Param(OptionInfo):
@@ -12,14 +10,15 @@ class Param(OptionInfo):
         tune_min=None,
         tune_max=None,
         tune_choices=None,
-        log=False,
+        log=False, # deprecated. use tune_log
+        tune_log=False,
         distribution=None,
         annotation=None,
         **kwargs,
     ):
         super().__init__(default=default, **kwargs)
         self.tune = tune
-        self.log = log
+        self.tune_log = tune_log or log
         self.tune_min = tune_min if tune_min is not None else self.min
         self.tune_max = tune_max if tune_max is not None else self.max
         self.annotation = annotation
@@ -28,3 +27,13 @@ class Param(OptionInfo):
         
         if distribution:
             raise NotImplementedError("Distribution for parameters not implemented yet")
+
+    def check_choices(self):
+        if self.tune_choices:
+            return
+
+        if self.annotation == bool:
+            self.tune_choices = [False, True]
+
+        elif self.annotation == Activation:
+            self.tune_choices = Activation.default_tune_choices()

@@ -61,3 +61,13 @@ class Activation(str, Enum):
             raise ActivationError(f"Activation function '{self.value}' not available.")
 
         return getattr(nn, self.value)(*args, **kwargs)
+
+    @classmethod
+    def default_tune_choices(cls):
+        return [
+            cls.ReLU,
+            cls.LeakyReLU,
+            cls.RReLU,
+            cls.ELU,
+            cls.Hardsigmoid,
+        ]

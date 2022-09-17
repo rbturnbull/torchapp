@@ -1,7 +1,7 @@
 import pytest
-from numpy.testing import assert_allclose
 import skopt
 from torchapp.tuning.skopt import get_optimizer
+import torchapp as ta
 from .tuning_test_app import TuningTestApp
 
 TOLERANCE = 0.1
@@ -11,20 +11,21 @@ def test_skopt_tune_random():
     runs = 100
     result = app.tune(engine="skopt", method="random", runs=runs, seed=42)
     assert len(result.func_vals) == runs
-    assert result.fun < -8
-    assert result.space.n_dims == 4
+    assert result.fun < -4
+    assert result.space.n_dims == 5
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
     assert type(result.space[2][1]).__name__ == 'Categorical'
     assert type(result.space[3][1]).__name__ == 'Categorical'
+    assert type(result.space[4][1]).__name__ == 'Categorical'
 
 
 def test_skopt_tune_bayes():
     app = TuningTestApp()
     runs = 10
-    result = app.tune(engine="skopt", method="bayes", runs=runs, seed=42)
+    result = app.tune(engine="skopt", method="bayes", runs=runs, seed=42, activation=ta.Activation.ReLU)
     assert len(result.func_vals) == runs
-    assert result.fun < -9.9
+    assert result.fun < -9.0
     assert result.space.n_dims == 4
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
@@ -35,7 +36,7 @@ def test_skopt_tune_bayes():
 def test_skopt_tune_bayes_2param():
     app = TuningTestApp()
     runs = 10
-    result = app.tune(engine="skopt", method="bayes", runs=runs, switch=True, seed=42, x=4.0)
+    result = app.tune(engine="skopt", method="bayes", runs=runs, switch=True, seed=42, activation=ta.Activation.ReLU, x=4.0)
     assert len(result.func_vals) == runs
     assert result.fun < 1
     assert result.space.n_dims == 2
@@ -45,28 +46,30 @@ def test_skopt_tune_bayes_2param():
 
 def test_skopt_tune_forest():
     app = TuningTestApp()
-    runs = 10
+    runs = 20
     result = app.tune(engine="skopt", method="forest", runs=runs, seed=42)
     assert len(result.func_vals) == runs
-    assert result.fun < 10
-    assert result.space.n_dims == 4
+    assert result.fun < 13
+    assert result.space.n_dims == 5
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
     assert type(result.space[2][1]).__name__ == 'Categorical'
     assert type(result.space[3][1]).__name__ == 'Categorical'
+    assert type(result.space[4][1]).__name__ == 'Categorical'
 
 
 def test_skopt_tune_gradientboost():
     app = TuningTestApp()
-    runs = 10
+    runs = 20
     result = app.tune(engine="skopt", method="gradientboost", runs=runs, seed=42)
     assert len(result.func_vals) == runs
-    assert result.fun < 10
-    assert result.space.n_dims == 4
+    assert result.fun < 52
+    assert result.space.n_dims == 5
     assert type(result.space[0][1]).__name__ == 'Real'
     assert type(result.space[1][1]).__name__ == 'Integer'
     assert type(result.space[2][1]).__name__ == 'Categorical'
     assert type(result.space[3][1]).__name__ == 'Categorical'
+    assert type(result.space[4][1]).__name__ == 'Categorical'
 
 
 def test_get_optimizer():

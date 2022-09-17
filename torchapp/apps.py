@@ -461,7 +461,10 @@ class TorchApp(Citable):
                 if value.annotation:
                     default_value.annotation = value.annotation
 
+                default_value.check_choices()
+
                 tuning_params[key] = default_value
+                
         return tuning_params
 
     def dataloaders(self):

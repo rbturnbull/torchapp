@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, PropertyMock
-import math
+import torchapp as ta
 from torchapp import params
 from torchapp.tuning.wandb import get_parameter_config, get_sweep_config
 from .tuning_test_app import TuningTestApp
@@ -63,6 +63,7 @@ def test_get_sweep_config():
             'a': {'distribution': 'q_uniform', 'min': 1, 'max': 12},
             'string': {'distribution': 'categorical', 'values': ['abcdefghij', 'baby', 'c']},
             'switch': {'distribution': 'categorical', 'values': [False, True]},
+            'activation': {'distribution': 'categorical', 'values': ta.Activation.default_tune_choices()},
         },
         'metric': {'name': 'metric', 'goal': 'maximize'},
     }
@@ -79,6 +80,7 @@ def test_get_sweep_config_min_iter():
             'a': {'distribution': 'q_uniform', 'min': 1, 'max': 12},
             'string': {'distribution': 'categorical', 'values': ['abcdefghij', 'baby', 'c']},
             'switch': {'distribution': 'categorical', 'values': [False, True]},
+            'activation': {'distribution': 'categorical', 'values': ta.Activation.default_tune_choices()},
         },
         'metric': {'name': 'metric', 'goal': 'maximize'},
         'early_terminate': {'type': 'hyperband', 'min_iter': 10},

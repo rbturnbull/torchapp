@@ -25,13 +25,10 @@ def get_optimizer(method):
 
 
 def get_param_search_space(param):
-    if param.annotation == bool:
-        param.tune_choices = [False, True]
-
     if param.tune_choices:
         return Categorical(categories=param.tune_choices)
 
-    prior = "uniform" if not param.log else "log-uniform"
+    prior = "uniform" if not param.tune_log else "log-uniform"
     if param.annotation == float:
         return Real(param.tune_min, param.tune_max, prior=prior)
 

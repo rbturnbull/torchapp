@@ -34,6 +34,7 @@ class TuningTestApp(ta.TorchApp):
             help="An string parameter which is either 'abcdefghij', 'baby', or 'c'.",
         ),
         switch: bool = ta.Param(default=False, tune=True, help="A bool that can be true or false."),
+        activation: ta.Activation = ta.Param(default=ta.Activation.ReLU, tune=True, help="An activation function to use."),
         **kwargs,
     ):
         assert isinstance(x, float)
@@ -43,6 +44,7 @@ class TuningTestApp(ta.TorchApp):
         assert isinstance(string, str)
         assert string in categorical_choices
         assert switch in [True, False]
+        assert activation in ta.Activation.default_tune_choices()
 
         c = len(string)
 

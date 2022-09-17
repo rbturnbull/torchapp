@@ -27,15 +27,12 @@ def get_sampler(method, seed=0):
 
 
 def suggest(trial, name, param):
-    if param.annotation == bool:
-        param.tune_choices = [False, True]
-        
     if param.tune_choices:
         return trial.suggest_categorical(name, param.tune_choices)
     elif param.annotation == float:
-        return trial.suggest_float(name, param.tune_min, param.tune_max, log=param.log)
+        return trial.suggest_float(name, param.tune_min, param.tune_max, log=param.tune_log)
     elif param.annotation == int:
-        return trial.suggest_int(name, param.tune_min, param.tune_max, log=param.log)
+        return trial.suggest_int(name, param.tune_min, param.tune_max, log=param.tune_log)
 
     raise NotImplementedError("Optuna Tuning Engine cannot understand param '{name}': {param}")
 
@@ -49,6 +46,8 @@ def optuna_tune(
     seed: int = None,
     **kwargs,
 ):
+    output_dir = Path(kwargs.get("output_dir", "."))
+
     def objective(trial: optuna.Trial):
         run_kwargs = dict(kwargs)
 
@@ -74,7 +73,8 @@ def optuna_tune(
     if not storage:
         storage = None
     elif "://" not in storage:
-        storage = f"sqlite:///{storage}.sqlite3"
+        storage_path = output_dir/f"{storage}.sqlite3"
+        storage = f"sqlite:///{storage_path.resolve()}"
 
     study = optuna.create_study(
         study_name=name,

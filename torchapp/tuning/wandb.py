@@ -15,17 +15,11 @@ def get_parameter_config(param) -> dict:
             values=param.tune_choices,
         )
 
-    if param.annotation == bool:
-        return dict(
-            distribution="categorical",
-            values=[False, True],
-        )
-
     if param.annotation in [int, float]:
         assert param.tune_min is not None
         assert param.tune_max is not None
 
-        distribution = "log_uniform_values" if param.log else "uniform"
+        distribution = "log_uniform_values" if param.tune_log else "uniform"
         if param.annotation == int:
             distribution = f"q_{distribution}"
 
