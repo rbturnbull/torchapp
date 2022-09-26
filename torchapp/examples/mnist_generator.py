@@ -6,6 +6,7 @@ from torch import nn
 from fastai.data.transforms import get_image_files, Normalize
 from fastai.data.block import DataBlock, TransformBlock
 from fastai.vision.data import ImageBlock
+from fastai.vision.core import PILImageBW
 from fastai.vision.augment import Resize, ResizeMethod
 from fastai.vision.gan import basic_generator, basic_critic, generate_noise
 from fastai.layers import NormType
@@ -47,12 +48,13 @@ class MNISTGenerator(GANApp):
         self.image_size = image_size
         self.noise_size = noise_size
         dblock = DataBlock(
-            blocks = (TransformBlock, ImageBlock),
+            blocks = (TransformBlock, ImageBlock(cls=PILImageBW)),
             get_x = partial(generate_noise, size=noise_size),
             get_items = get_image_files,
             item_tfms=Resize(image_size, method=ResizeMethod.Crop),
-            batch_tfms = Normalize.from_stats(torch.tensor([0.5,0.5,0.5]), torch.tensor([0.5,0.5,0.5])),
+            batch_tfms = Normalize.from_stats(torch.tensor([0.5]), torch.tensor([0.5])),
         )
+
         return dblock.dataloaders(path, path=path, bs=batch_size)
 
     def generator(
@@ -62,7 +64,7 @@ class MNISTGenerator(GANApp):
     ) -> nn.Module:
         return basic_generator(
             out_size=self.image_size, 
-            n_channels=3, 
+            n_channels=1, 
             in_sz=self.noise_size,
             n_extra_layers=generator_extra_layers,
             n_features=generator_features,
@@ -76,7 +78,7 @@ class MNISTGenerator(GANApp):
     ) -> nn.Module:
         return basic_critic(
             in_size=self.image_size, 
-            n_channels=3, 
+            n_channels=1, 
             n_extra_layers=critic_extra_layers, 
             n_features=critic_features,
             norm_type=norm_type,
