@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 from pybtex import PybtexEngine
 from rich.console import Console
@@ -56,3 +57,7 @@ class Citable:
     def print_bibtex(self):
         bibtex = self.bibtex()
         print(bibtex)
+
+
+def torchapp_bibtex_dir() -> Path:
+    return Path(__file__).parent / "bibtex"

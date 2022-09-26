@@ -25,13 +25,13 @@ from rich.box import SIMPLE
 install()
 console = Console()
 
-from .citations import Citable
+from .citations import Citable, torchapp_bibtex_dir
 from .util import copy_func, call_func, change_typer_to_defaults, add_kwargs
 from .params import Param
 from .callbacks import TorchAppWandbCallback, TorchAppMlflowCallback
 from .download import cached_download
 
-bibtex_dir = Path(__file__).parent / "bibtex"
+bibtex_dir = torchapp_bibtex_dir()
 
 
 class TorchAppInitializationError(Exception):
