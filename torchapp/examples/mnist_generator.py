@@ -90,6 +90,9 @@ class MNISTGenerator(GANApp):
         files.append(Path(__file__).parent / "mnist.bib")
         return files
 
+    def monitor(self):
+        return False
+
 
 if __name__ == "__main__":
     MNISTGenerator.main()

@@ -612,7 +612,10 @@ class TorchApp(Citable):
         callbacks = [CSVLogger()]
         monitor = self.monitor()
         if monitor:
-            callbacks.append(SaveModelCallback(monitor=monitor))
+            save_model = SaveModelCallback(monitor=monitor)
+        else:
+            save_model = SaveModelCallback(at_end=True)
+        callbacks.append(save_model)
 
         if wandb:
             callback = TorchAppWandbCallback(
