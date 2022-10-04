@@ -35,7 +35,7 @@ def get_parameter_config(param) -> dict:
 def get_sweep_config(
     app,
     name: str = None,
-    method: str = "random",  # Should be enum
+    method: str = "",  # Should be enum
     min_iter: int = None,
     **kwargs,
 ):
@@ -46,6 +46,7 @@ def get_sweep_config(
         if key not in kwargs or kwargs[key] is None:
             parameters_config[key] = get_parameter_config(value)
 
+    method = method or "bayes"
     if method not in ["grid", "random", "bayes"]:
         raise NotImplementedError(f"Cannot interpret sampling method '{method}' using wandb.")
 

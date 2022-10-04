@@ -735,7 +735,7 @@ class TorchApp(Citable):
         self,
         runs: int = Param(default=1, help="The number of runs to attempt to train the model."),
         engine: str = Param(
-            default="wandb",
+            default="skopt",
             help="The optimizer to use to perform the hyperparameter tuning. Options: wandb, optuna, skopt.",
         ),  # should be enum
         id: str = Param(
@@ -750,7 +750,7 @@ class TorchApp(Citable):
             help="An informative name for this hyperparameter tuning job. If empty, then it creates a name from the project name.",
         ),
         method: str = Param(
-            default="random", help="The sampling method to use to perform the hyperparameter tuning."
+            default="", help="The sampling method to use to perform the hyperparameter tuning. By default it chooses the default method of the engine."
         ),  # should be enum
         min_iter: int = Param(
             default=None,

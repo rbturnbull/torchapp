@@ -1,4 +1,5 @@
 docshtml
+*.pkl
 paper.pdf
 torchapp/*.ipynb
 wandb/*

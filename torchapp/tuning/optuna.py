@@ -14,7 +14,7 @@ from ..util import call_func
 
 def get_sampler(method, seed=0):
     method = method.lower()
-    if method.startswith("tpe"):
+    if method.startswith("tpe") or not method:
         return samplers.TPESampler(seed=seed)
     elif method.startswith("cma"):
         return samplers.CmaEsSampler(seed=seed)
