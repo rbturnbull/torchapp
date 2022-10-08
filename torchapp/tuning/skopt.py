@@ -26,16 +26,16 @@ def get_optimizer(method):
     raise NotImplementedError(f"Cannot interpret sampling method '{method}' using scikit-optimize.")
 
 
-def get_param_search_space(param):
+def get_param_search_space(param, name):
     if param.tune_choices:
-        return Categorical(categories=param.tune_choices)
+        return Categorical(categories=param.tune_choices, name=name)
 
     prior = "uniform" if not param.tune_log else "log-uniform"
     if param.annotation == float:
-        return Real(param.tune_min, param.tune_max, prior=prior)
+        return Real(param.tune_min, param.tune_max, prior=prior, name=name)
 
     if param.annotation == int:
-        return Integer(param.tune_min, param.tune_max, prior=prior)
+        return Integer(param.tune_min, param.tune_max, prior=prior, name=name)
 
     raise NotImplementedError("scikit-optimize tuning engine cannot understand param '{name}': {param}")
 
@@ -119,7 +119,7 @@ def skopt_tune(
             used_tuning_params[key] = value
 
     # Get search space
-    search_space = [get_param_search_space(param) for param in used_tuning_params.values()]
+    search_space = [get_param_search_space(param, name=key) for key, param in used_tuning_params.items()]
 
     optimizer = get_optimizer(method)
 
@@ -143,7 +143,7 @@ def skopt_tune(
             except Exception as e:
                 raise IOError(f"Cannot read scikit-optimize checkpoint file '{file}': {e}")
 
-        checkpoint_saver = CheckpointSaver(str(file), compress=9)
+        checkpoint_saver = CheckpointSaver(str(file), compress=9, store_objective=False)
         optimizer_kwargs['callback'].append( checkpoint_saver )
 
     objective = SkoptObjective(app, kwargs, used_tuning_params, name, base_output_dir)
