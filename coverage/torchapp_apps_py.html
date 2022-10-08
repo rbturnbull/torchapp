@@ -789,7 +789,7 @@
     <p id="t735" class="pln"><span class="n"><a href="#t735">735</a></span><span class="t">        <span class="nam">self</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t736" class="pln"><span class="n"><a href="#t736">736</a></span><span class="t">        <span class="nam">runs</span><span class="op">:</span> <span class="nam">int</span> <span class="op">=</span> <span class="nam">Param</span><span class="op">(</span><span class="nam">default</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">help</span><span class="op">=</span><span class="str">"The number of runs to attempt to train the model."</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t737" class="pln"><span class="n"><a href="#t737">737</a></span><span class="t">        <span class="nam">engine</span><span class="op">:</span> <span class="nam">str</span> <span class="op">=</span> <span class="nam">Param</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t738" class="pln"><span class="n"><a href="#t738">738</a></span><span class="t">            <span class="nam">default</span><span class="op">=</span><span class="str">"wandb"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t738" class="pln"><span class="n"><a href="#t738">738</a></span><span class="t">            <span class="nam">default</span><span class="op">=</span><span class="str">"skopt"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t739" class="pln"><span class="n"><a href="#t739">739</a></span><span class="t">            <span class="nam">help</span><span class="op">=</span><span class="str">"The optimizer to use to perform the hyperparameter tuning. Options: wandb, optuna, skopt."</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t740" class="pln"><span class="n"><a href="#t740">740</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>  <span class="com"># should be enum</span>&nbsp;</span><span class="r"></span></p>
     <p id="t741" class="pln"><span class="n"><a href="#t741">741</a></span><span class="t">        <span class="nam">id</span><span class="op">:</span> <span class="nam">str</span> <span class="op">=</span> <span class="nam">Param</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -804,7 +804,7 @@
     <p id="t750" class="pln"><span class="n"><a href="#t750">750</a></span><span class="t">            <span class="nam">help</span><span class="op">=</span><span class="str">"An informative name for this hyperparameter tuning job. If empty, then it creates a name from the project name."</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t751" class="pln"><span class="n"><a href="#t751">751</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p id="t752" class="pln"><span class="n"><a href="#t752">752</a></span><span class="t">        <span class="nam">method</span><span class="op">:</span> <span class="nam">str</span> <span class="op">=</span> <span class="nam">Param</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t753" class="pln"><span class="n"><a href="#t753">753</a></span><span class="t">            <span class="nam">default</span><span class="op">=</span><span class="str">"random"</span><span class="op">,</span> <span class="nam">help</span><span class="op">=</span><span class="str">"The sampling method to use to perform the hyperparameter tuning."</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t753" class="pln"><span class="n"><a href="#t753">753</a></span><span class="t">            <span class="nam">default</span><span class="op">=</span><span class="str">""</span><span class="op">,</span> <span class="nam">help</span><span class="op">=</span><span class="str">"The sampling method to use to perform the hyperparameter tuning. By default it chooses the default method of the engine."</span>&nbsp;</span><span class="r"></span></p>
     <p id="t754" class="pln"><span class="n"><a href="#t754">754</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>  <span class="com"># should be enum</span>&nbsp;</span><span class="r"></span></p>
     <p id="t755" class="pln"><span class="n"><a href="#t755">755</a></span><span class="t">        <span class="nam">min_iter</span><span class="op">:</span> <span class="nam">int</span> <span class="op">=</span> <span class="nam">Param</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p id="t756" class="pln"><span class="n"><a href="#t756">756</a></span><span class="t">            <span class="nam">default</span><span class="op">=</span><span class="key">None</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -948,7 +948,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2022-09-17 11:50 +0000
+            created at 2022-10-08 13:27 +0000
         </p>
     </div>
 </div>
