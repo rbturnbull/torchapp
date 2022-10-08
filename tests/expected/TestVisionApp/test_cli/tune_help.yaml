@@ -11,7 +11,7 @@ output:
                                       model.  [default: 1]
       --engine TEXT                   The optimizer to use to perform the
                                       hyperparameter tuning. Options: wandb, optuna,
-                                      skopt.  [default: wandb]
+                                      skopt.  [default: skopt]
       --id TEXT                       The ID of this hyperparameter tuning job. If
                                       using wandb, then this is the sweep id. If
                                       using optuna, then this is the storage. If
@@ -21,7 +21,8 @@ output:
                                       tuning job. If empty, then it creates a name
                                       from the project name.
       --method TEXT                   The sampling method to use to perform the
-                                      hyperparameter tuning.  [default: random]
+                                      hyperparameter tuning. By default it chooses
+                                      the default method of the engine.
       --min-iter INTEGER              The minimum number of iterations if using
                                       early termination. If left empty, then early
                                       termination is not used.

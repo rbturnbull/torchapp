@@ -12,6 +12,21 @@ def test_optuna_tune_default():
     result = app.tune(engine="optuna", runs=runs, seed=42)
     assert len(result.trials) == runs
     assert result.best_value > 3.9
+    assert isinstance(result.sampler, samplers.TPESampler)
+    df = result.trials_dataframe()
+    assert "params_a" in df.columns
+    assert "params_x" in df.columns
+    assert "params_string" in df.columns
+    assert "params_switch" in df.columns
+    assert "params_activation" in df.columns
+
+
+def test_optuna_tune_random():
+    app = TuningTestApp()
+    runs = 100
+    result = app.tune(engine="optuna", method="random", runs=runs, seed=42)
+    assert len(result.trials) == runs
+    assert result.best_value > 3.9
     assert isinstance(result.sampler, samplers.RandomSampler)
     df = result.trials_dataframe()
     assert "params_a" in df.columns

@@ -46,6 +46,7 @@ class SkoptPlot(object):
     """
     def __init__(self, path:Path, format):
         self.path = Path(path)
+        self.path.mkdir(parents=True, exist_ok=True)
         self.format = format
 
     def __call__(self, result):
@@ -127,7 +128,11 @@ def skopt_tune(
         name = f"{app.project_name()}-tuning"
     base_output_dir = Path(kwargs.get("output_dir", ".")) / name
 
-    optimizer_kwargs = dict(n_calls=runs, random_state=seed, callback=[SkoptPlot(base_output_dir, "svg")])
+    optimizer_kwargs = dict(n_calls=runs, random_state=seed, callback=[])
+
+    if False:
+        optimizer_kwargs["callback"].append(SkoptPlot(base_output_dir, "svg"))
+
     if file:
         file = Path(file)
         # if a file is given, first try to read from that file the results and then use it as a checkpoint
