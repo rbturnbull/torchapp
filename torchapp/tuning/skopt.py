@@ -101,6 +101,10 @@ class SkoptObjective():
 
         return metric
 
+    def __deepcopy__(self, memo):
+        """ Returns None for deepcopy because this shouldn't be copied into the checkpoint. """
+        return None
+
 
 def skopt_tune(
     app,
@@ -144,7 +148,6 @@ def skopt_tune(
                 y0 = checkpoint.func_vals
                 optimizer_kwargs['x0'] = x0
                 optimizer_kwargs['y0'] = y0
-
             except Exception as e:
                 raise IOError(f"Cannot read scikit-optimize checkpoint file '{file}': {e}")
 
