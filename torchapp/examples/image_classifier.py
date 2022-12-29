@@ -2,7 +2,7 @@ from typing import List
 from pathlib import Path
 import torch
 from fastai.data.block import DataBlock, CategoryBlock
-from fastai.data.transforms import ColReader, RandomSplitter, DisplayedTransform, ColSplitter
+from fastai.data.transforms import ColReader, RandomSplitter, DisplayedTransform, ColSplitter, get_image_files
 from fastai.metrics import accuracy
 from fastai.vision.data import ImageBlock
 from fastai.vision.augment import Resize, ResizeMethod
@@ -46,6 +46,10 @@ class ImageClassifier(VisionApp):
             help="The column in the dataset to use for validation. "
             "If the column is not in the dataset, then a validation set will be chosen randomly according to `validation_proportion`.",
         ),
+        validation_value: str = ta.Param(
+            default=None,
+            help="If set, then the value in the `validation_column` must equal this string for the item to be in the validation set. "
+        ),
         validation_proportion: float = ta.Param(
             default=0.2,
             help="The proportion of the dataset to keep for validation. Used if `validation_column` is not in the dataset.",
@@ -56,8 +60,13 @@ class ImageClassifier(VisionApp):
         resize_method: str = ta.Param(default="squish", help="The method to resize images."),
     ):
         df = pd.read_csv(csv)
-
+        
         # Create splitter for training/validation images
+        if validation_value is not None:
+            validation_column_new = f"{validation_column} is {validation_value}"
+            df[validation_column_new] = df[validation_column].astype(str) == validation_value
+            validation_column = validation_column_new
+            
         if validation_column and validation_column in df:
             splitter = ColSplitter(validation_column)
         else:
@@ -83,16 +92,42 @@ class ImageClassifier(VisionApp):
         self, 
         learner, 
         items:List[Path] = None, 
+        csv: Path = ta.Param(default=None, help="A CSV with image paths."),
+        image_column: str = ta.Param(default="image", help="The name of the column with the image paths."),
+        base_dir: Path = ta.Param(default="./", help="The base directory for images with relative paths."),
         **kwargs
     ):
-        if not items:
-            items = []
+        self.items = []
         if isinstance(items, (Path, str)):
-            items = [items]
+            self.items.append(Path(items))
+        else:
+            try:
+                for item in items:
+                    item = Path(item)
+                    # If the item is a directory then get all images in that directory
+                    if item.is_dir():
+                        self.items.extend( get_image_files(item) )
+                    else:
+                        self.items.append(item)
+            except:
+                raise ValueError(f"Cannot interpret list of items.")
 
-        items = [Path(item) for item in items]
-        self.items = items
-        return learner.dls.test_dl(items, **kwargs)
+        # Read CSV if available
+        if csv is not None:
+            df = pd.read_csv(csv)
+            for _, row in df.iterrows():
+                self.items.append(Path(row[image_column]))
+
+        if not self.items:
+            raise ValueError(f"No items found.")
+
+        # Set relative to base dir
+        if base_dir:
+            base_dir = Path(base_dir)
+        
+            self.items = [base_dir / item if not item.is_absolute() else item for item in self.items]
+
+        return learner.dls.test_dl(self.items, **kwargs)
 
     def output_results(
         self, 
