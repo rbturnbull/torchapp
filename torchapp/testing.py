@@ -100,6 +100,14 @@ def assert_output(file: Path, interactive: bool, params: dict, output, expected,
     if expected == output:
         return
 
+    # if expected and output are both strings, check to see if they are equal when normalizing whitespace
+    breakpoint()
+    if isinstance(expected, str) and isinstance(output, str):
+        expected_cleaned = re.sub(r"\s*", " ", expected, re.MULTILINE)
+        output_cleaned = re.sub(r"\s*", " ", output, re.MULTILINE) 
+        if expected_cleaned == output_cleaned:
+            return
+
     if isinstance(expected, dict) and isinstance(output, dict):
         keys = set(expected.keys()) | set(output.keys())
         diff = {}
