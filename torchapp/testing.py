@@ -86,6 +86,15 @@ def clean_output(output):
     return output
 
 
+def strip_whitespace_recursive(obj):
+    if isinstance(obj, str):
+        return re.sub(r"\s*", " ", obj, re.MULTILINE)
+    if isinstance(obj, dict):
+        return {k:strip_whitespace_recursive(v) for k,v in obj.items()}
+
+    return obj
+
+
 def assert_output(file: Path, interactive: bool, params: dict, output, expected, regenerate: bool = False):
     """
     Tests to see if the output is the same as the expected data and allows for saving a new version of the expected files if needed.
@@ -101,12 +110,10 @@ def assert_output(file: Path, interactive: bool, params: dict, output, expected,
         return
 
     # if expected and output are both strings, check to see if they are equal when normalizing whitespace
-    breakpoint()
-    if isinstance(expected, str) and isinstance(output, str):
-        expected_cleaned = re.sub(r"\s*", " ", expected, re.MULTILINE)
-        output_cleaned = re.sub(r"\s*", " ", output, re.MULTILINE) 
-        if expected_cleaned == output_cleaned:
-            return
+    expected_cleaned = strip_whitespace_recursive(expected)
+    output_cleaned = strip_whitespace_recursive(output)
+    if expected_cleaned == output_cleaned:
+        return
 
     if isinstance(expected, dict) and isinstance(output, dict):
         keys = set(expected.keys()) | set(output.keys())
