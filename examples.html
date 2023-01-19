@@ -69,8 +69,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Examples</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -120,7 +120,7 @@
 
 
 <span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a basic app to do logistic regression.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -153,7 +153,7 @@
         <span class="k">return</span> <span class="n">datablock</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Builds a simple logistic regression model.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds a simple logistic regression model.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">loss_func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -183,7 +183,7 @@
 
 
 <span class="k">class</span> <span class="nc">IrisApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A classification app to predict the type of iris from sepal and petal lengths and widths.</span>
 
 <span class="sd">    A classic dataset publised in:</span>

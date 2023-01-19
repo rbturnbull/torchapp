@@ -73,8 +73,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Quickstart</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Quickstart</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -113,11 +113,11 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
 <p>The software can be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install torchapp
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>torchapp
 </pre></div>
 </div>
 <p>To install the latest version from the repository, you can use this command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/rbturnbull/torchapp.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/rbturnbull/torchapp.git
 </pre></div>
 </div>
 </section>
@@ -141,7 +141,7 @@ You can add parameter values with typing hints in the function signature and the
 
 
 <span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a basic app to do logistic regression.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -170,7 +170,7 @@ You can add parameter values with typing hints in the function signature and the
         <span class="k">return</span> <span class="n">datablock</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Builds a simple logistic regression model.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds a simple logistic regression model.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">loss_func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -201,19 +201,19 @@ You can add parameter values with typing hints in the function signature and the
 <section id="command-line-interface">
 <h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline"></a></h2>
 <p>Command-line interfaces are created simply by using the Poetry package management tool. Just add a line like this in <code class="code docutils literal notranslate"><span class="pre">pyproject.toml</span></code></p>
-<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;logistic.apps:LogisticRegressionApp.main&quot;</span><span class="w"></span>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;logistic.apps:LogisticRegressionApp.main&quot;</span>
 </pre></div>
 </div>
 <p>Now we can train with the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic train training_csv_path
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>train<span class="w"> </span>training_csv_path
 </pre></div>
 </div>
 <p>All the arguments for the dataloader and the model can be set through arguments in the CLI. To see them run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic train -h
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>train<span class="w"> </span>-h
 </pre></div>
 </div>
 <p>Predictions are made like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic predict data_csv_path
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>predict<span class="w"> </span>data_csv_path
 </pre></div>
 </div>
 </section>
@@ -224,7 +224,7 @@ You can add parameter values with typing hints in the function signature and the
 </pre></div>
 </div>
 <p>Or from the command line, run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic tune --runs <span class="m">10</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>tune<span class="w"> </span>--runs<span class="w"> </span><span class="m">10</span>
 </pre></div>
 </div>
 <p>These commands will connect with W&amp;B and your runs will be visible on the wandb.ai site.</p>

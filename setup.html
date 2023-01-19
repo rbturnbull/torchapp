@@ -77,8 +77,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Project Setup</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Project Setup</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/setup.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -123,17 +123,17 @@
 </div>
 <p>This uses <cite>https://cookiecutter.readthedocs.io/</cite> cookiecutter to generate a project for you.</p>
 <p>This will use the template that comes with your torchapp installation. If you wish to use the most up-to-date template, then run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>torchapp gh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>torchapp<span class="w"> </span>gh
 </pre></div>
 </div>
 <p>This will use the template from the torchapp-cookiecutter repository on Github. If you wish to create your own template, feel free to fork that repository and use the new URL as the command-line argument.</p>
 <p>The dependency management is handeled using poetry. Install poetry using the instructions here: <a class="reference external" href="https://python-poetry.org/docs/#installation">https://python-poetry.org/docs/#installation</a>
 Then to install the dependencies, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install
 </pre></div>
 </div>
 <p>Enter the virtual environment with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry setup
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>setup
 </pre></div>
 </div>
 <p>The command-line utility should be installed to your path automatically in that environment.</p>
@@ -142,7 +142,7 @@ Then to install the dependencies, run:</p>
 <section id="torchapp">
 <h4>torchapp<a class="headerlink" href="#torchapp" title="Permalink to this headline"></a></h4>
 <p>Generate a torchapp project using Cookiecutter (<a class="reference external" href="https://github.com/audreyr/cookiecutter">https://github.com/audreyr/cookiecutter</a>)</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>torchapp <span class="o">[</span>OPTIONS<span class="o">]</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>torchapp<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
 <p class="rubric">Options</p>
@@ -274,11 +274,11 @@ Then to install the dependencies, run:</p>
 <h2>Manual Setup<a class="headerlink" href="#manual-setup" title="Permalink to this headline"></a></h2>
 <p>You can use TorchApp in an existing project, by following these steps.</p>
 <p>If you are using the poetry dependency management system, the install the app like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry add git+https://github.com/rbturnbull/torchapp.git#main
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>add<span class="w"> </span>git+https://github.com/rbturnbull/torchapp.git#main
 </pre></div>
 </div>
 <p>If using pip then:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/rbturnbull/torchapp.git#main
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/rbturnbull/torchapp.git#main
 </pre></div>
 </div>
 <p>Then in your code (perhaps in a file named <code class="docutils literal notranslate"><span class="pre">apps.py</span></code>) subclass TorchApp and implement at least the <code class="docutils literal notranslate"><span class="pre">dataloaders</span></code> and the <code class="docutils literal notranslate"><span class="pre">model</span></code> methods.</p>
@@ -298,20 +298,20 @@ Then to install the dependencies, run:</p>
 </pre></div>
 </div>
 <p>If you wish to include the app in a python package, it is easiest to use the poetry dependency management system. In the pyproject.toml file add the main method of your app to the scripts section like this:</p>
-<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span><span class="w"></span>
-<span class="n">executable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;path.to.script:MyApp.main&quot;</span><span class="w"></span>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span>
+<span class="n">executable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;path.to.script:MyApp.main&quot;</span>
 </pre></div>
 </div>
 <p>For example, if the name of the executable was going to be <code class="docutils literal notranslate"><span class="pre">logistic</span></code> and the path to the file from the base directory was <code class="docutils literal notranslate"><span class="pre">logistic/apps.py</span></code> and the subclass of TorchApp was called <code class="docutils literal notranslate"><span class="pre">LogisticApp</span></code>, then the following would be added to pyproject.toml:</p>
-<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span><span class="w"></span>
-<span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;logistic.apps:LogisticApp.main&quot;</span><span class="w"></span>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span>
+<span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;logistic.apps:LogisticApp.main&quot;</span>
 </pre></div>
 </div>
 </section>
 <section id="pre-commit-hooks">
 <h2>Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Permalink to this headline"></a></h2>
 <p>To set up black code formatting with a pre-commit hook, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
 </section>
