@@ -116,6 +116,11 @@ def assert_output(file: Path, interactive: bool, params: dict, output, expected,
     if expected_cleaned == output_cleaned:
         return
 
+    print(' ----------------------\n')
+    print('expected_cleaned ----------------------\n', expected_cleaned)
+    print('output_cleaned ----------------------\n', output_cleaned)
+    print(' ----------------------\n')
+
     if isinstance(expected, dict) and isinstance(output, dict):
         keys = set(expected.keys()) | set(output.keys())
         diff = {}
