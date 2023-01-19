@@ -21,6 +21,9 @@ output:
                                      dataset, then a validation set will be chosen
                                      randomly according to `validation_proportion`.
                                      [default: validation]
+      --validation-value TEXT        If set, then the value in the
+                                     `validation_column` must equal this string for
+                                     the item to be in the validation set.
       --validation-proportion FLOAT  The proportion of the dataset to keep for
                                      validation. Used if `validation_column` is not
                                      in the dataset.  [default: 0.2]
