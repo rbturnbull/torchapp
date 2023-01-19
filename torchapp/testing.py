@@ -88,8 +88,8 @@ def clean_output(output):
 
 def strip_whitespace_recursive(obj):
     if isinstance(obj, str):
-        obj = obj.replace("\n", " ")
-        return re.sub(r"\s*", " ", obj)
+        obj = obj.replace("\n", " ").strip()
+        return re.sub(r"\s+", " ", obj)
     if isinstance(obj, dict):
         return {k:strip_whitespace_recursive(v) for k,v in obj.items()}
 
