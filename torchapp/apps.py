@@ -635,7 +635,14 @@ class TorchApp(Citable):
             callbacks.append(TorchAppMlflowCallback(app=self, experiment_name=project_name))
             self.add_bibtex_file(bibtex_dir / "mlflow.bib")  # this should be in the callback
 
+        extra_callbacks = self.extra_callbacks()
+        if extra_callbacks:
+            callbacks += extra_callbacks
+
         return callbacks
+
+    def extra_callbacks(self):
+        return None
 
     def show_batch(
         self, output_path: Path = Param(None, help="A location to save the HTML which summarizes the batch."), **kwargs

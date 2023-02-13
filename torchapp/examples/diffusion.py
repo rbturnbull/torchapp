@@ -296,7 +296,7 @@ class DiffusionGeneratorCIFAR10(ta.TorchApp):
     def loss_func(self):
         return nn.MSELoss()
 
-    def callbacks(self):
+    def extra_callbacks(self):
         return [ConditionalDDPMCallback(n_steps=1000, beta_min=0.0001, beta_max=0.02, tensor_type=TensorImageBW)]
 
 
