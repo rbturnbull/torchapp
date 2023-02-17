@@ -266,11 +266,14 @@ class TorchApp(Citable):
         # Create a dataloader for inference
         dataloader = call_func(self.inference_dataloader, learner, **kwargs)
 
-        results = learner.get_preds(dl=dataloader, reorder=False, with_decoded=False, act=self.activation())
+        results = learner.get_preds(dl=dataloader, reorder=False, with_decoded=False, act=self.activation(), cbs=self.inference_callbacks())
 
         # Output results
         output_results = call_func(self.output_results, results, **kwargs)
         return output_results if output_results is not None else results
+
+    def inference_callbacks(self):
+        return None
 
     @classmethod
     def main(cls, inference_only:bool=False):

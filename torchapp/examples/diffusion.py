@@ -5,12 +5,13 @@ import torchapp as ta
 from fastai.callback.core import Callback, CancelBatchException
 from fastcore.basics import store_attr
 from fastprogress import progress_bar
-from fastai.torch_core import TensorImage, TensorImageBW
+from fastai.torch_core import Tensor, TensorImage, TensorImageBW
 from torch import nn
 from fastai.vision.augment import Resize
 from fastai.vision.data import ImageBlock
 from fastai.data.block import DataBlock, CategoryBlock
 from fastai.data.transforms import get_image_files, parent_label
+from fastai.data.load import DataLoader
 
 from torchapp.vision import UNetApp
 
@@ -147,6 +148,8 @@ class Up(nn.Module):
 class UNet(nn.Module):
     def __init__(self, c_in=3, c_out=3, time_dim=256):
         super().__init__()
+        self.c_in = c_in
+        self.c_out = c_out
         self.time_dim = time_dim
         self.inc = DoubleConv(c_in, 64)
         self.down1 = Down(64, 128)
@@ -209,8 +212,8 @@ class UNet(nn.Module):
         t = self.pos_encoding(t, self.time_dim)
         return self.unet_forwad(x, t)
 
-
-class UNet_conditional(UNet):
+# TODO change to UNetConditional before training next
+class UNetConditional(UNet):
     def __init__(self, c_in=3, c_out=3, time_dim=256, num_classes=None):
         super().__init__(c_in, c_out, time_dim)
         if num_classes is not None:
@@ -226,11 +229,22 @@ class UNet_conditional(UNet):
         return self.unet_forwad(x, t)
 
 
+class SampleDataloader(DataLoader):
+    def __init__(self, *args, category_index, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.category_index = category_index
+
+    def __iter__(self):
+        y = torch.tensor([self.category_index] * self.bs, dtype=int)
+        x = [None]* self.bs
+        yield x,y
+
+
 class ConditionalDDPMCallback(Callback):
     """
     Derived from https://wandb.ai/capecape/train_sd/reports/How-To-Train-a-Conditional-Diffusion-Model-From-Scratch--VmlldzoyNzIzNTQ1#using-fastai-to-train-your-diffusion-model
     """
-    def __init__(self, n_steps, beta_min, beta_max, tensor_type=TensorImage):
+    def __init__(self, n_steps, beta_min, beta_max, tensor_type=TensorImage, size:int=32):
         store_attr()
 
     def before_fit(self):
@@ -250,17 +264,24 @@ class ConditionalDDPMCallback(Callback):
         self.learn.yb = (eps,) # ground truth is the noise 
 
     def before_batch_sampling(self):
-        xt = self.tensor_type(self.xb[0]) # a full batch at once!
-        batch_size = xt.shape[0]
-        label = torch.arange(10, dtype=torch.long, device=xt.device).repeat(batch_size//10 + 1).flatten()[0:batch_size]
+        # Use y to be the labels we want to generate
+        label = Tensor(self.yb[0])
+        batch_size = label.shape[0]
+        breakpoint()
+        
+        # Generate a batch of random noise to start with
+        # We can ignore the self.xb[0] data and just generate random noise here.
+        xt = self.tensor_type(torch.randn((batch_size, self.model.c_out, self.size, self.size), device=label.device))
+        
         for t in progress_bar(reversed(range(self.n_steps)), total=self.n_steps, leave=False):
             t_batch = torch.full((batch_size,), t, device=xt.device, dtype=torch.long)
             z = torch.randn(xt.shape, device=xt.device) if t > 0 else torch.zeros(xt.shape, device=xt.device)
             alpha_t = self.alpha[t] # get noise level at current timestep
             alpha_bar_t = self.alpha_bar[t]
             sigma_t = self.sigma[t]
-            xt = 1/torch.sqrt(alpha_t) * (xt - (1-alpha_t)/torch.sqrt(1-alpha_bar_t) * self.model(xt, t_batch, label=label))  + sigma_t*z # predict x_(t-1) in accordance to Algorithm 2 in paper
+            xt = 1/torch.sqrt(alpha_t) * (xt - (1-alpha_t)/torch.sqrt(1-alpha_bar_t) * self.model(xt, t_batch, y=label))  + sigma_t*z # predict x_(t-1) in accordance to Algorithm 2 in paper
         self.learn.pred = (xt,)
+
         raise CancelBatchException
 
     def before_batch(self):
@@ -287,17 +308,37 @@ class DiffusionGeneratorCIFAR10(ta.TorchApp):
             get_y=parent_label,
             item_tfms=Resize(size)
         )
+        self.size = size
 
         return dblock.dataloaders(path, bs=batch_size)
 
     def model(self):
-        return UNet_conditional(c_out=1, num_classes=10)
+        return UNetConditional(c_out=3, num_classes=10)
 
     def loss_func(self):
         return nn.MSELoss()
 
     def extra_callbacks(self):
-        return [ConditionalDDPMCallback(n_steps=1000, beta_min=0.0001, beta_max=0.02, tensor_type=TensorImageBW)]
+        return [ConditionalDDPMCallback(n_steps=1000, beta_min=0.0001, beta_max=0.02)]
+
+    def inference_callbacks(self):
+        return self.extra_callbacks()
+
+    def inference_dataloader(
+        self, 
+        learner, 
+        count:int = 1,
+        category:str = "",
+        **kwargs
+    ):
+        if category not in learner.dls.vocab:
+            raise ValueError(f"Please provide a category to generate from this list: {learner.dls.vocab}")
+
+        return SampleDataloader(
+            bs=32,
+            category_index=learner.dls.vocab.o2i[category],
+            n=count,
+        )
 
 
 if __name__ == "__main__":
