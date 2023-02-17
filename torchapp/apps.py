@@ -121,6 +121,7 @@ class TorchApp(Citable):
         # that __init__ has been called on this parent class
         self.torchapp_initialized = True
         self.learner_obj = None
+        self.console = console
 
     def __str__(self):
         return self.__class__.__name__
@@ -212,9 +213,6 @@ class TorchApp(Citable):
 
     def prepare_source(self, data):
         return data
-
-    def output_results(self, results, **kwargs):
-        print(results)
 
     def inference_dataloader(self, learner, **kwargs):
         dataloader = learner.dls.test_dl(**kwargs)
@@ -531,13 +529,13 @@ class TorchApp(Citable):
         # l2_regularization: bool = Param(False, help="Whether to add decay to the gradients (L2 regularization) instead of to the weights directly (weight decay)."),
         **kwargs,
     ):
-        output_dir = Path(output_dir)
-        output_dir.mkdir(exist_ok=True, parents=True)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(exist_ok=True, parents=True)
 
         return dict(
             loss_func=call_func(self.loss_func, **kwargs),
             metrics=call_func(self.metrics, **kwargs),
-            path=output_dir,
+            path=self.output_dir,
             wd=weight_decay,
         )
 

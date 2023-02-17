@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
+from pathlib import Path
 import torch
 from fastai.data.external import untar_data, URLs
 import torchapp as ta
 from fastai.callback.core import Callback, CancelBatchException
 from fastcore.basics import store_attr
-from fastprogress import progress_bar
+from rich.progress import track
 from fastai.torch_core import Tensor, TensorImage, TensorImageBW
 from torch import nn
 from fastai.vision.augment import Resize
@@ -12,10 +13,10 @@ from fastai.vision.data import ImageBlock
 from fastai.data.block import DataBlock, CategoryBlock
 from fastai.data.transforms import get_image_files, parent_label
 from fastai.data.load import DataLoader
-
+import torchvision.transforms as T
 from torchapp.vision import UNetApp
 
-
+from PIL import Image
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -265,15 +266,14 @@ class ConditionalDDPMCallback(Callback):
 
     def before_batch_sampling(self):
         # Use y to be the labels we want to generate
-        label = Tensor(self.yb[0])
+        label = self.yb[0]
         batch_size = label.shape[0]
-        breakpoint()
         
         # Generate a batch of random noise to start with
         # We can ignore the self.xb[0] data and just generate random noise here.
         xt = self.tensor_type(torch.randn((batch_size, self.model.c_out, self.size, self.size), device=label.device))
         
-        for t in progress_bar(reversed(range(self.n_steps)), total=self.n_steps, leave=False):
+        for t in track(reversed(range(self.n_steps)), total=self.n_steps, description="Performing diffusion steps for batch:"):
             t_batch = torch.full((batch_size,), t, device=xt.device, dtype=torch.long)
             z = torch.randn(xt.shape, device=xt.device) if t > 0 else torch.zeros(xt.shape, device=xt.device)
             alpha_t = self.alpha[t] # get noise level at current timestep
@@ -334,11 +334,30 @@ class DiffusionGeneratorCIFAR10(ta.TorchApp):
         if category not in learner.dls.vocab:
             raise ValueError(f"Please provide a category to generate from this list: {learner.dls.vocab}")
 
+        self.inference_category = category
         return SampleDataloader(
             bs=32,
             category_index=learner.dls.vocab.o2i[category],
             n=count,
         )
+
+    def output_results(
+        self, 
+        results, 
+        output_dir: Path = ta.Param("./outputs", help="The location of the output directory."),
+        **kwargs,
+    ):
+        output_dir = Path(output_dir)
+        self.console.print(f"Saving {len(results)} generated {self.inference_category} images:")
+
+        transform = T.ToPILImage()
+        output_dir.mkdir(exist_ok=True, parents=True)
+        for index, image in enumerate(results[0]):
+            path = output_dir/f"{self.inference_category}.{index}.jpg"
+            self.console.print(f"\t{path}")
+            transform(image).save(path)
+
+
 
 
 if __name__ == "__main__":
