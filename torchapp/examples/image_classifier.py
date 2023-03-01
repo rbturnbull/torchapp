@@ -40,7 +40,7 @@ class ImageClassifier(VisionApp):
         category_column: str = ta.Param(
             default="category", help="The name of the column with the category of the image."
         ),
-        base_dir: Path = ta.Param(default="./", help="The base directory for images with relative paths."),
+        base_dir: Path = ta.Param(default=None, help="The base directory for images with relative paths. If not given, then it is relative to the csv directory."),
         validation_column: str = ta.Param(
             default="validation",
             help="The column in the dataset to use for validation. "
@@ -60,6 +60,8 @@ class ImageClassifier(VisionApp):
         resize_method: str = ta.Param(default="squish", help="The method to resize images."),
     ):
         df = pd.read_csv(csv)
+
+        base_dir = base_dir or Path(csv).parent
         
         # Create splitter for training/validation images
         if validation_value is not None:
