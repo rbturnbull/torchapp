@@ -228,7 +228,11 @@ class TorchApp(Citable):
         # Check if CUDA is available
         gpu = gpu and torch.cuda.is_available()
 
-        learner = load_learner(path, cpu=not gpu)
+        try:
+            learner = load_learner(path, cpu=not gpu)
+        except Exception:
+            import dill
+            learner = load_learner(path, cpu=not gpu, pickle_module=dill)
 
         # Create a dataloader for inference
         dataloaders = call_func(self.dataloaders, **kwargs)
