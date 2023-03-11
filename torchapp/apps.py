@@ -121,7 +121,7 @@ class TorchApp(Citable):
         # that __init__ has been called on this parent class
         self.torchapp_initialized = True
         self.learner_obj = None
-        self.console = console
+        # self.console = console
 
     def __str__(self):
         return self.__class__.__name__

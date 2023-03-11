@@ -21,6 +21,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
+
 def one_param(m):
     "get model first parameter"
     return next(iter(m.parameters()))
@@ -348,13 +350,13 @@ class DiffusionGeneratorCIFAR10(ta.TorchApp):
         **kwargs,
     ):
         output_dir = Path(output_dir)
-        self.console.print(f"Saving {len(results)} generated {self.inference_category} images:")
+        print(f"Saving {len(results)} generated {self.inference_category} images:")
 
         transform = T.ToPILImage()
         output_dir.mkdir(exist_ok=True, parents=True)
         for index, image in enumerate(results[0]):
             path = output_dir/f"{self.inference_category}.{index}.jpg"
-            self.console.print(f"\t{path}")
+            print(f"\t{path}")
             transform(image).save(path)
 
 
