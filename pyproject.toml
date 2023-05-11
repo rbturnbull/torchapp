@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "torchapp"
-version = "0.2.5"
+version = "0.2.6"
 description = "A wrapper for fastai projects to create easy command-line inferfaces and manage hyper-parameter tuning."
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
@@ -31,7 +31,7 @@ scikit-learn = ">=1.0.2,<1.2.0"
 Pillow = "^9.0.1"
 PyYAML = "^6.0"
 click = "8.0.4"
-torchvision = "^0.14.1"
+torchvision = ">=0.15.1"
 pybtex = "^0.24.0"
 pyjwt = ">=2.4.0"
 mlflow = "^1.25.1"
