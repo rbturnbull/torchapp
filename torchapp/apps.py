@@ -897,3 +897,11 @@ class TorchApp(Citable):
         cache_dir = Path(user_cache_dir("torchapps"))/self.__class__.__name__
         cache_dir.mkdir(exist_ok=True, parents=True)
         return cache_dir
+
+    def output_results(
+        self, 
+        results, 
+        **kwargs
+    ):
+        print(results)
+        return results
