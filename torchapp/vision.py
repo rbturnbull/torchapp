@@ -26,10 +26,14 @@ def torchvision_model_choices() -> List[str]:
             # Only accept if the return value is a pytorch module
             hints = get_type_hints(obj)
             return_value = hints.get("return", "")
-            if nn.Module in return_value.mro():
-                model_choices.append(item)
-    return model_choices
+            try:
+                mro = return_value.mro()
+                if nn.Module in mro:
+                    model_choices.append(item)
+            except TypeError:
+                pass
 
+    return model_choices
 
 TorchvisionModelEnum = enum.Enum(
     "TorchvisionModelName",
