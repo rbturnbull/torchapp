@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Union
 import urllib.request
+import ssl, certifi
 
 class DownloadError(Exception):
     pass
@@ -26,8 +27,12 @@ def cached_download(url: str, local_path: Union[str, Path], force: bool = False)
         try:
             print(f"Downloading {url} to {local_path}")
             urllib.request.urlretrieve(url, local_path)
-        except:
-            raise DownloadError(f"Error downloading {url}")
+        except Exception:
+            try:
+                ssl._create_default_https_context = ssl.create_default_context(cafile=certifi.where())
+                urllib.request.urlretrieve(url, local_path)
+            except Exception:                    
+                raise DownloadError(f"Error downloading {url} to {local_path}")
 
     if not local_path.exists() or local_path.stat().st_size == 0:
         raise IOError(f"Error reading {local_path}")
