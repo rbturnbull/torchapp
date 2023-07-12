@@ -1,10 +1,28 @@
 from pathlib import Path
 from typing import Union
-import urllib.request
 import ssl, certifi
+import urllib.request
+from rich.progress import Progress
 
 class DownloadError(Exception):
     pass
+
+
+def download_file(url:str, local_path:Path, chunk_size:int=16 * 1024, context=None):
+    """ adapted from https://stackoverflow.com/a/1517728 """
+    local_path = Path(local_path)
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with urllib.request.urlopen(url, context=context) as response, open(local_path, 'wb') as f, Progress() as progress:
+        task = progress.add_task("[red]Downloading", total=response.length)
+        while True:
+            chunk = response.read(chunk_size)
+            progress.update(task, advance=chunk_size)
+            if not chunk:
+                break
+            f.write(chunk)
+        
+    return local_path
 
 
 def cached_download(url: str, local_path: Union[str, Path], force: bool = False) -> None:
@@ -26,13 +44,12 @@ def cached_download(url: str, local_path: Union[str, Path], force: bool = False)
     if (not local_path.exists() or local_path.stat().st_size == 0) or force:
         try:
             print(f"Downloading {url} to {local_path}")
-            urllib.request.urlretrieve(url, local_path)
+            download_file(url, local_path)
         except Exception:
             try:
-                ssl._create_default_https_context = ssl.create_default_context(cafile=certifi.where())
-                urllib.request.urlretrieve(url, local_path)
-            except Exception:                    
-                raise DownloadError(f"Error downloading {url} to {local_path}")
+                download_file(url, local_path, context=ssl.create_default_context(cafile=certifi.where()))
+            except Exception as err:                    
+                raise DownloadError(f"Error downloading {url} to {local_path}:\n{err}")
 
     if not local_path.exists() or local_path.stat().st_size == 0:
         raise IOError(f"Error reading {local_path}")
