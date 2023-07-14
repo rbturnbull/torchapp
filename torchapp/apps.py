@@ -22,6 +22,8 @@ from rich.traceback import install
 from rich.table import Table
 from rich.box import SIMPLE
 
+
+
 install()
 console = Console()
 
