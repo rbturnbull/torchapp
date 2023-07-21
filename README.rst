@@ -29,7 +29,7 @@ torchapp
 
 .. end-badges
 
-A wrapper for PyTorch projects to create easy command-line inferfaces and manage hyper-parameter tuning.
+A wrapper for PyTorch projects to create easy command-line interfaces and manage hyper-parameter tuning.
 
 Documentation at https://rbturnbull.github.io/torchapp/
 

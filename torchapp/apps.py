@@ -22,6 +22,8 @@ from rich.traceback import install
 from rich.table import Table
 from rich.box import SIMPLE
 
+
+
 install()
 console = Console()
 
@@ -121,6 +123,7 @@ class TorchApp(Citable):
         # that __init__ has been called on this parent class
         self.torchapp_initialized = True
         self.learner_obj = None
+        # self.console = console
 
     def __str__(self):
         return self.__class__.__name__
@@ -213,9 +216,6 @@ class TorchApp(Citable):
     def prepare_source(self, data):
         return data
 
-    def output_results(self, results, **kwargs):
-        print(results)
-
     def inference_dataloader(self, learner, **kwargs):
         dataloader = learner.dls.test_dl(**kwargs)
         return dataloader
@@ -230,7 +230,11 @@ class TorchApp(Citable):
         # Check if CUDA is available
         gpu = gpu and torch.cuda.is_available()
 
-        learner = load_learner(path, cpu=not gpu)
+        try:
+            learner = load_learner(path, cpu=not gpu)
+        except Exception:
+            import dill
+            learner = load_learner(path, cpu=not gpu, pickle_module=dill)
 
         # Create a dataloader for inference
         dataloaders = call_func(self.dataloaders, **kwargs)
@@ -266,11 +270,14 @@ class TorchApp(Citable):
         # Create a dataloader for inference
         dataloader = call_func(self.inference_dataloader, learner, **kwargs)
 
-        results = learner.get_preds(dl=dataloader, reorder=False, with_decoded=False, act=self.activation())
+        results = learner.get_preds(dl=dataloader, reorder=False, with_decoded=False, act=self.activation(), cbs=self.inference_callbacks())
 
         # Output results
         output_results = call_func(self.output_results, results, **kwargs)
         return output_results if output_results is not None else results
+
+    def inference_callbacks(self):
+        return None
 
     @classmethod
     def main(cls, inference_only:bool=False):
@@ -528,13 +535,13 @@ class TorchApp(Citable):
         # l2_regularization: bool = Param(False, help="Whether to add decay to the gradients (L2 regularization) instead of to the weights directly (weight decay)."),
         **kwargs,
     ):
-        output_dir = Path(output_dir)
-        output_dir.mkdir(exist_ok=True, parents=True)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(exist_ok=True, parents=True)
 
         return dict(
             loss_func=call_func(self.loss_func, **kwargs),
             metrics=call_func(self.metrics, **kwargs),
-            path=output_dir,
+            path=self.output_dir,
             wd=weight_decay,
         )
 
@@ -635,7 +642,14 @@ class TorchApp(Citable):
             callbacks.append(TorchAppMlflowCallback(app=self, experiment_name=project_name))
             self.add_bibtex_file(bibtex_dir / "mlflow.bib")  # this should be in the callback
 
+        extra_callbacks = self.extra_callbacks()
+        if extra_callbacks:
+            callbacks += extra_callbacks
+
         return callbacks
+
+    def extra_callbacks(self):
+        return None
 
     def show_batch(
         self, output_path: Path = Param(None, help="A location to save the HTML which summarizes the batch."), **kwargs
@@ -889,3 +903,11 @@ class TorchApp(Citable):
         cache_dir = Path(user_cache_dir("torchapps"))/self.__class__.__name__
         cache_dir.mkdir(exist_ok=True, parents=True)
         return cache_dir
+
+    def output_results(
+        self, 
+        results, 
+        **kwargs
+    ):
+        print(results)
+        return results

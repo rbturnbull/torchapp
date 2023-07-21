@@ -8,6 +8,7 @@ from fastai.vision.data import ImageBlock
 from fastai.vision.augment import Resize, ResizeMethod
 import pandas as pd
 import torchapp as ta
+from fastai.vision.augment import aug_transforms
 
 from torchapp.vision import VisionApp
 from rich.console import Console
@@ -58,6 +59,13 @@ class ImageClassifier(VisionApp):
         width: int = ta.Param(default=224, help="The width to resize all the images to."),
         height: int = ta.Param(default=224, help="The height to resize all the images to."),
         resize_method: str = ta.Param(default="squish", help="The method to resize images."),
+        max_lighting:float=0.0,
+        max_rotate:float=0.0,
+        max_warp:float=0.0,
+        max_zoom:float=1.0,
+        do_flip:bool=False,
+        p_affine:float=0.75,
+        p_lighting:float=0.75,
     ):
         df = pd.read_csv(csv)
 
@@ -74,12 +82,24 @@ class ImageClassifier(VisionApp):
         else:
             splitter = RandomSplitter(validation_proportion)
 
+        batch_transforms = aug_transforms(
+            p_lighting=p_lighting,
+            p_affine=p_affine,
+            max_rotate=max_rotate, 
+            do_flip=do_flip, 
+            max_lighting=max_lighting, 
+            max_zoom=max_zoom,
+            max_warp=max_warp,
+            pad_mode='zeros',
+        )
+
         datablock = DataBlock(
             blocks=[ImageBlock, CategoryBlock],
             get_x=PathColReader(column_name=image_column, base_dir=base_dir),
             get_y=ColReader(category_column),
             splitter=splitter,
             item_tfms=Resize((height, width), method=resize_method),
+            batch_tfms=batch_transforms,
         )
 
         return datablock.dataloaders(df, bs=batch_size)
@@ -140,7 +160,8 @@ class ImageClassifier(VisionApp):
     ):
         data = []
         vocab = self.learner_obj.dls.vocab
-        for item, probabilities in zip(self.items, results[0]):            
+        for item, scores in zip(self.items, results[0]): 
+            probabilities = torch.softmax(torch.as_tensor(scores), dim=-1)           
             prediction = vocab[torch.argmax(probabilities)]
             if verbose:
                 console.print(f"'{item}': '{prediction}'")
