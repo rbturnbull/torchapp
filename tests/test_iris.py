@@ -4,3 +4,4 @@ from torchapp.examples.iris import IrisApp
 
 class TestIris(TorchAppTestCase):
     app_class = IrisApp
+

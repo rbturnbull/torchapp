@@ -169,6 +169,13 @@ class TorchAppTestCase:
         self.expected_base = Path(self.expected_base)
         return self.expected_base
 
+    def test_cli_version(self):
+        app = self.get_app()
+        runner = CliRunner()
+        result = runner.invoke(app.cli(), "--version")
+        assert result.exit_code == 0
+        assert re.match(r"^(\d+\.)?(\d+\.)?(\*|\d+)$", result.stdout)
+
     def get_expected_dir(self) -> Path:
         """
         Returns the path to the directory where the expected files.
@@ -399,3 +406,5 @@ class TorchAppTestCase:
             )
 
             assert_output(file, interactive, params, output, expected_output, regenerate=regenerate)
+
+
