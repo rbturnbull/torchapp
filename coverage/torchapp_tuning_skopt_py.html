@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for torchapp/tuning/skopt.py: 69.61%</title>
+    <title>Coverage for torchapp/tuning/skopt.py: 69.00%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,12 +18,12 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>torchapp/tuning/skopt.py</b> :
-            <span class="pc_cov">69.61%</span>
+            <span class="pc_cov">69.00%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
-            102 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">71 run</button>
+            100 statements &nbsp;
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">69 run</button>
             <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">31 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
@@ -134,7 +134,7 @@
     <p id="t80" class="run"><span class="n"><a href="#t80">80</a></span><span class="t">            <span class="nam">run_kwargs</span><span class="op">[</span><span class="nam">key</span><span class="op">]</span> <span class="op">=</span> <span class="nam">value</span>&nbsp;</span><span class="r"></span></p>
     <p id="t81" class="pln"><span class="n"><a href="#t81">81</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t82" class="run"><span class="n"><a href="#t82">82</a></span><span class="t">        <span class="nam">run_number</span> <span class="op">=</span> <span class="num">0</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t83" class="run"><span class="n"><a href="#t83">83</a></span><span class="t">        <span class="key">while</span> <span class="key">True</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t83" class="pln"><span class="n"><a href="#t83">83</a></span><span class="t">        <span class="key">while</span> <span class="key">True</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t84" class="run"><span class="n"><a href="#t84">84</a></span><span class="t">            <span class="nam">trial_name</span> <span class="op">=</span> <span class="str">f"trial-{run_number}"</span>&nbsp;</span><span class="r"></span></p>
     <p id="t85" class="run"><span class="n"><a href="#t85">85</a></span><span class="t">            <span class="nam">output_dir</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">base_output_dir</span> <span class="op">/</span> <span class="nam">trial_name</span>&nbsp;</span><span class="r"></span></p>
     <p id="t86" class="run"><span class="n"><a href="#t86">86</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">output_dir</span><span class="op">.</span><span class="nam">exists</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -188,7 +188,7 @@
     <p id="t134" class="pln"><span class="n"><a href="#t134">134</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t135" class="run"><span class="n"><a href="#t135">135</a></span><span class="t">    <span class="nam">optimizer_kwargs</span> <span class="op">=</span> <span class="nam">dict</span><span class="op">(</span><span class="nam">n_calls</span><span class="op">=</span><span class="nam">runs</span><span class="op">,</span> <span class="nam">random_state</span><span class="op">=</span><span class="nam">seed</span><span class="op">,</span> <span class="nam">callback</span><span class="op">=</span><span class="op">[</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t136" class="pln"><span class="n"><a href="#t136">136</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t137" class="run"><span class="n"><a href="#t137">137</a></span><span class="t">    <span class="key">if</span> <span class="key">False</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t137" class="pln"><span class="n"><a href="#t137">137</a></span><span class="t">    <span class="key">if</span> <span class="key">False</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t138" class="pln"><span class="n"><a href="#t138">138</a></span><span class="t">        <span class="nam">optimizer_kwargs</span><span class="op">[</span><span class="str">"callback"</span><span class="op">]</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">SkoptPlot</span><span class="op">(</span><span class="nam">base_output_dir</span><span class="op">,</span> <span class="str">"svg"</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t139" class="pln"><span class="n"><a href="#t139">139</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t140" class="run"><span class="n"><a href="#t140">140</a></span><span class="t">    <span class="key">if</span> <span class="nam">file</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -217,7 +217,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2023-01-19 04:03 +0000
+            created at 2023-08-02 01:44 +0000
         </p>
     </div>
 </div>
