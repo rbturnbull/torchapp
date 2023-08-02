@@ -15,7 +15,8 @@ output:
       --category-column TEXT         The name of the column with the category of the
                                      image.  [default: category]
       --base-dir PATH                The base directory for images with relative
-                                     paths.  [default: ./]
+                                     paths. If not given, then it is relative to the
+                                     csv directory.
       --validation-column TEXT       The column in the dataset to use for
                                      validation. If the column is not in the
                                      dataset, then a validation set will be chosen
@@ -34,4 +35,11 @@ output:
       --height INTEGER               The height to resize all the images to.
                                      [default: 224]
       --resize-method TEXT           The method to resize images.  [default: squish]
+      --max-lighting FLOAT           [default: 0.0]
+      --max-rotate FLOAT             [default: 0.0]
+      --max-warp FLOAT               [default: 0.0]
+      --max-zoom FLOAT               [default: 1.0]
+      --do-flip / --no-do-flip       [default: no-do-flip]
+      --p-affine FLOAT               [default: 0.75]
+      --p-lighting FLOAT             [default: 0.75]
       --help                         Show this message and exit.
