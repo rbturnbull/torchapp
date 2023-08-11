@@ -3,10 +3,11 @@ from pathlib import Path
 import pandas as pd
 from torch import nn
 from fastai.data.block import DataBlock, TransformBlock
-from fastai.data.transforms import ColReader, RandomSplitter
+from fastai.data.transforms import ColReader, RandomSplitter, Transform
 import torchapp as ta
-from torchapp.blocks import BoolBlock
+from torchapp.blocks import BoolBlock, Float32Block
 from torchapp.metrics import logit_accuracy, logit_f1
+
 
 
 class LogisticRegressionApp(ta.TorchApp):
@@ -33,7 +34,7 @@ class LogisticRegressionApp(ta.TorchApp):
     ):
 
         datablock = DataBlock(
-            blocks=[TransformBlock, BoolBlock],
+            blocks=[Float32Block, BoolBlock],
             get_x=ColReader(x),
             get_y=ColReader(y),
             splitter=RandomSplitter(validation_proportion),

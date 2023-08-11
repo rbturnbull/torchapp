@@ -837,6 +837,8 @@ class TorchApp(Citable):
         batch = learner.dls.train.one_batch()
         n_inputs = getattr(learner.dls, 'n_inp', 1 if len(batch) == 1 else len(batch) - 1)
         batch_x = batch[:n_inputs]
+        
+        learner.model.to(batch_x[0].device)
         with torch.no_grad():
             output = learner.model(*batch_x)
         return output
@@ -851,6 +853,8 @@ class TorchApp(Citable):
         n_inputs = getattr(learner.dls, 'n_inp', 1 if len(batch) == 1 else len(batch) - 1)
         batch_x = batch[:n_inputs]
         batch_y = batch[n_inputs:]
+        
+        learner.model.to(batch_x[0].device)
         with torch.no_grad():
             output = learner.model(*batch_x)
             loss = learner.loss_func(output, *batch_y)
