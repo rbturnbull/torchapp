@@ -11,17 +11,11 @@ def unsqueeze(inputs):
     return inputs.unsqueeze(dim=-1).float()
 
 
-def BoolBlock():
+def BoolBlock(**kwargs):
     return TransformBlock(
         item_tfms=[bool_to_tensor],
         batch_tfms=unsqueeze,
-    )
-
-
-def BoolBlock():
-    return TransformBlock(
-        item_tfms=[bool_to_tensor],
-        batch_tfms=unsqueeze,
+        **kwargs
     )
 
 
@@ -29,7 +23,8 @@ def float64_to_32(value: np.float64):
     return np.float32(value)
 
 
-def Float32Block():
+def Float32Block(**kwargs):
     return TransformBlock(
         item_tfms=[float64_to_32],
+        **kwargs
     )

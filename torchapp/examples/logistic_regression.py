@@ -9,12 +9,22 @@ from torchapp.blocks import BoolBlock, Float32Block
 from torchapp.metrics import logit_accuracy, logit_f1
 
 
+class Normalize(Transform):    
+    def __init__(self, mean=None, std=None): 
+        self.mean = mean
+        self.std = std
+
+    def encodes(self, x): 
+        return (x-self.mean) / self.std
+    
+    def decodes(self, x):
+        return x * self.std + self.mean
+
 
 class LogisticRegressionApp(ta.TorchApp):
     """
     Creates a basic app to do logistic regression.
     """
-
     def dataloaders(
         self,
         csv: Path = ta.Param(help="The path to a CSV file with the data."),
@@ -23,6 +33,7 @@ class LogisticRegressionApp(ta.TorchApp):
         validation_proportion: float = ta.Param(
             default=0.2, help="The proportion of the dataset to use for validation."
         ),
+        seed: int = ta.Param(default=42, help="The random seed to use for splitting the data."),
         batch_size: int = ta.Param(
             default=32,
             tune=True,
@@ -33,13 +44,13 @@ class LogisticRegressionApp(ta.TorchApp):
         ),
     ):
 
+        df = pd.read_csv(csv)
         datablock = DataBlock(
-            blocks=[Float32Block, BoolBlock],
+            blocks=[Float32Block(type_tfms=[Normalize(mean=df[x].mean(), std=df[x].std())]), BoolBlock],
             get_x=ColReader(x),
             get_y=ColReader(y),
-            splitter=RandomSplitter(validation_proportion),
+            splitter=RandomSplitter(validation_proportion, seed=seed),
         )
-        df = pd.read_csv(csv)
 
         return datablock.dataloaders(df, bs=batch_size)
 
