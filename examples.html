@@ -117,17 +117,28 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">fastai.data.block</span> <span class="kn">import</span> <span class="n">DataBlock</span><span class="p">,</span> <span class="n">TransformBlock</span>
-<span class="kn">from</span> <span class="nn">fastai.data.transforms</span> <span class="kn">import</span> <span class="n">ColReader</span><span class="p">,</span> <span class="n">RandomSplitter</span>
+<span class="kn">from</span> <span class="nn">fastai.data.transforms</span> <span class="kn">import</span> <span class="n">ColReader</span><span class="p">,</span> <span class="n">RandomSplitter</span><span class="p">,</span> <span class="n">Transform</span>
 <span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
-<span class="kn">from</span> <span class="nn">torchapp.blocks</span> <span class="kn">import</span> <span class="n">BoolBlock</span>
+<span class="kn">from</span> <span class="nn">torchapp.blocks</span> <span class="kn">import</span> <span class="n">BoolBlock</span><span class="p">,</span> <span class="n">Float32Block</span>
 <span class="kn">from</span> <span class="nn">torchapp.metrics</span> <span class="kn">import</span> <span class="n">logit_accuracy</span><span class="p">,</span> <span class="n">logit_f1</span>
+
+
+<span class="k">class</span> <span class="nc">Normalize</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">std</span>
+
+    <span class="k">def</span> <span class="nf">encodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> 
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span>
+    
+    <span class="k">def</span> <span class="nf">decodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
 
 
 <span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a basic app to do logistic regression.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">dataloaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">csv</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to a CSV file with the data.&quot;</span><span class="p">),</span>
@@ -136,6 +147,7 @@
         <span class="n">validation_proportion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The proportion of the dataset to use for validation.&quot;</span>
         <span class="p">),</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The random seed to use for splitting the data.&quot;</span><span class="p">),</span>
         <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
             <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -146,13 +158,13 @@
         <span class="p">),</span>
     <span class="p">):</span>
 
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>
         <span class="n">datablock</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span>
-            <span class="n">blocks</span><span class="o">=</span><span class="p">[</span><span class="n">TransformBlock</span><span class="p">,</span> <span class="n">BoolBlock</span><span class="p">],</span>
+            <span class="n">blocks</span><span class="o">=</span><span class="p">[</span><span class="n">Float32Block</span><span class="p">(</span><span class="n">type_tfms</span><span class="o">=</span><span class="p">[</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">std</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())]),</span> <span class="n">BoolBlock</span><span class="p">],</span>
             <span class="n">get_x</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
             <span class="n">get_y</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
-            <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(</span><span class="n">validation_proportion</span><span class="p">),</span>
+            <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(</span><span class="n">validation_proportion</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">datablock</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
 
