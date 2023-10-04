@@ -61,6 +61,7 @@ class TorchApp(Citable):
         self.__call__ = self.copy_method(self.__call__)
         self.validate = self.copy_method(self.validate)
         self.callbacks = self.copy_method(self.callbacks)
+        self.one_batch_size = self.copy_method(self.one_batch_size)
         self.one_batch_output = self.copy_method(self.one_batch_output)
         self.one_batch_output_size = self.copy_method(self.one_batch_output_size)
         self.one_batch_loss = self.copy_method(self.one_batch_loss)
@@ -82,6 +83,7 @@ class TorchApp(Citable):
             from_funcs=[self.pretrained_local_path, self.inference_dataloader, self.output_results],
         )
         add_kwargs(to_func=self.validate, from_funcs=[self.pretrained_local_path, self.dataloaders])
+        add_kwargs(to_func=self.one_batch_size, from_funcs=self.dataloaders)
         add_kwargs(to_func=self.one_batch_output, from_funcs=self.learner)
         add_kwargs(to_func=self.one_batch_loss, from_funcs=self.learner)
         add_kwargs(to_func=self.lr_finder, from_funcs=self.learner)
@@ -112,6 +114,7 @@ class TorchApp(Citable):
         change_typer_to_defaults(self.validate)
         change_typer_to_defaults(self.dataloaders)
         change_typer_to_defaults(self.pretrained_location)
+        change_typer_to_defaults(self.one_batch_size)
         change_typer_to_defaults(self.one_batch_output_size)
         change_typer_to_defaults(self.one_batch_output)
         change_typer_to_defaults(self.one_batch_loss)
@@ -831,6 +834,11 @@ class TorchApp(Citable):
         metric_function = min if self.goal()[:3] == "min" else max
         metric_value = metric_function(metric_values)
         return metric_value
+
+    def one_batch_size(self, **kwargs):
+        dls = call_func(self.dataloaders, **kwargs)
+        batch = dls.train.one_batch()
+        return batch[0].size()
 
     def one_batch_output(self, **kwargs):
         learner = call_func(self.learner, **kwargs)
