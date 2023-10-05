@@ -369,6 +369,12 @@ class TorchAppTestCase:
     def test_one_batch_loss(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
+    def test_bibliography(self, interactive: bool):
+        self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
+
+    def test_bibtex(self, interactive: bool):
+        self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
+
     def cli_commands_to_test(self):
         return [
             "--help",
