@@ -1,7 +1,6 @@
 import types
 import inspect
 from collections.abc import Iterable
-import typer
 from typer.models import OptionInfo
 from typer.main import get_params_convertors_ctx_param_name_from_function
 from rich.console import Console

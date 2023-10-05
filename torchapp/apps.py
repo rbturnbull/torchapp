@@ -61,6 +61,7 @@ class TorchApp(Citable):
         self.__call__ = self.copy_method(self.__call__)
         self.validate = self.copy_method(self.validate)
         self.callbacks = self.copy_method(self.callbacks)
+        self.extra_callbacks = self.copy_method(self.extra_callbacks)
         self.one_batch_size = self.copy_method(self.one_batch_size)
         self.one_batch_output = self.copy_method(self.one_batch_output)
         self.one_batch_output_size = self.copy_method(self.one_batch_output_size)
@@ -74,6 +75,7 @@ class TorchApp(Citable):
         # Add keyword arguments to the signatures of the methods used in the CLI
         add_kwargs(to_func=self.learner_kwargs, from_funcs=[self.metrics, self.loss_func])
         add_kwargs(to_func=self.learner, from_funcs=[self.learner_kwargs, self.dataloaders, self.model])
+        add_kwargs(to_func=self.callbacks, from_funcs=[self.extra_callbacks])
         add_kwargs(to_func=self.train, from_funcs=[self.learner, self.fit, self.callbacks])
         add_kwargs(to_func=self.show_batch, from_funcs=self.dataloaders)
         add_kwargs(to_func=self.tune, from_funcs=self.train)
@@ -106,6 +108,7 @@ class TorchApp(Citable):
         change_typer_to_defaults(self.metrics)
         change_typer_to_defaults(self.learner)
         change_typer_to_defaults(self.callbacks)
+        change_typer_to_defaults(self.extra_callbacks)
         change_typer_to_defaults(self.train)
         change_typer_to_defaults(self.show_batch)
         change_typer_to_defaults(self.tune)
@@ -609,6 +612,7 @@ class TorchApp(Citable):
             help="Specify the type of run, which is useful when you're grouping runs together into larger experiments using group.",
         ),
         mlflow: bool = Param(default=False, help="Whether or not to use MLflow for logging."),
+        **kwargs,
     ) -> List:
         """
         The list of callbacks to use with this app in the fastai training loop.
@@ -645,7 +649,7 @@ class TorchApp(Citable):
             callbacks.append(TorchAppMlflowCallback(app=self, experiment_name=project_name))
             self.add_bibtex_file(bibtex_dir / "mlflow.bib")  # this should be in the callback
 
-        extra_callbacks = self.extra_callbacks()
+        extra_callbacks = call_func(self.extra_callbacks, **kwargs)
         if extra_callbacks:
             callbacks += extra_callbacks
 

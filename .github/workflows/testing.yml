@@ -26,4 +26,4 @@ jobs:
     - name: Testing
       run: |
         poetry env info
-        poetry run pytest
+        poetry run pytest -v
