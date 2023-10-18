@@ -1,8 +1,26 @@
 from typing import List
 from pybtex import PybtexEngine
 from rich.console import Console
+from unittest.mock import patch
+import pybtex.richtext
+
 
 console = Console()
+
+
+def from_latex(latex):
+    """ 
+    Temporary patch until this issue isresolved:
+    https://bitbucket.org/pybtex-devs/pybtex/issues/443/decoding-issue-in-from_latex-method-in-the
+    """
+    import codecs
+    import latexcodec  # noqa
+    from pybtex.markup import LaTeXParser
+
+    if not isinstance(latex, str):
+        latex = codecs.decode(latex, 'ulatex')
+
+    return LaTeXParser(latex).parse()
 
 
 class Citable:
@@ -31,6 +49,7 @@ class Citable:
                 bibtex_strings.append(f.read())
         return "\n".join(bibtex_strings)
 
+    @patch.object(pybtex.richtext.Text, 'from_latex', from_latex)
     def bibliography(self, style="plain", output_backend="plaintext", **kwargs) -> str:
         engine = PybtexEngine()
         return engine.format_from_files(
