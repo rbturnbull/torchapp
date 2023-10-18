@@ -1,14 +1,7 @@
 params: {}
-output: "[1] R. A. Fisher. The use of multiple measurements in taxonomic problems.\
-  \ Annals of Eugenics, 7(7):179-188, 1936. doi:10.1111/j.1469-1809.1936.tb02137.x.\n\
-  [2] J. Howard and S. Gugger. Deep Learning for Coders with Fastai and Pytorch: AI\
-  \ Applications Without a PhD. O'Reilly Media, Incorporated, 2020. ISBN 9781492045526.\
-  \ URL: https://books.google.no/books?id=xd6LxgEACAAJ.\n[3] Jeremy Howard and Sylvain\
-  \ Gugger. Fastai: A Layered API for Deep Learning. Information, 2020. URL: https://www.mdpi.com/2078-2489/11/2/108,\
-  \ doi:10.3390/info11020108.\n[4] F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel,\
-  \ B. Thirion, O. Grisel, M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, J. Vanderplas,\
-  \ A. Passos, D. Cournapeau, M. Brucher, M. Perrot, and E. Duchesnay. Scikit-learn:\
-  \ machine learning in Python. Journal of Machine Learning Research, 12:2825\u2013\
-  2830, 2011.\n[5] Robert Turnbull and Jonathan Garber. TorchApp: A wrapper for fastai\
-  \ projects to create easy command-line inferfaces and manage hyper-parameter tuning.\
-  \ JOSS, 2022 (forthcoming).\n"
+output: |
+  [1] R. A. Fisher. The use of multiple measurements in taxonomic problems. Annals of Eugenics, 7(7):179-188, 1936. doi:10.1111/j.1469-1809.1936.tb02137.x.
+  [2] J. Howard and S. Gugger. Deep Learning for Coders with Fastai and Pytorch: AI Applications Without a PhD. O'Reilly Media, Incorporated, 2020. ISBN 9781492045526. URL: https://books.google.no/books?id=xd6LxgEACAAJ.
+  [3] Jeremy Howard and Sylvain Gugger. Fastai: A Layered API for Deep Learning. Information, 2020. URL: https://www.mdpi.com/2078-2489/11/2/108, doi:10.3390/info11020108.
+  [4] F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel, B. Thirion, O. Grisel, M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, J. Vanderplas, A. Passos, D. Cournapeau, M. Brucher, M. Perrot, and E. Duchesnay. Scikit-learn: machine learning in Python. Journal of Machine Learning Research, 12:2825-2830, 2011.
+  [5] Robert Turnbull and Jonathan Garber. TorchApp: A wrapper for fastai projects to create easy command-line inferfaces and manage hyper-parameter tuning. JOSS, 2022 (forthcoming).
