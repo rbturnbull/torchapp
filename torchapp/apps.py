@@ -62,6 +62,7 @@ class TorchApp(Citable):
         self.validate = self.copy_method(self.validate)
         self.callbacks = self.copy_method(self.callbacks)
         self.extra_callbacks = self.copy_method(self.extra_callbacks)
+        self.inference_callbacks = self.copy_method(self.inference_callbacks)
         self.one_batch_size = self.copy_method(self.one_batch_size)
         self.one_batch_output = self.copy_method(self.one_batch_output)
         self.one_batch_output_size = self.copy_method(self.one_batch_output_size)
@@ -82,7 +83,7 @@ class TorchApp(Citable):
         add_kwargs(to_func=self.pretrained_local_path, from_funcs=self.pretrained_location)
         add_kwargs(
             to_func=self.__call__,
-            from_funcs=[self.pretrained_local_path, self.inference_dataloader, self.output_results],
+            from_funcs=[self.pretrained_local_path, self.inference_dataloader, self.output_results, self.inference_callbacks],
         )
         add_kwargs(to_func=self.validate, from_funcs=[self.pretrained_local_path, self.dataloaders])
         add_kwargs(to_func=self.one_batch_size, from_funcs=self.dataloaders)
@@ -123,6 +124,7 @@ class TorchApp(Citable):
         change_typer_to_defaults(self.one_batch_loss)
         change_typer_to_defaults(self.lr_finder)
         change_typer_to_defaults(self.inference_dataloader)
+        change_typer_to_defaults(self.inference_callbacks)
         change_typer_to_defaults(self.output_results)
 
         # Store a bool to let the app know later on (in self.assert_initialized)
@@ -276,7 +278,9 @@ class TorchApp(Citable):
         # Create a dataloader for inference
         dataloader = call_func(self.inference_dataloader, learner, **kwargs)
 
-        results = learner.get_preds(dl=dataloader, reorder=False, with_decoded=False, act=self.activation(), cbs=self.inference_callbacks())
+        inference_callbacks = call_func(self.inference_callbacks, **kwargs)
+
+        results = learner.get_preds(dl=dataloader, reorder=False, with_decoded=False, act=self.activation(), cbs=inference_callbacks)
 
         # Output results
         output_results = call_func(self.output_results, results, **kwargs)
