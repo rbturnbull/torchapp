@@ -78,7 +78,7 @@ class TorchApp(Citable):
         add_kwargs(to_func=self.learner_kwargs, from_funcs=[self.metrics, self.loss_func])
         add_kwargs(to_func=self.learner, from_funcs=[self.learner_kwargs, self.dataloaders, self.model])
         add_kwargs(to_func=self.callbacks, from_funcs=[self.extra_callbacks])
-        add_kwargs(to_func=self.export, from_funcs=self.learner)
+        add_kwargs(to_func=self.export, from_funcs=[self.learner, self.callbacks])
         add_kwargs(to_func=self.train, from_funcs=[self.learner, self.fit, self.callbacks])
         add_kwargs(to_func=self.show_batch, from_funcs=self.dataloaders)
         add_kwargs(to_func=self.tune, from_funcs=self.train)
@@ -745,6 +745,8 @@ class TorchApp(Citable):
         
         This is useful if a run has not reached completion but the model weights have still been saved.
         """
+        # Run the callbacks to ensure that everything is initialized the same as running the training loop
+        call_func(self.callbacks, **kwargs) 
         learner = call_func(self.learner, **kwargs)
         load_model(model_path, learner.model, opt=None, with_opt=False, device=learner.dls.device, strict=True)
         learner.export()
