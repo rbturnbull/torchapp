@@ -7,7 +7,7 @@ import hashlib
 from appdirs import user_cache_dir
 import torch
 from torch import nn
-from fastai.learner import Learner, load_learner
+from fastai.learner import Learner, load_learner, load_model
 from fastai.data.core import DataLoaders
 from fastai.callback.schedule import fit_one_cycle
 
@@ -58,6 +58,7 @@ class TorchApp(Citable):
         self.pretrained_local_path = self.copy_method(self.pretrained_local_path)
         self.learner_kwargs = self.copy_method(self.learner_kwargs)
         self.learner = self.copy_method(self.learner)
+        self.export = self.copy_method(self.export)
         self.__call__ = self.copy_method(self.__call__)
         self.validate = self.copy_method(self.validate)
         self.callbacks = self.copy_method(self.callbacks)
@@ -77,6 +78,7 @@ class TorchApp(Citable):
         add_kwargs(to_func=self.learner_kwargs, from_funcs=[self.metrics, self.loss_func])
         add_kwargs(to_func=self.learner, from_funcs=[self.learner_kwargs, self.dataloaders, self.model])
         add_kwargs(to_func=self.callbacks, from_funcs=[self.extra_callbacks])
+        add_kwargs(to_func=self.export, from_funcs=self.learner)
         add_kwargs(to_func=self.train, from_funcs=[self.learner, self.fit, self.callbacks])
         add_kwargs(to_func=self.show_batch, from_funcs=self.dataloaders)
         add_kwargs(to_func=self.tune, from_funcs=self.train)
@@ -93,6 +95,7 @@ class TorchApp(Citable):
         add_kwargs(to_func=self.one_batch_output_size, from_funcs=self.one_batch_output)
 
         # Make copies of methods to use just for the CLI
+        self.export_cli = self.copy_method(self.export)
         self.train_cli = self.copy_method(self.train)
         self.show_batch_cli = self.copy_method(self.show_batch)
         self.tune_cli = self.copy_method(self.tune)
@@ -107,6 +110,7 @@ class TorchApp(Citable):
         change_typer_to_defaults(self.learner_kwargs)
         change_typer_to_defaults(self.loss_func)
         change_typer_to_defaults(self.metrics)
+        change_typer_to_defaults(self.export)
         change_typer_to_defaults(self.learner)
         change_typer_to_defaults(self.callbacks)
         change_typer_to_defaults(self.extra_callbacks)
@@ -415,6 +419,14 @@ class TorchApp(Citable):
             params=train_params,
         )
         typer_click_object.add_command(train_command)
+
+        export_params, _, _ = get_params_convertors_ctx_param_name_from_function(self.export_cli)
+        export_command = click.Command(
+            name="export",
+            callback=self.export_cli,
+            params=export_params,
+        )
+        typer_click_object.add_command(export_command)
 
         show_batch_params, _, _ = get_params_convertors_ctx_param_name_from_function(self.show_batch_cli)
         command = click.Command(
@@ -725,6 +737,17 @@ class TorchApp(Citable):
 
         learner.export()
 
+        return learner
+    
+    def export(self, model_path:Path, **kwargs):
+        """ 
+        Generates a learner, saves model weights from a file and exports the learner so that it can be used for inference.
+        
+        This is useful if a run has not reached completion but the model weights have still been saved.
+        """
+        learner = call_func(self.learner, **kwargs)
+        load_model(model_path, learner.model, opt=None, with_opt=False, device=learner.dls.device, strict=True)
+        learner.export()
         return learner
 
     def fit(
