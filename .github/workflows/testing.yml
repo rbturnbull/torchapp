@@ -22,7 +22,7 @@ jobs:
         poetry env use "${{ matrix.python-version }}"
         poetry install
         # install a version of pytorch that does not require a GPU / CUDA
-        poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cpu --force
+        # poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cpu --force
     - name: Testing
       run: |
         poetry env info
