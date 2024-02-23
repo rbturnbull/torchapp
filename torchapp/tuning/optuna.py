@@ -2,7 +2,6 @@ from pathlib import Path
 
 try:
     import optuna
-    from optuna.integration import FastAIV2PruningCallback
     from optuna import samplers
 except:
     raise Exception(

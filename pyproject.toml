@@ -19,7 +19,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
-torch = ">=1.12.1"
+torch = ">=1.13.1"
 numpy = ">=1.22.0"
 typer = ">=0.4.0"
 rich = ">=10.16.1"
@@ -41,6 +41,7 @@ scikit-optimize = ">=0.9.0"
 scipy = ">=1.9.1"
 appdirs = ">=1.4.4"
 certifi = ">=2023.5.7"
+cmaes = "^0.10.0"
 
 
 [tool.poetry.dev-dependencies]

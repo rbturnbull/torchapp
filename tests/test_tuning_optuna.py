@@ -1,4 +1,5 @@
 from pathlib import Path
+import optuna
 from optuna import samplers
 import pytest
 import tempfile
