@@ -72,6 +72,61 @@ class MyRandomForestRegressor(skopt.utils.RandomForestRegressor):
 
 skopt.utils.RandomForestRegressor = MyRandomForestRegressor
 
+import sklearn.ensemble
+class MyExtraTreesRegressor(sklearn.ensemble.ExtraTreesRegressor):
+    def __init__(self, n_estimators=10, criterion='friedman_mse', max_depth=None,
+                 min_samples_split=2, min_samples_leaf=1,
+                 min_weight_fraction_leaf=0.0, max_features=None,
+                 max_leaf_nodes=None, min_impurity_decrease=0.,
+                 bootstrap=False, oob_score=False,
+                 n_jobs=1, random_state=None, verbose=0, warm_start=False,
+                 min_variance=0.0):
+        self.min_variance = min_variance
+        super().__init__(
+            n_estimators=n_estimators, criterion=criterion,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            min_weight_fraction_leaf=min_weight_fraction_leaf,
+            max_features=max_features, max_leaf_nodes=max_leaf_nodes,
+            min_impurity_decrease=min_impurity_decrease,
+            bootstrap=bootstrap, oob_score=oob_score,
+            n_jobs=n_jobs, random_state=random_state,
+            verbose=verbose, warm_start=warm_start)
+
+    def predict(self, X, return_std=False):
+        """
+        Predict continuous output for X.
+
+        Parameters
+        ----------
+        X : array-like of shape=(n_samples, n_features)
+            Input data.
+
+        return_std : boolean
+            Whether or not to return the standard deviation.
+
+        Returns
+        -------
+        predictions : array-like of shape=(n_samples,)
+            Predicted values for X. If criterion is set to "mse",
+            then `predictions[i] ~= mean(y | X[i])`.
+
+        std : array-like of shape=(n_samples,)
+            Standard deviation of `y` at `X`. If criterion
+            is set to "mse", then `std[i] ~= std(y | X[i])`.
+        """
+        mean = super().predict(X)
+
+        if return_std:
+            std = skopt.learning.forest._return_std(X, self.estimators_, mean, self.min_variance)
+            return mean, std
+
+        return mean
+
+skopt.learning.forest.ExtraTreesRegressor = MyExtraTreesRegressor
+skopt.utils.ExtraTreesRegressor = MyExtraTreesRegressor
+
 from ..util import call_func
 
 
@@ -82,7 +137,7 @@ def get_optimizer(method):
     elif method.startswith("random"):
         return skopt.dummy_minimize
     elif method.startswith("forest"):
-        return partial(skopt.forest_minimize, base_estimator="RF")
+        return skopt.forest_minimize
     elif method.startswith("gbrt") or method.startswith("gradientboost"):
         return skopt.gbrt_minimize
     raise NotImplementedError(f"Cannot interpret sampling method '{method}' using scikit-optimize.")
