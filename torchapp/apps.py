@@ -712,28 +712,39 @@ class TorchApp(Citable):
 
     def train(
         self,
-        distributed: bool = Param(default=False, help="If the learner is distributed."),
+        max_gpus: int = Param(0, help="The maximum number of GPUs to use. If zero, then all available GPUs are used."),
         **kwargs,
     ) -> Learner:
         """
         Trains a model for this app.
 
-        Args:
-            distributed (bool, optional): If the learner is distributed. Defaults to Param(default=False, help="If the learner is distributed.").
-
         Returns:
             Learner: The fastai Learner object created for training.
         """
         self.training_kwargs = kwargs
-        self.training_kwargs['distributed'] = distributed
 
         callbacks = call_func(self.callbacks, **kwargs)
         learner = call_func(self.learner, **kwargs)
 
         self.print_bibliography(verbose=True)
 
-        # with learner.distrib_ctx() if distributed == True else nullcontext():
-        call_func(self.fit, learner, callbacks, **kwargs)
+        device_count = torch.cuda.device_count()
+        if max_gpus > 0 and device_count > max_gpus:
+            device_count = max_gpus
+
+        distributed = device_count > 1
+        if distributed:
+            console.print(f"Using {device_count} GPUs", style="bold green")
+
+            from accelerate import Accelerator
+            from accelerate.utils import write_basic_config
+            write_basic_config()
+
+            accelerator = Accelerator()
+            learner.model, learner.opt = accelerator.prepare(learner.model, learner.opt)
+
+        with learner.distrib_ctx() if distributed == True else nullcontext():
+            call_func(self.fit, learner, callbacks, **kwargs)
 
         learner.export()
 
