@@ -611,6 +611,7 @@ class TorchApp(Citable):
 
     def callbacks(
         self,
+        save_every_epoch:bool = Param(False, help="Whether or not to save the model weights at every epoch."),
         project_name: str = Param(default=None, help="The name for this project for logging purposes."),
         run_name: str = Param(default=None, help="The name for this particular run for logging purposes."),
         run_id: str = Param(default=None, help="A unique ID for this particular run for logging purposes."),
@@ -642,7 +643,7 @@ class TorchApp(Citable):
         callbacks = [CSVLogger()]
         monitor = self.monitor()
         if monitor:
-            callbacks.append(SaveModelCallback(monitor=monitor))
+            callbacks.append(SaveModelCallback(monitor=monitor, every_epoch=save_every_epoch))
 
         if wandb:
             callback = TorchAppWandbCallback(
