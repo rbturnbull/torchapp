@@ -270,6 +270,7 @@ class TorchApp(Citable):
     def __call__(
         self, 
         gpu: bool = Param(True, help="Whether or not to use a GPU for processing if available."), 
+        model:Path = Param(None, help="A path to a model checkpoint file. If given, then it overrides the model in the learner."),
         **kwargs
     ):
         # Check if CUDA is available
@@ -278,6 +279,8 @@ class TorchApp(Citable):
         # Open the exported learner from a pickle file
         path = call_func(self.pretrained_local_path, **kwargs)
         learner = self.learner_obj = load_learner(path, cpu=not gpu)
+        if model:
+            load_model(model, learner.model, opt=None, with_opt=False, device=learner.dls.device, strict=True)
 
         # Create a dataloader for inference
         dataloader = call_func(self.inference_dataloader, learner, **kwargs)
