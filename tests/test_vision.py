@@ -1,6 +1,6 @@
 import pytest
 from torchapp.testing import TorchAppTestCase
-from torchapp.vision import VisionApp
+from torchapp.examples.vision import VisionApp
 
 
 class TestVisionApp(TorchAppTestCase):

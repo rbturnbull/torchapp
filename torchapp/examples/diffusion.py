@@ -14,7 +14,7 @@ from fastai.data.block import DataBlock, CategoryBlock
 from fastai.data.transforms import get_image_files, parent_label
 from fastai.data.load import DataLoader
 import torchvision.transforms as T
-from torchapp.vision import UNetApp
+from torchapp.examples.vision import UNetApp
 
 from PIL import Image
 import torch

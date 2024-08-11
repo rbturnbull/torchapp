@@ -1,6 +1,6 @@
 from typer.testing import CliRunner
 from unittest.mock import patch
-from torchapp.main import app
+from torchapp.cookiecutter import app
 
 runner = CliRunner()
 

@@ -10,7 +10,7 @@ import pandas as pd
 import torchapp as ta
 from fastai.vision.augment import aug_transforms
 
-from torchapp.vision import VisionApp
+from torchapp.examples.vision import VisionApp
 from rich.console import Console
 console = Console()
 

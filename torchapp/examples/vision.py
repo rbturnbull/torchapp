@@ -6,8 +6,8 @@ import torchvision.models as models
 from torch import nn
 from fastai.vision.learner import cnn_learner, unet_learner
 
-from .apps import TorchApp
-from .params import Param
+from ..apps import TorchApp
+from ..params import Param
 
 
 def torchvision_model_choices() -> List[str]:
