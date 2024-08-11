@@ -18,29 +18,27 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-torch = ">=1.12.1"
+python = ">=3.10,<3.12"
+executing = ">=2.0.1"
+torch = ">=1.12.1,<=2.2.2"
+lightning = ">=2.3.3"
 numpy = ">=1.22.0"
 typer = ">=0.4.0"
 rich = ">=10.16.1"
-fastai = "^2.5.3"
 pandas = ">=1.3.5"
 wandb = ">=0.12.9"
 cookiecutter = ">=2.1.1"
 scikit-learn = ">=1.0.2"
 Pillow = ">=9.0.1"
 PyYAML = ">=6.0"
-click = "8.0.4"
 torchvision = ">=0.13.0"
 pybtex = ">=0.24.0"
 pyjwt = ">=2.4.0"
-mlflow = ">=1.25.1"
 optuna = ">=2.10.0"
 pybtexnbib = ">=0.1.1"
 scikit-optimize = ">=0.9.0"
 scipy = ">=1.9.1"
 appdirs = ">=1.4.4"
-certifi = ">=2023.5.7"
 
 
 [tool.poetry.dev-dependencies]

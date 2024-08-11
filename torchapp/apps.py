@@ -11,11 +11,21 @@ from torchmetrics import Metric
 from .modules import GeneralLightningModule
 from .callbacks import TimeLoggingCallback, LogOptimizerCallback
 from .cli import CLIApp, method, main, tool
+from .citations import Citable
 
-class TorchApp2(CLIApp):
+
+BIBTEX_DIR = Path(__file__).parent / "bibtex"
+
+
+class TorchApp(Citable,CLIApp):
     @method
     def setup(self) -> None:
         pass
+
+    def get_bibtex_files(self):
+        return [
+            BIBTEX_DIR / "torchapp.bib",
+        ]
 
     @method
     def model(self) -> nn.Module:
