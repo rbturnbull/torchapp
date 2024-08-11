@@ -2,14 +2,12 @@ from pathlib import Path
 
 try:
     import optuna
-    from optuna.integration import FastAIV2PruningCallback
     from optuna import samplers
 except:
     raise Exception(
         "No module named 'optuna'. Please install this as an extra dependency or choose a different optimization engine."
     )
 
-from ..util import call_func
 
 
 def get_sampler(method, seed=0):
@@ -66,7 +64,7 @@ def optuna_tune(
         run_kwargs["run_name"] = trial_name
 
         # Train
-        learner = call_func(app.train, **run_kwargs)
+        learner = app.train(**run_kwargs)
 
         # Return metric from recorder
         return app.get_best_metric(learner)

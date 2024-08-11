@@ -1,9 +1,11 @@
+from typing import Type
 from pathlib import Path
 import os
 from collections.abc import Iterable
+import inspect
+import typer
 import torch
 from torch import nn
-from typing import Type
 import lightning as L
 from lightning.pytorch.loggers import CSVLogger, WandbLogger
 from torchmetrics import Metric
@@ -12,6 +14,7 @@ from .modules import GeneralLightningModule
 from .callbacks import TimeLoggingCallback, LogOptimizerCallback
 from .cli import CLIApp, method, main, tool
 from .citations import Citable
+from .params import Param
 
 
 BIBTEX_DIR = Path(__file__).parent / "bibtex"
@@ -94,6 +97,45 @@ class TorchApp(Citable,CLIApp):
     def metrics(self) -> list[tuple[str,Metric]]:
         return []
     
+    def version(self, verbose: bool = False):
+        """
+        Prints the version of the package that defines this app.
+
+        Used in the command-line interface.
+
+        Args:
+            verbose (bool, optional): Whether or not to print to stdout. Defaults to False.
+
+        Raises:
+            Exception: If it cannot find the package.
+
+        """
+        if verbose:
+            from importlib import metadata
+
+            module = inspect.getmodule(self)
+            package = ""
+            if module.__package__:
+                package = module.__package__.split('.')[0]
+            else:
+                path = Path(module.__file__).parent
+                while path.name:
+                    try:
+                        if metadata.distribution(path.name):
+                            package = path.name
+                            break
+                    except Exception:
+                        pass
+                    path = path.parent
+
+            if package:
+                version = metadata.version(package)
+                print(version)
+            else:
+                raise Exception("Cannot find package.")
+
+            raise typer.Exit()
+
     @method
     def input_count(self) -> int:
         return 1
@@ -174,6 +216,86 @@ class TorchApp(Citable,CLIApp):
         results = trainer.predict(module, dataloaders=prediction_dataloader)
 
         return self.output_results(results, **kwargs)
-        
+
+    @tool("train")
+    def tune(
+        self,
+        runs: int = Param(default=1, help="The number of runs to attempt to train the model."),
+        engine: str = Param(
+            default="skopt",
+            help="The optimizer to use to perform the hyperparameter tuning. Options: wandb, optuna, skopt.",
+        ),  # should be enum
+        id: str = Param(
+            default="",
+            help="The ID of this hyperparameter tuning job. "
+            "If using wandb, then this is the sweep id. "
+            "If using optuna, then this is the storage. "
+            "If using skopt, then this is the file to store the results. ",
+        ),
+        name: str = Param(
+            default="",
+            help="An informative name for this hyperparameter tuning job. If empty, then it creates a name from the project name.",
+        ),
+        method: str = Param(
+            default="", help="The sampling method to use to perform the hyperparameter tuning. By default it chooses the default method of the engine."
+        ),  # should be enum
+        min_iter: int = Param(
+            default=None,
+            help="The minimum number of iterations if using early termination. If left empty, then early termination is not used.",
+        ),
+        seed: int = Param(
+            default=None,
+            help="A seed for the random number generator.",
+        ),
+        **kwargs,
+    ):
+        if not name:
+            name = f"{self.project_name()}-tuning"
+
+        if engine == "wandb":
+            from .tuning.wandb import wandb_tune
+
+            self.add_bibtex_file(BIBTEX_DIR / "wandb.bib")
+
+            return wandb_tune(
+                self,
+                runs=runs,
+                sweep_id=id,
+                name=name,
+                method=method,
+                min_iter=min_iter,
+                **kwargs,
+            )
+        elif engine == "optuna":
+            from .tuning.optuna import optuna_tune
+
+            self.add_bibtex_file(BIBTEX_DIR / "optuna.bib")
+
+            return optuna_tune(
+                self,
+                runs=runs,
+                storage=id,
+                name=name,
+                method=method,
+                seed=seed,
+                **kwargs,
+            )
+        elif engine in ["skopt", "scikit-optimize"]:
+            from .tuning.skopt import skopt_tune
+
+            self.add_bibtex_file(BIBTEX_DIR / "skopt.bib")
+
+            return skopt_tune(
+                self,
+                runs=runs,
+                file=id,
+                name=name,
+                method=method,
+                seed=seed,
+                **kwargs,
+            )
+        else:
+            raise NotImplementedError(f"Optimizer engine {engine} not implemented.")
+
 
 

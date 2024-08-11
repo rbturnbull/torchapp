@@ -10,7 +10,6 @@ except:
         "No module named 'skopt'. Please install this as an extra dependency or choose a different optimization engine."
     )
 
-from ..util import call_func
 
 
 def get_optimizer(method):
@@ -92,7 +91,7 @@ class SkoptObjective():
         run_kwargs["run_name"] = trial_name
 
         # Train
-        learner = call_func(self.app.train, **run_kwargs)
+        learner = self.app.train(**run_kwargs)
         metric = self.app.get_best_metric(learner)
 
         # make negative if the goal is to maximize this metric

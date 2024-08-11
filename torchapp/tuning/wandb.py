@@ -2,8 +2,6 @@ from pathlib import Path
 import wandb
 from rich.console import Console
 from rich.pretty import pprint
-import math
-from ..util import call_func
 
 console = Console()
 
@@ -113,7 +111,7 @@ def wandb_tune(
             console.print("Training with parameters:", style="bold red")
             pprint(run_kwargs)
 
-            return call_func(app.train, **run_kwargs)
+            return app.train(**run_kwargs)
 
     wandb.agent(sweep_id, function=agent_train, count=runs, project=name)
 
