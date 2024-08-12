@@ -62,7 +62,8 @@ def collect_arguments(*funcs):
 
 
 class CLIApp:
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.main_app = typer.Typer()
         self.tools_app = typer.Typer()
         self.register_methods()

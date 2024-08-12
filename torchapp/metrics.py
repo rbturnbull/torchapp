@@ -16,7 +16,7 @@ class AvgSmoothLoss(Metric):
 
     def update(self, loss):
         # Ensure loss is detached to avoid graph-related issues
-        loss = loss.detach()
+        loss = loss.detach().float()
         self.count += 1
         self.val = torch.lerp(loss.mean(), self.val, self.beta)
 
