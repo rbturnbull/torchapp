@@ -63,7 +63,6 @@ def collect_arguments(*funcs):
 
 class CLIApp:
     def __init__(self):
-        breakpoint()
         self.main_app = typer.Typer()
         self.tools_app = typer.Typer()
         self.register_methods()
