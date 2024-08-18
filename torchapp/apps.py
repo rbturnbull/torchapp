@@ -50,12 +50,18 @@ class TorchApp(Citable,CLIApp):
     def prediction_dataloader(self, module) -> Iterable:
         raise NotImplementedError(f"Please ensure that the 'data' method is implemented in {self.__class__.__name__}.")
 
-    @method
-    def callbacks(self):
-        return [
+    @method("extra_callbacks")
+    def callbacks(self, **kwargs):
+        callbacks = [
             TimeLoggingCallback(),
             LogOptimizerCallback(),
         ]
+        callbacks += self.extra_callbacks(**kwargs) or []
+        return callbacks
+    
+    @method
+    def extra_callbacks(self, **kwargs) -> list[L.Callback]:
+        return []
     
     @method
     def trainer(
@@ -180,7 +186,7 @@ class TorchApp(Citable,CLIApp):
         trainer = self.trainer(**kwargs)
 
         # Dummy data to set the number of weights in the model
-        dummy_batch = next(iter(data.train_dataloader()))
+        dummy_batch = next(iter(data.train_dataloader(num_workers=1)))
         dummy_x = dummy_batch[:lightning_module.input_count]
         with torch.no_grad():
             lightning_module.model(*dummy_x)

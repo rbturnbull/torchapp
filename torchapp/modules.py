@@ -51,13 +51,20 @@ class GeneralLightningModule(L.LightningModule):
         loss = self.loss_function(y_hat, *y)
         self.log("valid_loss", loss, sync_dist=True)
         # Metrics
-        for name, metric in self.metricks:
+        for item in self.metricks:
+            if isinstance(item, tuple):
+                assert len(item) == 2
+                name, metric = item
+            else:
+                name = item.__name__
+                metric = item
+            
             result = metric(y_hat, *y)
             if isinstance(result, dict):
                 for key, value in result.items():
                     self.log(key, value, on_step=False, on_epoch=True, sync_dist=True)
             else:
-                self.log(name, metric, on_step=False, on_epoch=True, sync_dist=True)
+                self.log(name, result, on_step=False, on_epoch=True, sync_dist=True)
 
     def on_epoch_end(self):
         self.current_step = 0
