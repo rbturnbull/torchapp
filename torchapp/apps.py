@@ -9,6 +9,7 @@ from torch import nn
 import lightning as L
 from lightning.pytorch.loggers import CSVLogger, WandbLogger
 from torchmetrics import Metric
+from pytorch_lightning.profilers import Profiler, PyTorchProfiler
 
 from .modules import GeneralLightningModule
 from .callbacks import TimeLoggingCallback, LogOptimizerCallback
@@ -62,8 +63,22 @@ class TorchApp(Citable,CLIApp):
     @method
     def extra_callbacks(self, **kwargs) -> list[L.Callback]:
         return []
-    
+
     @method
+    def profiler(
+        self,
+        profiler_path:Path=None,
+        profile_memory:bool=False,
+        **kwargs,
+    ) -> Profiler|None:
+        if profiler_path:
+            return PyTorchProfiler(
+                filename=str(profiler_path),
+                profile_memory=profile_memory,
+            )
+        return None
+    
+    @tool("callbacks", "profiler")
     def trainer(
         self,
         max_epochs:int=20,
@@ -72,6 +87,7 @@ class TorchApp(Citable,CLIApp):
         wandb_project:str="",
         wandb_entity:str="",
         max_gpus:int=0,
+        **kwargs,
     ) -> L.Trainer:
         loggers = [
             CSVLogger("logs", name=run_name)
@@ -97,7 +113,15 @@ class TorchApp(Citable,CLIApp):
             devices = "auto"  # Will use CPU if no GPU is available
             strategy = "auto"
 
-        return L.Trainer(accelerator="gpu", devices=devices, strategy=strategy, logger=loggers, max_epochs=max_epochs, callbacks=self.callbacks())
+        return L.Trainer(
+            accelerator="gpu", 
+            devices=devices, 
+            strategy=strategy, 
+            logger=loggers, 
+            max_epochs=max_epochs,
+            callbacks=self.callbacks(**kwargs),
+            profiler=self.profiler(**kwargs),
+        )
     
     @method
     def metrics(self) -> list[tuple[str,Metric]]:
@@ -186,7 +210,7 @@ class TorchApp(Citable,CLIApp):
         trainer = self.trainer(**kwargs)
 
         # Dummy data to set the number of weights in the model
-        dummy_batch = next(iter(data.train_dataloader(num_workers=1)))
+        dummy_batch = next(iter(data.train_dataloader()))
         dummy_x = dummy_batch[:lightning_module.input_count]
         with torch.no_grad():
             lightning_module.model(*dummy_x)

@@ -105,7 +105,7 @@ class CLIApp:
         # Check if the method is already had its signature modified
         if not isinstance(method_to_modify, Method) or method_to_modify.signature_ready:
             return
-
+        
         method_to_modify.obj = self
 
         all_methods = [method_to_modify]
@@ -126,8 +126,8 @@ class CLIApp:
         if new_params:        
             try:
                 method_to_modify.func.__signature__ = signature(method_to_modify.func).replace(parameters=new_params)
-            except Exception:
-                print(f"ERROR in {method_to_modify}")
+            except Exception as err:
+                print(f"ERROR in {method_to_modify}: {err}")
         
         # Set the method as ready
         method_to_modify.signature_ready = True
