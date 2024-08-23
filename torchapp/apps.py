@@ -78,7 +78,11 @@ class TorchApp(Citable,CLIApp):
             )
         return None
     
-    @tool("callbacks", "profiler")
+    @method
+    def project_name(self, project_name:str=Param(default="", help="The name of this project (for logging purposes). Defaults to the name of the app."), **kwargs) -> str:
+        return project_name or self.__class__.__name__
+
+    @tool("callbacks", "profiler", "project_name")
     def trainer(
         self,
         max_epochs:int=20,
@@ -98,7 +102,7 @@ class TorchApp(Citable,CLIApp):
             if wandb_entity:
                 os.environ["WANDB_ENTITY"] = wandb_entity
 
-            wandb_logger = WandbLogger(name=run_name)
+            wandb_logger = WandbLogger(name=run_name, project=self.project_name(**kwargs))
             loggers.append(wandb_logger)
         
         # If GPUs are available, use all of them; otherwise, use CPUs
@@ -247,7 +251,7 @@ class TorchApp(Citable,CLIApp):
 
         return self.output_results(results, **kwargs)
 
-    @tool("train")
+    @tool("train", "project_name")
     def tune(
         self,
         runs: int = Param(default=1, help="The number of runs to attempt to train the model."),
@@ -280,7 +284,7 @@ class TorchApp(Citable,CLIApp):
         **kwargs,
     ):
         if not name:
-            name = f"{self.project_name()}-tuning"
+            name = f"{self.project_name(**kwargs)}-tuning"
 
         if engine == "wandb":
             from .tuning.wandb import wandb_tune
