@@ -222,10 +222,12 @@ class TorchApp(Citable,CLIApp):
         trainer.fit( lightning_module, data, validation_dataloader )
 
     @method
-    def checkpoint(self, checkpoint:Path, **kwargs) -> Path:
+    def checkpoint(self, checkpoint:Path=None, **kwargs) -> Path:
         """ Returns a path to a checkpoint to use for prediction. """
+        if not checkpoint:
+            raise ValueError("Please provide a checkpoint path or implement the 'checkpoint' method in your app.")
         return checkpoint
-    
+        
     @method("checkpoint")
     def load_checkpoint(self, **kwargs) -> L.LightningModule:
         module_class = self.module_class(**kwargs)
