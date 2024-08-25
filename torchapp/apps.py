@@ -226,7 +226,7 @@ class TorchApp(Citable,CLIApp):
         """ Returns a path to a checkpoint to use for prediction. """
         return checkpoint
     
-    @method
+    @method("checkpoint")
     def load_checkpoint(self, **kwargs) -> L.LightningModule:
         module_class = self.module_class(**kwargs)
         return module_class.load_from_checkpoint(self.checkpoint(**kwargs))
