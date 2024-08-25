@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
+
 from pathlib import Path
 import numpy as np
-from fastai.tabular.data import TabularDataLoaders
-from fastai.tabular.all import tabular_learner, accuracy, error_rate
 from sklearn.datasets import load_iris
 import torchapp as ta
 
@@ -38,9 +37,6 @@ class IrisApp(ta.TorchApp):
     def model(self):
         return None
 
-    def build_learner_func(self):
-        return tabular_learner
-
     def get_bibtex_files(self):
         files = super().get_bibtex_files()
         files.append(Path(__file__).parent / "iris.bib")
@@ -48,4 +44,4 @@ class IrisApp(ta.TorchApp):
 
 
 if __name__ == "__main__":
-    IrisApp.main()
+    IrisApp.tools()

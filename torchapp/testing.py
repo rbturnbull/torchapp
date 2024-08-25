@@ -10,10 +10,7 @@ from pathlib import Path
 import difflib
 from torch import nn
 from collections import OrderedDict
-from fastai.data.core import DataLoaders
-from fastai.learner import Learner
 from rich.console import Console
-from fastai.torch_core import TensorBase
 
 from .apps import TorchApp
 
