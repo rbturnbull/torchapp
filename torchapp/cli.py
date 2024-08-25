@@ -121,13 +121,13 @@ class CLIApp:
         new_params = [
             Parameter(name, param.kind, default=param.default, annotation=param.annotation)
             for name, param in params.items()
-            if name not in ["self", "kwargs"]
+            if name not in ["self", "kwargs"] and param.default != Parameter.empty
         ]
-        if new_params:        
-            try:
-                method_to_modify.func.__signature__ = signature(method_to_modify.func).replace(parameters=new_params)
-            except Exception as err:
-                print(f"ERROR in {method_to_modify}: {err}")
+
+        try:
+            method_to_modify.func.__signature__ = signature(method_to_modify.func).replace(parameters=new_params)
+        except Exception as err:
+            print(f"ERROR in {method_to_modify}: {err}")
         
         # Set the method as ready
         method_to_modify.signature_ready = True
