@@ -110,7 +110,11 @@ class CLIApp:
 
         all_methods = [method_to_modify]
         for method_to_call_name in method_to_modify.methods_to_call:
-            method_to_call = getattr(self, method_to_call_name)
+            if method_to_call_name == "super":
+                self_super = super(self.__class__, self)
+                method_to_call = getattr(self_super, method_to_modify.__name__)
+            else:
+                method_to_call = getattr(self, method_to_call_name)
 
             # make sure method is has its signature modified before getting parameters
             self.modify_signature(method_to_call)
