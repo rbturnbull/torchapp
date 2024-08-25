@@ -38,9 +38,9 @@ class GeneralLightningModule(L.LightningModule):
         self.log("train_loss", self.smooth_loss.compute(), on_step=True, on_epoch=False)
 
         # Log the fractional epoch
-        self.current_step += 1
-        fractional_epoch = self.current_epoch + ((self.current_step%self.steps_per_epoch) / self.steps_per_epoch)
-        self.log('fractional_epoch', fractional_epoch, on_step=True, on_epoch=False, prog_bar=False, logger=True)
+        # self.current_step += 1
+        # fractional_epoch = self.current_epoch + ((self.current_step%self.steps_per_epoch) / self.steps_per_epoch)
+        # self.log('fractional_epoch', fractional_epoch, on_step=True, on_epoch=False, prog_bar=False, logger=True)
 
         return loss
 
