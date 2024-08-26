@@ -111,7 +111,7 @@ class CLIApp:
         all_methods = [method_to_modify]
         for method_to_call_name in method_to_modify.methods_to_call:
             if method_to_call_name == "super":
-                self_super = super(self.__class__, self)
+                self_super = super(self.__class__, self) # this 'self' is a problem. TODO add an object as a function argument
                 method_to_call = getattr(self_super, method_to_modify.__name__)
             else:
                 method_to_call = getattr(self, method_to_call_name)

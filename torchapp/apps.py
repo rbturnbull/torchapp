@@ -7,6 +7,7 @@ import typer
 import torch
 from torch import nn
 import lightning as L
+from lightning.pytorch.callbacks import RichProgressBar
 from lightning.pytorch.loggers import CSVLogger, WandbLogger
 from torchmetrics import Metric
 from pytorch_lightning.profilers import Profiler, PyTorchProfiler
@@ -54,6 +55,7 @@ class TorchApp(Citable,CLIApp):
     @method("extra_callbacks")
     def callbacks(self, **kwargs):
         callbacks = [
+            RichProgressBar(),
             TimeLoggingCallback(),
             LogOptimizerCallback(),
         ]
@@ -85,6 +87,7 @@ class TorchApp(Citable,CLIApp):
     @tool("callbacks", "profiler", "project_name")
     def trainer(
         self,
+        output_dir:Path=Param("./outputs", help="The location of the output directory."),
         max_epochs:int=20,
         run_name:str="",
         wandb:bool=False,
@@ -93,6 +96,8 @@ class TorchApp(Citable,CLIApp):
         max_gpus:int=0,
         **kwargs,
     ) -> L.Trainer:
+        run_name = run_name or output_dir.name
+        
         loggers = [
             CSVLogger("logs", name=run_name)
         ]
@@ -118,6 +123,7 @@ class TorchApp(Citable,CLIApp):
             strategy = "auto"
 
         return L.Trainer(
+            default_root_dir=output_dir,
             accelerator="gpu", 
             devices=devices, 
             strategy=strategy, 
