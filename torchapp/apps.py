@@ -55,7 +55,7 @@ class TorchApp(Citable,CLIApp):
     @method("extra_callbacks")
     def callbacks(self, **kwargs):
         callbacks = [
-            RichProgressBar(),
+            RichProgressBar(leave=True),
             TimeLoggingCallback(),
             LogOptimizerCallback(),
         ]
@@ -84,7 +84,7 @@ class TorchApp(Citable,CLIApp):
     def project_name(self, project_name:str=Param(default="", help="The name of this project (for logging purposes). Defaults to the name of the app."), **kwargs) -> str:
         return project_name or self.__class__.__name__
 
-    @tool("callbacks", "profiler", "project_name")
+    @method("callbacks", "profiler", "project_name")
     def trainer(
         self,
         output_dir:Path=Param("./outputs", help="The location of the output directory."),
@@ -97,7 +97,7 @@ class TorchApp(Citable,CLIApp):
         **kwargs,
     ) -> L.Trainer:
         run_name = run_name or output_dir.name
-        
+
         loggers = [
             CSVLogger("logs", name=run_name)
         ]
@@ -124,7 +124,7 @@ class TorchApp(Citable,CLIApp):
 
         return L.Trainer(
             default_root_dir=output_dir,
-            accelerator="gpu", 
+            accelerator="auto",
             devices=devices, 
             strategy=strategy, 
             logger=loggers, 
@@ -213,7 +213,7 @@ class TorchApp(Citable,CLIApp):
         """Train the model."""
         self.setup(**kwargs)
         data = self.data(**kwargs)
-        data.setup()
+        data.setup("fit")
         validation_dataloader = self.validation_dataloader(**kwargs)
 
         lightning_module = self.lightning_module(**kwargs)
@@ -291,6 +291,7 @@ class TorchApp(Citable,CLIApp):
         ),
         **kwargs,
     ):
+        """ Perform hyperparameter tuning. """
         if not name:
             name = f"{self.project_name(**kwargs)}-tuning"
 

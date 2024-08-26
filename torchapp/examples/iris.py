@@ -2,9 +2,27 @@
 
 from pathlib import Path
 import numpy as np
+from torch.utils.data import random_split, DataLoader, Dataset
 from sklearn.datasets import load_iris
+from torch import nn
 import torchapp as ta
+import torch
+from torchmetrics import Metric, Accuracy
+import lightning as L
 
+class IrisDataset(Dataset):
+    def __init__(self, df):
+        self.df = df
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        row = self.df.iloc[idx]
+        x = torch.tensor(row[['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']].values, dtype=torch.float32)
+        y = torch.tensor(row['target'], dtype=int)
+        return x, y
+    
 
 class IrisApp(ta.TorchApp):
     """
@@ -15,28 +33,36 @@ class IrisApp(ta.TorchApp):
     For more information about the dataset, see:
         https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-plants-dataset
     """
+    @ta.method
+    def data(self, validation_fraction: float = 0.2, batch_size: int = 32):
+        iris_data = load_iris(as_frame=True)
+        df = iris_data['frame']
+        validation_df = df.sample(frac=validation_fraction)
+        train_df = df.drop(validation_df.index)
+        train_dataset = IrisDataset(train_df)
+        val_dataset = IrisDataset(validation_df)
+        data_module = L.LightningDataModule()
+        data_module.train_dataloader = lambda: DataLoader(train_dataset, batch_size=batch_size)
+        data_module.val_dataloader = lambda: DataLoader(val_dataset, batch_size=batch_size)
+        return data_module
 
-    def dataloaders(
-        self,
-        batch_size: int = ta.Param(default=32, tune_min=8, tune_max=128, log=True, tune=True),
-    ):
-        df = load_iris(as_frame=True)
+    # @ta.method
+    # def metrics(self) -> list[Metric]:
+    #     return [Accuracy()]
 
-        df["frame"]["target_name"] = np.take(df["target_names"], df["target"])
-
-        return TabularDataLoaders.from_df(
-            df["frame"],
-            cont_names=df["feature_names"],
-            y_names="target_name",
-            bs=batch_size,
+    @ta.method
+    def model(self):
+        return nn.Sequential(
+            nn.Linear(4, 8),
+            nn.ReLU(),
+            nn.Linear(8, 3),
         )
 
-    def metrics(self) -> list:
-        return [accuracy, error_rate]
+    @ta.method
+    def loss_function(self):
+        return nn.CrossEntropyLoss()
 
-    def model(self):
-        return None
-
+    @ta.method
     def get_bibtex_files(self):
         files = super().get_bibtex_files()
         files.append(Path(__file__).parent / "iris.bib")

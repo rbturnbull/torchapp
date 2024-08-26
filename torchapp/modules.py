@@ -24,8 +24,8 @@ class GeneralLightningModule(L.LightningModule):
     @cached_property
     def steps_per_epoch(self) -> int:
         # HACK assumes DDP strategy
-        gpus = torch.cuda.device_count()
-        return len(self.trainer.datamodule.train_dataloader())//gpus
+        devices = torch.cuda.device_count() or 1
+        return len(self.trainer.datamodule.train_dataloader())//devices
 
     def training_step(self, batch, batch_idx):
         x = batch[:self.input_count]
