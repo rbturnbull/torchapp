@@ -8,15 +8,17 @@ import lightning as L
 from .metrics import AvgSmoothLoss
 
 class GeneralLightningModule(L.LightningModule):
-    def __init__(self, model=None, loss_function=None, max_learning_rate:float=None, input_count:int=1, metrics:list[tuple[str,Metric]]|None=None):
+    def __init__(self, model, loss_function, max_learning_rate:float, input_count:int=1, metrics:list[tuple[str,Metric]]|None=None):
         super().__init__()
+        self.save_hyperparameters()
         self.model = model
         self.loss_function = loss_function
         self.max_learning_rate = max_learning_rate
         self.input_count = input_count
+        self.metrics = metrics or []
+
         self.smooth_loss = AvgSmoothLoss()
-        self.metricks = metrics or []
-        for name, metric in self.metricks:
+        for name, metric in metrics:
             setattr(self, name, metric)        
         self.current_step = 0
         self.strict_loading = False
@@ -51,7 +53,7 @@ class GeneralLightningModule(L.LightningModule):
         loss = self.loss_function(y_hat, *y)
         self.log("valid_loss", loss, sync_dist=True, prog_bar=True)
         # Metrics
-        for item in self.metricks:
+        for item in self.metrics:
             if isinstance(item, tuple):
                 assert len(item) == 2
                 name, metric = item
@@ -94,4 +96,5 @@ class GeneralLightningModule(L.LightningModule):
             "lr_scheduler": self.lr_scheduler_config(optimizer=optimizer),
         }
 
-
+    def forward(self, *args, **kwargs):
+        return self.model(*args, **kwargs)

@@ -82,9 +82,15 @@ class IrisApp(ta.TorchApp):
         assert petal_length is not None
         assert petal_width is not None
 
-        x = torch.tensor([sepal_length, sepal_width, petal_length, petal_width], dtype=torch.float32)
+        x = torch.tensor([[sepal_length, sepal_width, petal_length, petal_width]], dtype=torch.float32)
         return [x]
 
+    @ta.method
+    def output_results(
+        self, 
+        results,
+    ):
+        print(f"Predicted class: {results[0].argmax().item()}")
 
 if __name__ == "__main__":
     IrisApp.tools()

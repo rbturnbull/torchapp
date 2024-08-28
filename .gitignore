@@ -172,3 +172,4 @@ mlruns
 .vscode
 torchapp/examples/charlm.py
 logs/
+lightning_logs/
