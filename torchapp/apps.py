@@ -7,7 +7,7 @@ import typer
 import torch
 from torch import nn
 import lightning as L
-from lightning.pytorch.callbacks import RichProgressBar
+from lightning.pytorch.callbacks import RichProgressBar, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, WandbLogger
 from torchmetrics import Metric
 from pytorch_lightning.profilers import Profiler, PyTorchProfiler
@@ -50,7 +50,22 @@ class TorchApp(Citable,CLIApp):
 
     @method
     def prediction_dataloader(self, module) -> Iterable:
-        raise NotImplementedError(f"Please ensure that the 'data' method is implemented in {self.__class__.__name__}.")
+        raise NotImplementedError(f"Please ensure that the 'prediction_dataloader' method is implemented in {self.__class__.__name__}.")
+
+    @method
+    def monitor(self) -> str:
+        return "valid_loss"
+
+    @method("monitor")
+    def checkpoint_callback(self, save_top_k:int=1, save_weights_only:bool=True) -> ModelCheckpoint:
+        monitor = self.monitor()
+        return ModelCheckpoint(
+            save_top_k=save_top_k,
+            monitor=monitor,
+            mode="min" if "loss" in monitor else "max",
+            save_weights_only=save_weights_only,
+            filename="checkpoint-{epoch:02d}-{"+monitor+":.2f}",
+        )
 
     @method("extra_callbacks")
     def callbacks(self, **kwargs):
@@ -59,9 +74,13 @@ class TorchApp(Citable,CLIApp):
             TimeLoggingCallback(),
             LogOptimizerCallback(),
         ]
+        if checkpoint_callback := self.checkpoint_callback(**kwargs):
+            callbacks.append(checkpoint_callback)
+            
         callbacks += self.extra_callbacks(**kwargs) or []
         return callbacks
     
+    # Hack - this should be done through calling the 'super' of 'callbacks'
     @method
     def extra_callbacks(self, **kwargs) -> list[L.Callback]:
         return []

@@ -68,6 +68,23 @@ class IrisApp(ta.TorchApp):
         files.append(Path(__file__).parent / "iris.bib")
         return files
 
+    @ta.method
+    def prediction_dataloader(
+        self, 
+        module, 
+        sepal_length:float=None, 
+        sepal_width:float=None, 
+        petal_length:float=None, 
+        petal_width:float=None, 
+    ) -> list:
+        assert sepal_length is not None
+        assert sepal_width is not None
+        assert petal_length is not None
+        assert petal_width is not None
+
+        x = torch.tensor([sepal_length, sepal_width, petal_length, petal_width], dtype=torch.float32)
+        return [x]
+
 
 if __name__ == "__main__":
     IrisApp.tools()

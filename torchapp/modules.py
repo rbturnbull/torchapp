@@ -49,7 +49,7 @@ class GeneralLightningModule(L.LightningModule):
         y = batch[self.input_count:]
         y_hat = self.model(*x)
         loss = self.loss_function(y_hat, *y)
-        self.log("valid_loss", loss, sync_dist=True)
+        self.log("valid_loss", loss, sync_dist=True, prog_bar=True)
         # Metrics
         for item in self.metricks:
             if isinstance(item, tuple):
