@@ -64,7 +64,7 @@ class TorchApp(Citable,CLIApp):
             monitor=monitor,
             mode="min" if "loss" in monitor else "max",
             save_weights_only=save_weights_only,
-            filename="checkpoint-{epoch:02d}-{"+monitor+":.2f}",
+            filename="checkpoint-{epoch:02d}-{"+monitor+":.2g}",
         )
 
     @method("extra_callbacks")
