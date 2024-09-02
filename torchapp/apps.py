@@ -55,14 +55,22 @@ class TorchApp(Citable,CLIApp):
     @method
     def monitor(self) -> str:
         return "valid_loss"
+    
+    @method
+    def goal(self) -> str:
+        return "minimize" if "loss" in self.monitor() else "maximize"
 
     @method("monitor")
     def checkpoint_callback(self, save_top_k:int=1, save_weights_only:bool=True) -> ModelCheckpoint:
         monitor = self.monitor()
+        
+        goal = self.goal()
+        goal = goal.lower()[:3]
+        assert goal in ["min", "max"], f"Goal '{goal}' not recognized."
         return ModelCheckpoint(
             save_top_k=save_top_k,
             monitor=monitor,
-            mode="min" if "loss" in monitor else "max",
+            mode=goal,
             save_weights_only=save_weights_only,
             filename="checkpoint-{epoch:02d}-{"+monitor+":.2g}",
         )
