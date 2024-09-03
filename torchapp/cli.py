@@ -1,8 +1,10 @@
 from typing import Callable
 import typer
+from typer.core import TyperCommand
 from inspect import signature, Parameter
-from functools import wraps
 from dataclasses import dataclass
+
+
 
 @dataclass
 class Method():
@@ -18,8 +20,10 @@ class Method():
         return self.func.__name__
 
     def __call__(self, *args, **kwargs):
-        func_args = {k: v for k, v in kwargs.items() if k in signature(self.func).parameters}
-        return self.func(self.obj, *args, **func_args)
+        func_kwargs = {k: v for k, v in kwargs.items() if k in signature(self.func).parameters}
+        if 'opts' in kwargs:
+            self.obj.opts = kwargs['opts']
+        return self.func(self.obj, *args, **func_kwargs)
 
     @property
     def __signature__(self):
@@ -61,6 +65,19 @@ def collect_arguments(*funcs):
     return params
 
 
+class CLICommand(TyperCommand):
+    def parse_args(self, ctx, args):
+        original_args = list(args)
+        result = super().parse_args(ctx, args)
+
+        # Save Options given
+        parser = self.make_parser(ctx)
+        opts, _, _ = parser.parse_args(args=original_args)
+        ctx.params['opts'] = opts
+        
+        return result
+
+
 class CLIApp:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -77,11 +94,11 @@ class CLIApp:
         cls().tools_app()
 
     def add_to_main(self, func):
-        self.main_app.command()(func)
+        self.main_app.command(cls=CLICommand)(func)
         return func
 
     def add_to_tools(self, func):
-        self.tools_app.command()(func)
+        self.tools_app.command(cls=CLICommand)(func)
         return func
 
     def register_methods(self):

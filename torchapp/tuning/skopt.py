@@ -1,4 +1,5 @@
 from pathlib import Path
+from .util import best_model_score
 
 try:
     import skopt
@@ -91,8 +92,8 @@ class SkoptObjective():
         run_kwargs["run_name"] = trial_name
 
         # Train
-        learner = self.app.train(**run_kwargs)
-        metric = self.app.get_best_metric(learner)
+        _, trainer = self.app.train(**run_kwargs)
+        metric = best_model_score(trainer)
 
         # make negative if the goal is to maximize this metric
         if self.app.goal()[:3] != "min":

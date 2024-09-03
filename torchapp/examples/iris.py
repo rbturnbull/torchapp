@@ -34,16 +34,16 @@ class IrisApp(ta.TorchApp):
         https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-plants-dataset
     """
     @ta.method
-    def data(self, validation_fraction: float = 0.2, batch_size: int = 32):
+    def data(self, validation_fraction: float = 0.2, batch_size: int = 32, seed: int = 42):
         iris_data = load_iris(as_frame=True)
         df = iris_data['frame']
-        validation_df = df.sample(frac=validation_fraction)
+        validation_df = df.sample(frac=validation_fraction, random_state=seed)
         train_df = df.drop(validation_df.index)
         train_dataset = IrisDataset(train_df)
         val_dataset = IrisDataset(validation_df)
         data_module = L.LightningDataModule()
-        data_module.train_dataloader = lambda: DataLoader(train_dataset, batch_size=batch_size)
-        data_module.val_dataloader = lambda: DataLoader(val_dataset, batch_size=batch_size)
+        data_module.train_dataloader = lambda: DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        data_module.val_dataloader = lambda: DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
         return data_module
 
     # @ta.method
@@ -51,11 +51,16 @@ class IrisApp(ta.TorchApp):
     #     return [Accuracy()]
 
     @ta.method
-    def model(self):
+    def model(
+        self, 
+        hidden_size:int=ta.Param(default=8, tune=True, tune_min=4, tune_max=128, tune_log=True),
+    ):
+        in_features = 4
+        output_categories = 3
         return nn.Sequential(
-            nn.Linear(4, 8),
+            nn.Linear(in_features, hidden_size),
             nn.ReLU(),
-            nn.Linear(8, 3),
+            nn.Linear(hidden_size, output_categories),
         )
 
     @ta.method
@@ -91,6 +96,8 @@ class IrisApp(ta.TorchApp):
         results,
     ):
         print(f"Predicted class: {results[0].argmax().item()}")
+
+
 
 if __name__ == "__main__":
     IrisApp.tools()

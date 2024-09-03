@@ -1,4 +1,5 @@
 from pathlib import Path
+from .util import best_model_score
 
 try:
     import optuna
@@ -7,7 +8,6 @@ except:
     raise Exception(
         "No module named 'optuna'. Please install this as an extra dependency or choose a different optimization engine."
     )
-
 
 
 def get_sampler(method, seed=0):
@@ -53,7 +53,7 @@ def optuna_tune(
         tuning_params = app.tuning_params()
 
         for key, value in tuning_params.items():
-            if key not in kwargs or kwargs[key] is None:
+            if key not in app.opts or kwargs[key] is None:
                 run_kwargs[key] = suggest(trial, key, value)
 
         trial_name = f"trial-{trial.number}"
@@ -64,16 +64,17 @@ def optuna_tune(
         run_kwargs["run_name"] = trial_name
 
         # Train
-        learner = app.train(**run_kwargs)
+        _, trainer = app.train(**run_kwargs)
 
-        # Return metric from recorder
-        return app.get_best_metric(learner)
+        # Return metric from trainer
+        return best_model_score(trainer)
 
     if not storage:
         storage = None
     elif "://" not in storage:
         storage_path = output_dir/f"{storage}.sqlite3"
         storage = f"sqlite:///{storage_path.resolve()}"
+        print("Using storage:", storage_path)
 
     study = optuna.create_study(
         study_name=name,

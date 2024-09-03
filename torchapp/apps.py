@@ -63,7 +63,7 @@ class TorchApp(Citable,CLIApp):
     @method("monitor")
     def checkpoint_callback(self, save_top_k:int=1, save_weights_only:bool=True) -> ModelCheckpoint:
         monitor = self.monitor()
-        
+
         goal = self.goal()
         goal = goal.lower()[:3]
         assert goal in ["min", "max"], f"Goal '{goal}' not recognized."
@@ -73,6 +73,7 @@ class TorchApp(Citable,CLIApp):
             mode=goal,
             save_weights_only=save_weights_only,
             filename="checkpoint-{epoch:02d}-{"+monitor+":.2g}",
+            verbose=True,
         )
 
     @method("extra_callbacks")
@@ -236,7 +237,7 @@ class TorchApp(Citable,CLIApp):
     def train(
         self,
         **kwargs,
-    ):
+    ) -> L.LightningModule:
         """Train the model."""
         self.setup(**kwargs)
         data = self.data(**kwargs)
@@ -253,6 +254,8 @@ class TorchApp(Citable,CLIApp):
             lightning_module.model(*dummy_x)
 
         trainer.fit( lightning_module, data, validation_dataloader )
+
+        return lightning_module, trainer
 
     @method
     def checkpoint(self, checkpoint:Path=None, **kwargs) -> Path:
@@ -367,5 +370,22 @@ class TorchApp(Citable,CLIApp):
         else:
             raise NotImplementedError(f"Optimizer engine {engine} not implemented.")
 
+    def tuning_params(self):
+        tuning_params = {}
+        signature = inspect.signature(self.tune)
+
+        for key, value in signature.parameters.items():
+            default_value = value.default
+            if isinstance(default_value, Param) and default_value.tune == True:
+
+                # Override annotation if given in typing hints
+                if value.annotation:
+                    default_value.annotation = value.annotation
+
+                default_value.check_choices()
+
+                tuning_params[key] = default_value
+                
+        return tuning_params
 
 
