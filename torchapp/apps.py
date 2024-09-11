@@ -11,6 +11,7 @@ from lightning.pytorch.callbacks import RichProgressBar, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, WandbLogger
 from torchmetrics import Metric
 from pytorch_lightning.profilers import Profiler, PyTorchProfiler
+from rich.console import Console
 
 from .modules import GeneralLightningModule
 from .callbacks import TimeLoggingCallback, LogOptimizerCallback
@@ -18,6 +19,8 @@ from .cli import CLIApp, method, main, tool
 from .citations import Citable
 from .params import Param
 
+
+console = Console()
 
 BIBTEX_DIR = Path(__file__).parent / "bibtex"
 
@@ -122,6 +125,7 @@ class TorchApp(Citable,CLIApp):
         wandb_project:str="",
         wandb_entity:str="",
         max_gpus:int=0,
+        log_every_n_steps:int=50,
         **kwargs,
     ) -> L.Trainer:
         run_name = run_name or output_dir.name
@@ -159,6 +163,7 @@ class TorchApp(Citable,CLIApp):
             max_epochs=max_epochs,
             callbacks=self.callbacks(**kwargs),
             profiler=self.profiler(**kwargs),
+            log_every_n_steps=log_every_n_steps,
         )
     
     @method
@@ -239,20 +244,29 @@ class TorchApp(Citable,CLIApp):
         **kwargs,
     ) -> L.LightningModule:
         """Train the model."""
+        style = 'bold red'
+        console.rule("Setting up training", style=style)
         self.setup(**kwargs)
+        
+        console.print("Setting up dataloaders")
         data = self.data(**kwargs)
         data.setup("fit")
         validation_dataloader = self.validation_dataloader(**kwargs)
 
+        console.print("Setting up Module")
         lightning_module = self.lightning_module(**kwargs)
+
+        console.print("Setting up Trainer")
         trainer = self.trainer(**kwargs)
 
         # Dummy data to set the number of weights in the model
+        console.print("Training Dummy Batch")
         dummy_batch = next(iter(data.train_dataloader()))
         dummy_x = dummy_batch[:lightning_module.input_count]
         with torch.no_grad():
             lightning_module.model(*dummy_x)
 
+        console.rule("Training", style=style)
         trainer.fit( lightning_module, data, validation_dataloader )
 
         return lightning_module, trainer

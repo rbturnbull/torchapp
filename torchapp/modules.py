@@ -10,7 +10,7 @@ from .metrics import AvgSmoothLoss
 class GeneralLightningModule(L.LightningModule):
     def __init__(self, model, loss_function, max_learning_rate:float, input_count:int=1, metrics:list[tuple[str,Metric]]|None=None):
         super().__init__()
-        self.save_hyperparameters()
+        self.save_hyperparameters(logger=False)
         self.model = model
         self.loss_function = loss_function
         self.max_learning_rate = max_learning_rate
