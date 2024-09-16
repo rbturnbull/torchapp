@@ -264,6 +264,8 @@ class TorchApp(Citable,CLIApp):
         dummy_batch = next(iter(data.train_dataloader()))
         dummy_x = dummy_batch[:lightning_module.input_count]
         with torch.no_grad():
+            device = next(lightning_module.model.parameters()).device
+            dummy_x = [x.to(device) for x in dummy_x]
             lightning_module.model(*dummy_x)
 
         console.rule("Training", style=style)
