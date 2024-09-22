@@ -261,12 +261,13 @@ class TorchApp(Citable,CLIApp):
 
         # Dummy data to set the number of weights in the model
         console.print("Training Dummy Batch")
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         dummy_batch = next(iter(data.train_dataloader()))
         dummy_x = dummy_batch[:lightning_module.input_count]
         with torch.no_grad():
-            device = next(lightning_module.model.parameters()).device
             dummy_x = [x.to(device) for x in dummy_x]
-            lightning_module.model(*dummy_x)
+            model = lightning_module.model.to(device)
+            model(*dummy_x)
 
         console.rule("Training", style=style)
         trainer.fit( lightning_module, data, validation_dataloader )
