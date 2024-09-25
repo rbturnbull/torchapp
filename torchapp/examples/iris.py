@@ -99,4 +99,4 @@ class IrisApp(ta.TorchApp):
 
 
 if __name__ == "__main__":
-    IrisApp.tools_gui()
+    IrisApp.tools()

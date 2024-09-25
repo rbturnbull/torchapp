@@ -4,6 +4,65 @@ from typer.core import TyperCommand
 from inspect import signature, Parameter
 from dataclasses import dataclass
 import guigaga
+from guigaga.interface import InterfaceBuilder
+from guigaga.themes import Theme
+from typing import Callable, Optional, Union
+import click
+
+
+def launch_gui(typer_app:typer.Typer):
+    app = typer.main.get_command(typer_app)
+
+    def update_launch_kwargs_from_cli(ctx, launch_kwargs, cli_mappings):
+        """
+        Update launch_kwargs with CLI options that differ from their defaults.
+
+        Args:
+            ctx: Click context object containing the command parameters and options.
+            launch_kwargs: Dictionary to update with CLI-specified values.
+            cli_mappings: Dictionary mapping CLI option names to their corresponding launch_kwargs keys.
+        """
+        for param in ctx.command.params:
+            param_name = param.name
+            if param_name in cli_mappings and ctx.params[param_name] != param.default:
+                launch_kwargs[cli_mappings[param_name]] = ctx.params[param_name]
+
+    name: Optional[str] = None
+    command_name: str = "gui"
+    message: str = "Open Gradio GUI."
+    theme: Theme = Theme.base
+    hide_not_required: bool = False
+    allow_file_download: bool = False
+    launch_kwargs: Optional[dict] = {}
+    queue_kwargs: Optional[dict] = {}
+    catch_errors: bool = True
+
+    ctx = app.make_context("info_name", args=[])
+
+    # Mapping of CLI option names to launch_kwargs keys
+    cli_mappings = {
+        "share": "share",
+        "host": "server_name",
+        "port": "server_port",
+    }
+
+    # Update launch_kwargs based on CLI inputs
+    update_launch_kwargs_from_cli(ctx, launch_kwargs, cli_mappings)
+
+    # Build the interface using InterfaceBuilder
+    builder = InterfaceBuilder(
+        app,
+        app_name=name,
+        command_name=command_name,
+        # click_context=ctx,
+        theme=theme,
+        hide_not_required=hide_not_required,
+        allow_file_download=allow_file_download,
+        # catch_errors=catch_errors,
+    )
+
+    # Launch the interface with optional sharing
+    builder.interface.queue(**queue_kwargs).launch(**launch_kwargs, app_kwargs={"docs_url": "/docs"})
 
 
 @dataclass
@@ -95,73 +154,15 @@ class CLIApp:
 
     @classmethod
     def tools_gui(cls):
-        from guigaga.interface import InterfaceBuilder
-        from guigaga.themes import Theme
-        from typing import Callable, Optional, Union
-        import click
-
-
-        def update_launch_kwargs_from_cli(ctx, launch_kwargs, cli_mappings):
-            """
-            Update launch_kwargs with CLI options that differ from their defaults.
-
-            Args:
-                ctx: Click context object containing the command parameters and options.
-                launch_kwargs: Dictionary to update with CLI-specified values.
-                cli_mappings: Dictionary mapping CLI option names to their corresponding launch_kwargs keys.
-            """
-            for param in ctx.command.params:
-                param_name = param.name
-                if param_name in cli_mappings and ctx.params[param_name] != param.default:
-                    launch_kwargs[cli_mappings[param_name]] = ctx.params[param_name]
-
-        name: Optional[str] = None
-        command_name: str = "gui"
-        message: str = "Open Gradio GUI."
-        theme: Theme = Theme.base
-        hide_not_required: bool = False
-        allow_file_download: bool = False
-        launch_kwargs: Optional[dict] = {}
-        queue_kwargs: Optional[dict] = {}
-        catch_errors: bool = True
-
-        app = cls().tools_app
-        typer_click_object = typer.main.get_command(app)
-        app = typer_click_object
-        ctx = typer_click_object.make_context("info_name", args=[])
-
-
-        # Mapping of CLI option names to launch_kwargs keys
-        cli_mappings = {
-            "share": "share",
-            "host": "server_name",
-            "port": "server_port",
-        }
-
-        # Update launch_kwargs based on CLI inputs
-        update_launch_kwargs_from_cli(ctx, launch_kwargs, cli_mappings)
-
-        # Build the interface using InterfaceBuilder
-        builder = InterfaceBuilder(
-            app,
-            app_name=name,
-            command_name=command_name,
-            # click_context=ctx,
-            theme=theme,
-            hide_not_required=hide_not_required,
-            allow_file_download=allow_file_download,
-            # catch_errors=catch_errors,
-        )
-
-        # Launch the interface with optional sharing
-        builder.interface.queue(**queue_kwargs).launch(**launch_kwargs, app_kwargs={"docs_url": "/docs"})
-    
-    # @tool
-    # def launch_tools_gui(self):
-    #     breakpoint()
-    #     typer_click_object = typer.main.get_command(self.tools_app)
-    #     gui = guigaga.gui()(typer_click_object)
-    #     return gui()
+        launch_gui(cls().tools_app)
+        
+    @classmethod
+    def main_gui(cls):
+        launch_gui(cls().main_app)
+        
+    @tool
+    def gui(self):
+        launch_gui(self.tools_app)
 
     def add_to_main(self, func):
         self.main_app.command(cls=CLICommand)(func)
