@@ -113,6 +113,7 @@ class TorchApp(Citable,CLIApp):
     
     @method
     def project_name(self, project_name:str=Param(default="", help="The name of this project (for logging purposes). Defaults to the name of the app."), **kwargs) -> str:
+        breakpoint()
         return project_name or self.__class__.__name__
 
     @method("callbacks", "profiler", "project_name")
@@ -140,7 +141,9 @@ class TorchApp(Citable,CLIApp):
             if wandb_entity:
                 os.environ["WANDB_ENTITY"] = wandb_entity
 
-            wandb_logger = WandbLogger(name=run_name, project=self.project_name(**kwargs))
+            project_name = self.project_name(**kwargs)
+            breakpoint()
+            wandb_logger = WandbLogger(name=run_name, project=project_name)
             loggers.append(wandb_logger)
         
         # If GPUs are available, use all of them; otherwise, use CPUs
