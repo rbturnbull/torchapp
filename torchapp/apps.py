@@ -113,7 +113,6 @@ class TorchApp(Citable,CLIApp):
     
     @method
     def project_name(self, project_name:str=Param(default="", help="The name of this project (for logging purposes). Defaults to the name of the app."), **kwargs) -> str:
-        breakpoint()
         return project_name or self.__class__.__name__
 
     @method("callbacks", "profiler", "project_name")
@@ -123,7 +122,6 @@ class TorchApp(Citable,CLIApp):
         max_epochs:int=20,
         run_name:str="",
         wandb:bool=False,
-        wandb_project:str="",
         wandb_entity:str="",
         max_gpus:int=0,
         log_every_n_steps:int=50,
@@ -136,13 +134,10 @@ class TorchApp(Citable,CLIApp):
             CSVLogger("logs", name=run_name)
         ]
         if wandb:
-            if wandb_project:
-                os.environ["WANDB_PROJECT"] = wandb_project
             if wandb_entity:
                 os.environ["WANDB_ENTITY"] = wandb_entity
 
             project_name = self.project_name(**kwargs)
-            breakpoint()
             wandb_logger = WandbLogger(name=run_name, project=project_name)
             loggers.append(wandb_logger)
         
