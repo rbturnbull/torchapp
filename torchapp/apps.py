@@ -128,6 +128,7 @@ class TorchApp(Citable,CLIApp):
         log_every_n_steps:int=50,
         **kwargs,
     ) -> L.Trainer:
+        output_dir = Path(output_dir)
         run_name = run_name or output_dir.name
 
         loggers = [

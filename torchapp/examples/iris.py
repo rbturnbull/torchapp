@@ -82,8 +82,9 @@ class IrisApp(ta.TorchApp):
         petal_width:float=ta.Param(...,help="The petal width in cm."), 
     ) -> list:
         assert sepal_width is not None
-        assert petal_length is not None
+        assert sepal_length is not None
         assert petal_width is not None
+        assert petal_length is not None
 
         x = torch.tensor([[sepal_length, sepal_width, petal_length, petal_width]], dtype=torch.float32)
         return [x]
@@ -98,4 +99,4 @@ class IrisApp(ta.TorchApp):
 
 
 if __name__ == "__main__":
-    IrisApp.tools()
+    IrisApp.tools_gui()
