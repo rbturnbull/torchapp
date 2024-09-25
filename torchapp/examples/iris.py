@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-import numpy as np
-from torch.utils.data import random_split, DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset
 from sklearn.datasets import load_iris
 from torch import nn
 import torchapp as ta
@@ -77,12 +76,11 @@ class IrisApp(ta.TorchApp):
     def prediction_dataloader(
         self, 
         module, 
-        sepal_length:float=None, 
-        sepal_width:float=None, 
-        petal_length:float=None, 
-        petal_width:float=None, 
+        sepal_length:float=ta.Param(...,help="The sepal length in cm."), 
+        sepal_width:float=ta.Param(...,help="The sepal width in cm."), 
+        petal_length:float=ta.Param(...,help="The petal length in cm."), 
+        petal_width:float=ta.Param(...,help="The petal width in cm."), 
     ) -> list:
-        assert sepal_length is not None
         assert sepal_width is not None
         assert petal_length is not None
         assert petal_width is not None
