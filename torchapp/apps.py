@@ -274,6 +274,32 @@ class TorchApp(Citable,CLIApp):
 
         return lightning_module, trainer
 
+    @tool("setup", "data", "load_checkpoint", "trainer")
+    def validate(
+        self,
+        **kwargs,
+    ) -> L.LightningModule:
+        """ Validate the model. """
+        style = 'bold red'
+        console.rule("Setting up", style=style)
+        self.setup(**kwargs)
+        
+        console.print("Setting up dataloaders")
+        data = self.data(**kwargs)
+        data.setup("fit")
+        validation_dataloader = self.validation_dataloader(**kwargs)
+
+        console.print("Setting up Module")
+        lightning_module = self.load_checkpoint(**kwargs)
+
+        console.print("Setting up Trainer")
+        trainer = self.trainer(**kwargs)
+
+        console.rule("Validating", style=style)
+        result = trainer.validate( lightning_module, data, validation_dataloader )
+
+        return result
+
     @method
     def checkpoint(self, checkpoint:Path=None, **kwargs) -> Path:
         """ Returns a path to a checkpoint to use for prediction. """
