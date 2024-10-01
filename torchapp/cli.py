@@ -162,6 +162,7 @@ class CLIApp:
         
     @tool
     def gui(self):
+        """ Launches a GUI for the tool commands. """
         launch_gui(self.tools_app)
 
     def add_to_main(self, func):
