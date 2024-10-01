@@ -329,7 +329,10 @@ class TorchApp(Citable,CLIApp):
 
         results = trainer.predict(module, dataloaders=prediction_dataloader)
 
-        return self.output_results(results, **kwargs)
+        # Concatenate results of prediction batches
+        results = torch.cat(results, dim=0)
+
+        return self.output_results(results, **kwargs)        
 
     @tool("train", "project_name")
     def tune(
