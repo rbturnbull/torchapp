@@ -1,6 +1,7 @@
 from typing import Type
 from pathlib import Path
 import os
+import sys
 from collections.abc import Iterable
 import inspect
 import typer
@@ -82,10 +83,12 @@ class TorchApp(Citable,CLIApp):
     @method("extra_callbacks")
     def callbacks(self, **kwargs):
         callbacks = [
-            RichProgressBar(leave=True),
             TimeLoggingCallback(),
             LogOptimizerCallback(),
         ]
+        if sys.stdout.isatty():
+            callbacks.append(RichProgressBar(leave=True))
+
         if checkpoint_callback := self.checkpoint_callback(**kwargs):
             callbacks.append(checkpoint_callback)
             
