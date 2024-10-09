@@ -128,6 +128,7 @@ class TorchApp(Citable,CLIApp):
         wandb_entity:str="",
         max_gpus:int=0,
         log_every_n_steps:int=50,
+        gradient_clip_val:float=Param(None, help="The value to clip the gradients to. If None, then no clipping is done."),
         **kwargs,
     ) -> L.Trainer:
         output_dir = Path(output_dir)
@@ -166,6 +167,7 @@ class TorchApp(Citable,CLIApp):
             callbacks=self.callbacks(**kwargs),
             profiler=self.profiler(**kwargs),
             log_every_n_steps=log_every_n_steps,
+            gradient_clip_val=gradient_clip_val,
         )
     
     @method
