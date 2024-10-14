@@ -8,7 +8,7 @@ import lightning as L
 from .metrics import AvgSmoothLoss
 
 class GeneralLightningModule(L.LightningModule):
-    def __init__(self, model, loss_function, max_learning_rate:float, input_count:int=1, metrics:list[tuple[str,Metric]]|None=None):
+    def __init__(self, model, loss_function, max_learning_rate:float, input_count:int=1, metrics:list[tuple[str,Metric]]|None=None, **kwargs):
         super().__init__()
         self.save_hyperparameters(logger=False)
         self.model = model
