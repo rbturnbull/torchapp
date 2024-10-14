@@ -218,10 +218,15 @@ class TorchApp(Citable,CLIApp):
         return 1
     
     @method
+    def extra_hyperparameters(self) -> dict:
+        """ Extra hyperparameters to save with the module. """
+        return {}
+    
+    @method
     def module_class(self) -> Type[GeneralLightningModule]:
         return GeneralLightningModule
         
-    @method("model", "loss_function")
+    @method("model", "loss_function", "extra_hyperparameters", "input_count", "metrics", "module_class")
     def lightning_module(
         self,
         max_learning_rate:float = 1e-4,
@@ -231,8 +236,8 @@ class TorchApp(Citable,CLIApp):
         loss_function = self.loss_function(**kwargs)
         metrics = self.metrics(**kwargs)
         input_count = self.input_count(**kwargs)
-
         module_class = self.module_class(**kwargs)
+        extras = self.extra_hyperparameters(**kwargs)
 
         return module_class(
             model=model,
@@ -240,6 +245,7 @@ class TorchApp(Citable,CLIApp):
             max_learning_rate=max_learning_rate,
             input_count=input_count,
             metrics=metrics,
+            **extras,
         )
     
     @tool("setup", "data", "lightning_module", "trainer")
