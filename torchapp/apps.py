@@ -341,7 +341,13 @@ class TorchApp(Citable,CLIApp):
         results = trainer.predict(module, dataloaders=prediction_dataloader)
 
         # Concatenate results of prediction batches
-        results = torch.cat(results, dim=0)
+        if len(results) == 0:
+            return None
+        if isinstance(results[0], tuple):
+            # zip and cat elements of tuples
+            results = tuple(torch.cat(elements, dim=0) for elements in zip(*results))
+        else:
+            results = torch.cat(results, dim=0)
 
         return self.output_results(results, **kwargs)        
 
