@@ -66,6 +66,13 @@ class TorchApp(Citable,CLIApp):
     def goal(self) -> str:
         return "minimize" if "loss" in self.monitor() else "maximize"
 
+    @method
+    def checkpoint(self, checkpoint:Path=None, **kwargs) -> Path:
+        """ Returns a path to a checkpoint to use for prediction. """
+        if not checkpoint:
+            raise ValueError("Please provide a checkpoint path or implement the 'checkpoint' method in your app.")
+        return checkpoint
+
     @method("monitor")
     def checkpoint_callback(self, save_top_k:int=1, save_weights_only:bool=True) -> ModelCheckpoint:
         monitor = self.monitor()
