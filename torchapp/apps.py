@@ -6,7 +6,9 @@ from collections.abc import Iterable
 import inspect
 import typer
 import torch
+import hashlib
 from torch import nn
+from appdirs import user_cache_dir
 import lightning as L
 from lightning.pytorch.callbacks import RichProgressBar, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, WandbLogger
@@ -19,7 +21,7 @@ from .callbacks import TimeLoggingCallback, LogOptimizerCallback
 from .cli import CLIApp, method, main, tool
 from .citations import Citable
 from .params import Param
-
+from .download import cached_download
 
 console = Console()
 
@@ -310,13 +312,45 @@ class TorchApp(Citable,CLIApp):
 
         return result
 
-    @method
-    def checkpoint(self, checkpoint:Path=None, **kwargs) -> Path:
-        """ Returns a path to a checkpoint to use for prediction. """
-        if not checkpoint:
-            raise ValueError("Please provide a checkpoint path or implement the 'checkpoint' method in your app.")
-        return checkpoint
+    @method("checkpoint")
+    def load_checkpoint(
+        self, 
+        reload: bool = Param(
+            default=False,
+            help="Should the checkpoint be downloaded again if it is online and already present locally.",
+        ),
+        **kwargs,
+    ) -> L.LightningModule:
+        module_class = self.module_class(**kwargs)
+
+        location = self.checkpoint(**kwargs)
+        location = str(location)
+        if location.startswith("http"):
+            name = location.split("/")[-1]
+            extension_location = name.rfind(".")
+            if extension_location:
+                name_stem = name[:extension_location]
+                extension = name[extension_location:]
+            else:
+                name_stem = name
+                extension = ".dat"
+            url_hash = hashlib.md5(location.encode()).hexdigest()
+            path = self.cache_dir()/f"{name_stem}-{url_hash}{extension}"
+            cached_download(location, path, force=reload)
+
+        path = Path(location)
+
+        if not path or not path.is_file():
+            raise FileNotFoundError(f"Cannot find pretrained model at '{path}'")
+
+        return module_class.load_from_checkpoint(self.checkpoint(**kwargs))
         
+    def cache_dir(self) -> Path:
+        """ Returns a path to a directory where data files for this app can be cached. """
+        cache_dir = Path(user_cache_dir("torchapps"))/self.__class__.__name__
+        cache_dir.mkdir(exist_ok=True, parents=True)
+        return cache_dir
+
     @method("checkpoint")
     def load_checkpoint(self, **kwargs) -> L.LightningModule:
         module_class = self.module_class(**kwargs)
