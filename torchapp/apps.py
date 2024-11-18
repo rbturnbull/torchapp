@@ -344,8 +344,8 @@ class TorchApp(Citable,CLIApp):
             url_hash = hashlib.md5(location.encode()).hexdigest()
             path = self.cache_dir()/f"{name_stem}-{url_hash}{extension}"
             cached_download(location, path, force=reload)
-
-        path = Path(location)
+        else:
+            path = Path(location)
 
         if not path or not path.is_file():
             raise FileNotFoundError(f"Cannot find pretrained model at '{path}'")
@@ -357,11 +357,6 @@ class TorchApp(Citable,CLIApp):
         cache_dir = Path(user_cache_dir("torchapps"))/self.__class__.__name__
         cache_dir.mkdir(exist_ok=True, parents=True)
         return cache_dir
-
-    @method("checkpoint")
-    def load_checkpoint(self, **kwargs) -> L.LightningModule:
-        module_class = self.module_class(**kwargs)
-        return module_class.load_from_checkpoint(self.checkpoint(**kwargs))
     
     @method
     def prediction_trainer(self, module) -> L.Trainer:
