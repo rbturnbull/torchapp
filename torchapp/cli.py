@@ -140,8 +140,8 @@ class CLICommand(TyperCommand):
 class CLIApp:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.main_app = typer.Typer()
-        self.tools_app = typer.Typer()
+        self.main_app = typer.Typer(pretty_exceptions_enable=False)
+        self.tools_app = typer.Typer(pretty_exceptions_enable=False)
         self.register_methods()
 
     @classmethod

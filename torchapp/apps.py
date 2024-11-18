@@ -350,7 +350,7 @@ class TorchApp(Citable,CLIApp):
         if not path or not path.is_file():
             raise FileNotFoundError(f"Cannot find pretrained model at '{path}'")
 
-        return module_class.load_from_checkpoint(self.checkpoint(**kwargs))
+        return module_class.load_from_checkpoint(location)
         
     def cache_dir(self) -> Path:
         """ Returns a path to a directory where data files for this app can be cached. """
