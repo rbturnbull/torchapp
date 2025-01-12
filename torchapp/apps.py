@@ -74,20 +74,43 @@ class TorchApp(Citable,CLIApp):
         return checkpoint
 
     @method("monitor")
-    def checkpoint_callback(self, save_top_k:int=1, save_weights_only:bool=True) -> ModelCheckpoint:
+    def checkpoint_callback(self, save_top_k:int=1) -> ModelCheckpoint|list[ModelCheckpoint]:
         monitor = self.monitor()
 
         goal = self.goal()
         goal = goal.lower()[:3]
         assert goal in ["min", "max"], f"Goal '{goal}' not recognized."
-        return ModelCheckpoint(
+
+        class WeightsOnlyCheckpoint(ModelCheckpoint):
+            @property
+            def state_key(self) -> str:
+                return "weights_only_checkpoint"
+
+        checkpoints = []
+        weights_checkpoint = WeightsOnlyCheckpoint(
             save_top_k=save_top_k,
             monitor=monitor,
             mode=goal,
-            save_weights_only=save_weights_only,
+            save_weights_only=True,
+            filename="weights-{epoch:02d}-{"+monitor+":.2g}",
+            verbose=True,
+        )
+        # weights_checkpoint.state_key = "weights"
+        checkpoints.append(weights_checkpoint)
+
+        checkpoint = ModelCheckpoint(
+            save_top_k=save_top_k,
+            monitor=monitor,
+            mode=goal,
+            save_weights_only=False,
             filename="checkpoint-{epoch:02d}-{"+monitor+":.2g}",
             verbose=True,
         )
+        # checkpoint.state_key = "checkpoint"
+
+        checkpoints.append(checkpoint)
+
+        return checkpoints
 
     @method("extra_callbacks")
     def callbacks(self, **kwargs):
@@ -98,8 +121,10 @@ class TorchApp(Citable,CLIApp):
         if sys.stdout.isatty():
             callbacks.append(RichProgressBar(leave=True))
 
-        if checkpoint_callback := self.checkpoint_callback(**kwargs):
-            callbacks.append(checkpoint_callback)
+        if checkpoint_callbacks := self.checkpoint_callback(**kwargs):
+            if isinstance(checkpoint_callbacks, ModelCheckpoint):
+                checkpoint_callbacks = [checkpoint_callbacks]
+            callbacks.extend(checkpoint_callbacks)
             
         callbacks += self.extra_callbacks(**kwargs) or []
         return callbacks
@@ -344,6 +369,7 @@ class TorchApp(Citable,CLIApp):
             url_hash = hashlib.md5(location.encode()).hexdigest()
             path = self.cache_dir()/f"{name_stem}-{url_hash}{extension}"
             cached_download(location, path, force=reload)
+            location = path
         else:
             path = Path(location)
 
