@@ -2,6 +2,7 @@ from typing import Callable
 import typer
 from typer.core import TyperCommand
 from inspect import signature, Parameter
+from typer.models import OptionInfo
 from dataclasses import dataclass
 import guigaga
 from guigaga.interface import InterfaceBuilder
@@ -79,7 +80,14 @@ class Method():
         return self.func.__name__
 
     def __call__(self, *args, **kwargs):
-        func_kwargs = {k: v for k, v in kwargs.items() if k in signature(self.func).parameters}
+        parameters = signature(self.func).parameters
+        func_kwargs = {k: v for k, v in kwargs.items() if k in parameters}
+        
+        # Replace default values if they are OptionInfo
+        for key,value in parameters.items(): 
+            if key not in func_kwargs and isinstance(value.default, OptionInfo):
+                func_kwargs[key] = value.default.default
+
         if 'opts' in kwargs:
             self.obj.opts = kwargs['opts']
         return self.func(self.obj, *args, **func_kwargs)
