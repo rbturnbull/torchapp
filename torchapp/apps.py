@@ -393,6 +393,10 @@ class TorchApp(Citable,CLIApp):
     def output_results(self, results, **kwargs):
         raise NotImplementedError(f"Please ensure that the 'output_results' method is implemented in {self.__class__.__name__}.")
 
+    @method("predict")
+    def __call__(self, **kwargs):
+        return self.predict(**kwargs)
+
     @main("load_checkpoint", "prediction_trainer", "prediction_dataloader", "output_results")
     def predict(self, **kwargs):
         """ Make predictions with the model. """
