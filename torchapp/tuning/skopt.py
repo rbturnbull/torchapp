@@ -5,10 +5,9 @@ try:
     import skopt
     from skopt.space.space import Real, Integer, Categorical
     from skopt.callbacks import CheckpointSaver
-    from skopt.plots import plot_convergence, plot_evaluations, plot_objective
-except:
+except ImportError as err:
     raise Exception(
-        "No module named 'skopt'. Please install this as an extra dependency or choose a different optimization engine."
+        f"Error loading 'skopt'. Please install this as an extra dependency or choose a different optimization engine.\n{err}"
     )
 
 
@@ -50,6 +49,7 @@ class SkoptPlot(object):
         self.format = format
 
     def __call__(self, result):
+        from skopt.plots import plot_convergence, plot_evaluations, plot_objective
         import matplotlib.pyplot as plt
         import matplotlib
         matplotlib.use('Agg')

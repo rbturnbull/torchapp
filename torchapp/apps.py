@@ -64,7 +64,8 @@ class TorchApp(Citable,CLIApp):
     
     @method
     def goal(self) -> str:
-        return "minimize" if "loss" in self.monitor() else "maximize"
+        monitor = self.monitor() or "valid_loss"
+        return "minimize" if "loss" in monitor else "maximize"
 
     @method
     def checkpoint(self, checkpoint:Path=None, **kwargs) -> Path:

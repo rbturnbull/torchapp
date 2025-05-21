@@ -5,7 +5,6 @@ import pandas as pd
 from torch import nn
 import torch
 import torchapp as ta
-from torchapp.blocks import BoolBlock, Float32Block
 from torchapp.metrics import logit_accuracy, logit_f1
 import torchapp as ta
 from torch.utils.data import DataLoader, Dataset

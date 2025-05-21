@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import get_type_hints, List
 import torchvision.models as models
 from torch import nn
-from fastai.vision.learner import cnn_learner, unet_learner
 
 from ..apps import TorchApp
 from ..params import Param

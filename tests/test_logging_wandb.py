@@ -1,4 +1,3 @@
-from torchapp.callbacks.wandb import TorchAppWandbCallback, wandb
 from torchapp.examples.iris import IrisApp
 import tempfile
 

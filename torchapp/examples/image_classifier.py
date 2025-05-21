@@ -1,21 +1,15 @@
 from typing import List
 from pathlib import Path
 import torch
-from fastai.data.block import DataBlock, CategoryBlock
-from fastai.data.transforms import ColReader, RandomSplitter, DisplayedTransform, ColSplitter, get_image_files
-from fastai.metrics import accuracy
-from fastai.vision.data import ImageBlock
-from fastai.vision.augment import Resize, ResizeMethod
 import pandas as pd
 import torchapp as ta
-from fastai.vision.augment import aug_transforms
 
 from torchapp.examples.vision import VisionApp
 from rich.console import Console
 console = Console()
 
 
-class PathColReader(DisplayedTransform):
+class PathColReader():
     def __init__(self, column_name: str, base_dir: Path):
         self.column_name = column_name
         self.base_dir = base_dir
