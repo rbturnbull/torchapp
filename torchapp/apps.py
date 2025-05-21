@@ -344,18 +344,12 @@ class TorchApp(Citable,CLIApp):
 
         return result
 
-    @method("checkpoint")
-    def load_checkpoint(
-        self, 
-        reload: bool = Param(
-            default=False,
-            help="Should the checkpoint be downloaded again if it is online and already present locally.",
-        ),
-        **kwargs,
-    ) -> L.LightningModule:
-        module_class = self.module_class(**kwargs)
-
-        location = self.checkpoint(**kwargs)
+    def process_location(self, location: str, reload:bool=False) -> Path:
+        """
+        Process a location string into a Path
+        
+        Can be a URL or a local path.
+        """
         location = str(location)
         if location.startswith("http"):
             name = location.split("/")[-1]
@@ -372,6 +366,22 @@ class TorchApp(Citable,CLIApp):
             location = path
         else:
             path = Path(location)
+        
+        return path
+
+    @method("checkpoint")
+    def load_checkpoint(
+        self, 
+        reload: bool = Param(
+            default=False,
+            help="Should the checkpoint be downloaded again if it is online and already present locally.",
+        ),
+        **kwargs,
+    ) -> L.LightningModule:
+        module_class = self.module_class(**kwargs)
+
+        location = self.checkpoint(**kwargs)
+        path = self.process_location(location, reload=reload)
 
         if not path or not path.is_file():
             raise FileNotFoundError(f"Cannot find pretrained model at '{path}'")
