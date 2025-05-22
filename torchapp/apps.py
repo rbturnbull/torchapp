@@ -431,6 +431,7 @@ class TorchApp(Citable,CLIApp):
     @tool("train", "project_name")
     def tune(
         self,
+        output_dir:Path=Param("./outputs", help="The location of the output directory."),
         runs: int = Param(default=1, help="The number of runs to attempt to train the model."),
         engine: str = Param(
             default="skopt",
@@ -490,6 +491,7 @@ class TorchApp(Citable,CLIApp):
                 name=name,
                 method=method,
                 seed=seed,
+                output_dir=output_dir,
                 **kwargs,
             )
         elif engine in ["skopt", "scikit-optimize"]:

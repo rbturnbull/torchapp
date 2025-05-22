@@ -58,7 +58,7 @@ def test_optuna_tune_tpe():
     with tempfile.TemporaryDirectory() as tmp_dir:
         storage_path = Path(tmp_dir).resolve()/f"{id}.sqlite3"
         result = app.tune(engine="optuna", id=id, method="tpe", runs=runs, seed=42, output_dir=tmp_dir)
-        best_value = result.best_value   
+        # best_value = result.best_value   
         result_runs = len(result.trials)
         df = result.trials_dataframe()
 

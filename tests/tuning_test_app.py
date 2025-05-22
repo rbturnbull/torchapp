@@ -1,3 +1,4 @@
+import torch
 import torchapp as ta
 import numpy as np
 
@@ -6,23 +7,26 @@ MOCK_METRIC = "metric"
 categorical_choices = ["abcdefghij", "baby", "c"]
 
 
-class MockRecorder:
-    def __init__(self, value, metric_name=MOCK_METRIC, epochs=20):
-        self.metric_names = ["epoch", "other", metric_name]
-        self.values = []
-        for epoch in range(epochs):
-            self.values.append([-2.22, epoch - epochs + 1 + value])
-
-
-class MockLearner:
+class MockCheckpoint:
     def __init__(self, value):
-        self.recorder = MockRecorder(value=value)
+        self.best_model_score = torch.tensor(value)
+
+
+class MockTrainer:
+    def __init__(self, value):
+        self.checkpoint_callback = MockCheckpoint(value=value)
+
+
+class MockLightningModule:
+    pass
 
 
 class TuningTestApp(ta.TorchApp):
+    @ta.method
     def monitor(self):
         return MOCK_METRIC
 
+    @ta.tool
     def train(
         self,
         x: float = ta.Param(default=0.0, tune=True, min=-10.0, max=10.0, help="A real parameter in [-10.0,10.0]."),
@@ -49,4 +53,4 @@ class TuningTestApp(ta.TorchApp):
         c = len(string)
 
         value = c * switch - a * (x - 2.0) ** 2 - a + 1
-        return MockLearner(value=value)
+        return MockLightningModule(), MockTrainer(value=value)

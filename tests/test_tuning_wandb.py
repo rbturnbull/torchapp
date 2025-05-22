@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch
 import torchapp as ta
 from torchapp import params
 from torchapp.tuning.wandb import get_parameter_config, get_sweep_config
