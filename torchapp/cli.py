@@ -24,12 +24,16 @@ class CLIAppTyper(typer.Typer):
         super().__init__(pretty_exceptions_enable=pretty_exceptions_enable, add_completion=add_completion, **kwargs)
         self.cliapp = cliapp
 
+    def getcommand(self) -> click.Command:
+        command = typer.main.get_command(self)
+        self.patch_command(command)
+        return command
+
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         if sys.excepthook != typer.main.except_hook:
             sys.excepthook = typer.main.except_hook
         try:
-            command = typer.main.get_command(self)
-            self.patch_command(command)
+            command = self.getcommand()
             return command(*args, **kwargs)
         except Exception as e:
             # Set a custom attribute to tell the hook to show nice exceptions for user

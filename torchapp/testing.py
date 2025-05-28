@@ -5,13 +5,16 @@ import importlib
 import pytest
 import torch
 from typing import get_type_hints
-from typer.testing import CliRunner
 from pathlib import Path
 import difflib
 from torch import nn
 from collections import OrderedDict
 from rich.console import Console
+from typing import IO, Any, Mapping, Optional, Sequence, Union
+from click.testing import CliRunner as ClickCliRunner  # noqa
+from click.testing import Result
 
+from .cli import CLIAppTyper 
 from .apps import TorchApp
 
 console = Console()
@@ -19,6 +22,29 @@ console = Console()
 ######################################################################
 ## pytest fixtures
 ######################################################################
+
+
+class CliRunner(ClickCliRunner):
+    def invoke(  # type: ignore
+        self,
+        app: CLIAppTyper,
+        args: Optional[Union[str, Sequence[str]]] = None,
+        input: Optional[Union[bytes, str, IO[Any]]] = None,
+        env: Optional[Mapping[str, str]] = None,
+        catch_exceptions: bool = True,
+        color: bool = False,
+        **extra: Any,
+    ) -> Result:
+        use_cli = app.getcommand()
+        return super().invoke(
+            use_cli,
+            args=args,
+            input=input,
+            env=env,
+            catch_exceptions=catch_exceptions,
+            color=color,
+            **extra,
+        )
 
 
 @pytest.fixture
@@ -162,11 +188,10 @@ class TorchAppTestCase:
         self.expected_base = Path(self.expected_base)
         return self.expected_base
 
-    def test_main_version(self):
+    def test_version_main(self):
         app = self.get_app()
         runner = CliRunner()
         result = runner.invoke(app.main_app, ["--version"])
-        breakpoint()
         assert result.exit_code == 0
         assert re.match(r"^(\d+\.)?(\d+\.)?(\*|\d+)$", result.stdout)
 
