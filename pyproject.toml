@@ -78,3 +78,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 torchapp = "torchapp.cookiecutter:app"
 torchapp-imageclassifier = "torchapp.examples.image_classifier:ImageClassifier.main"
+torchapp-imageclassifier-tools = "torchapp.examples.image_classifier:ImageClassifier.tools"

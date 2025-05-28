@@ -70,11 +70,11 @@ class CLIAppTyper(typer.Typer):
             cmd.params.insert(
                 flag_index,
                 click.Option(
-                    ["--version", "-v"],
+                    [f"--{attr_name}"],
                     is_flag=True,
                     is_eager=True,
                     expose_value=False,
-                    help="Show version and exit",
+                    help=(attr.__doc__ or "").strip().splitlines()[0] if attr.__doc__ else None,
                     callback=run_flag_function,
                 )
             )

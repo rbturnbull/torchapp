@@ -538,7 +538,7 @@ class TorchApp(Citable,CLIApp):
         self,
     ) -> str:
         """
-        Prints the version of the package that defines this app.
+        The version of this package.
         """
         version_info = "1.0.0"
         return version_info
