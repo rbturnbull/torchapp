@@ -36,12 +36,6 @@ class LogisticRegressionDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
-        # print("--------------")
-        # print("row, idx")
-        # print(row, idx)
-        # print("row[self.x_columns]")
-        # print(row[self.x_columns])
-        # print(row[self.x_columns].values)
         x = torch.tensor([row[self.x_columns].item()], dtype=torch.float32)
         y = torch.tensor([row[self.y_column]], dtype=torch.float32)
         return x, y

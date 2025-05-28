@@ -354,7 +354,9 @@ class TorchAppTestCase:
 
         for params, expected_output, file in self.subtests(app, name):
             modified_params = dict(params)
-            for key, value in inspect.signature(method.func).parameters.items():
+
+            function = method.func if hasattr(method, 'func') else method
+            for key, value in inspect.signature(function).parameters.items():
                 # if this is a union class, then loop over all options
                 if not isinstance(value, type) and hasattr(value, "__args__"):  # This is the case for unions
                     values = value.__args__

@@ -1,13 +1,62 @@
-from typing import List
+import enum
 from pathlib import Path
-import torch
+import types
 import pandas as pd
+import torch
+from typing import get_type_hints
+from torch import nn
+import torchvision.models as models
+import lightning as L
+from torchmetrics import Metric, Accuracy
 import torchapp as ta
 
 from torchapp.examples.vision import VisionApp
 from rich.console import Console
 console = Console()
 
+
+def accuracy(predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    """
+    Computes the accuracy of predictions against targets.
+    
+    Args:
+        predictions (torch.Tensor): The predicted values.
+        targets (torch.Tensor): The ground truth values.
+    
+    Returns:
+        torch.Tensor: The accuracy as a tensor.
+    """
+    return (predictions == targets).float().mean()
+
+def torchvision_model_choices() -> list[str]:
+    """
+    Returns a list of function names in torchvision.models which can produce torch modules.
+
+    For more information see: https://pytorch.org/vision/stable/models.html
+    """
+    model_choices = [""]  # Allow for blank option
+    for item in dir(models):
+        obj = getattr(models, item)
+
+        # Only accept functions
+        if isinstance(obj, types.FunctionType):
+
+            # Only accept if the return value is a pytorch module
+            hints = get_type_hints(obj)
+            return_value = hints.get("return", "")
+            try:
+                mro = return_value.mro()
+                if nn.Module in mro:
+                    model_choices.append(item)
+            except TypeError:
+                pass
+
+    return model_choices
+
+TorchvisionModelEnum = enum.Enum(
+    "TorchvisionModelName",
+    {model_name if model_name else "default": model_name for model_name in torchvision_model_choices()},
+)
 
 class PathColReader():
     def __init__(self, column_name: str, base_dir: Path):
@@ -27,8 +76,27 @@ class ImageClassifier(VisionApp):
 
     For training, it expects a CSV with image paths and categories.
     """
+    def default_model_name(self):
+        return "resnet18"
 
-    def dataloaders(
+    @ta.method
+    def model(
+        self,
+        model_name: TorchvisionModelEnum = ta.Param(
+            default="",
+            help="The name of a model architecture in torchvision.models (https://pytorch.org/vision/stable/models.html). If not given, then it is given by `default_model_name`",
+        ),
+    ):
+        if not model_name:
+            model_name = self.default_model_name()
+
+        if not hasattr(models, model_name):
+            raise ValueError(f"Model '{model_name}' not recognized.")
+
+        return getattr(models, model_name)
+    
+    @ta.method
+    def data(
         self,
         csv: Path = ta.Param(default=None, help="A CSV with image paths and categories."),
         image_column: str = ta.Param(default="image", help="The name of the column with the image paths."),
@@ -60,7 +128,7 @@ class ImageClassifier(VisionApp):
         do_flip:bool=False,
         p_affine:float=0.75,
         p_lighting:float=0.75,
-    ):
+    ) -> L.LightningDataModule:
         df = pd.read_csv(csv)
 
         base_dir = base_dir or Path(csv).parent
@@ -98,16 +166,19 @@ class ImageClassifier(VisionApp):
 
         return datablock.dataloaders(df, bs=batch_size)
 
+    @ta.method
     def metrics(self):
         return [accuracy]
 
+    @ta.method
     def monitor(self):
         return "accuracy"
 
-    def inference_dataloader(
+    @ta.method
+    def prediction_dataloader(
         self, 
         learner, 
-        items:List[Path] = None, 
+        items:list[Path] = None, 
         csv: Path = ta.Param(default=None, help="A CSV with image paths."),
         image_column: str = ta.Param(default="image", help="The name of the column with the image paths."),
         base_dir: Path = ta.Param(default="./", help="The base directory for images with relative paths."),
@@ -145,6 +216,7 @@ class ImageClassifier(VisionApp):
 
         return learner.dls.test_dl(self.items, **kwargs)
 
+    @ta.method
     def output_results(
         self, 
         results, 
@@ -172,4 +244,4 @@ class ImageClassifier(VisionApp):
 
 
 if __name__ == "__main__":
-    ImageClassifier.main()
+    ImageClassifier.tools()
