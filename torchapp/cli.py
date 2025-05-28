@@ -67,10 +67,18 @@ class CLIAppTyper(typer.Typer):
                         typer.echo(result)
                     raise typer.Exit()
 
+            # Add shortcut and flag to the command
+            option_params = [f"--{attr_name}"]
+            if attr.shortcut:
+                shortcut = attr.shortcut
+                if shortcut[0] != "-":
+                    shortcut = f"-{shortcut}"
+                option_params.append(shortcut)
+                
             cmd.params.insert(
                 flag_index,
                 click.Option(
-                    [f"--{attr_name}"],
+                    option_params,
                     is_flag=True,
                     is_eager=True,
                     expose_value=False,
@@ -143,6 +151,7 @@ class Method():
     main: bool = False    
     tool: bool = False    
     flag: bool = False
+    shortcut: str = ""
     signature_ready: bool = False
     obj = None
 
@@ -172,12 +181,12 @@ class Method():
         return self.func.__doc__
 
 
-def method(*args, main:bool=False, tool:bool=False, flag:bool=False):
+def method(*args, main:bool=False, tool:bool=False, flag:bool=False, shortcut:str=""):
     if len(args) == 1 and callable(args[0]):
-        return Method(args[0], [], main=main, tool=tool, flag=flag)
+        return Method(args[0], [], main=main, tool=tool, flag=flag, shortcut=shortcut)
     
     def decorator(func):
-        return Method(func, args, main=main, tool=tool, flag=flag)
+        return Method(func, args, main=main, tool=tool, flag=flag, shortcut=shortcut)
 
     return decorator
 

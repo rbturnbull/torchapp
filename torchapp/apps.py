@@ -533,13 +533,33 @@ class TorchApp(Citable,CLIApp):
                 
         return tuning_params
 
-    @flag
+    @flag(shortcut="-v")
     def version(
         self,
     ) -> str:
         """
         The version of this package.
         """
-        version_info = "1.0.0"
-        return version_info
+        from importlib import metadata
+
+        module = inspect.getmodule(self)
+        package = ""
+        if module.__package__:
+            package = module.__package__.split('.')[0]
+        else:
+            path = Path(module.__file__).parent
+            while path.name:
+                try:
+                    if metadata.distribution(path.name):
+                        package = path.name
+                        break
+                except Exception:
+                    pass
+                path = path.parent
+
+        if package:
+            version = metadata.version(package)
+        else:
+            raise Exception("Cannot find package.")
         
+        return version
