@@ -1,2 +1,2 @@
 params: {}
-output: '[MulticlassAccuracy()]'
+output: '[<function accuracy at <HEX>>]'
