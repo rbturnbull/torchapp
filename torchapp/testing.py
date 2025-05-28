@@ -5,7 +5,7 @@ import importlib
 import pytest
 import torch
 from typing import get_type_hints
-from click.testing import CliRunner
+from typer.testing import CliRunner
 from pathlib import Path
 import difflib
 from torch import nn
@@ -162,10 +162,11 @@ class TorchAppTestCase:
         self.expected_base = Path(self.expected_base)
         return self.expected_base
 
-    def test_cli_version(self):
+    def test_main_version(self):
         app = self.get_app()
         runner = CliRunner()
-        result = runner.invoke(app.cli(), "--version")
+        result = runner.invoke(app.main_app, ["--version"])
+        breakpoint()
         assert result.exit_code == 0
         assert re.match(r"^(\d+\.)?(\d+\.)?(\*|\d+)$", result.stdout)
 

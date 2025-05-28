@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Optional
 from pathlib import Path
 import os
 import sys
@@ -26,6 +26,10 @@ from .download import cached_download
 console = Console()
 
 BIBTEX_DIR = Path(__file__).parent / "bibtex"
+
+
+def version_callback():
+    print("version callback func - needs to be implemented in the app")
 
 
 class TorchApp(Citable,CLIApp):
@@ -529,4 +533,13 @@ class TorchApp(Citable,CLIApp):
                 
         return tuning_params
 
-
+    @method(global_option=True)
+    def version(
+        self,
+    ) -> str:
+        """
+        Prints the version of the package that defines this app.
+        """
+        version_info = "1.0.0"
+        return version_info
+        

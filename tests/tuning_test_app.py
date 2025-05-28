@@ -23,6 +23,10 @@ class MockLightningModule:
 
 class TuningTestApp(ta.TorchApp):
     @ta.method
+    def data(self, **kwargs):
+        return []
+
+    @ta.method
     def monitor(self):
         return MOCK_METRIC
 

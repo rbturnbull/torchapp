@@ -1,4 +1,7 @@
+import sys
 from typing import Callable
+import click
+from typing import Any
 import typer
 from typer.core import TyperCommand
 from inspect import signature, Parameter
@@ -7,8 +10,75 @@ from dataclasses import dataclass
 import guigaga
 from guigaga.interface import InterfaceBuilder
 from guigaga.themes import Theme
-from typing import Callable, Optional, Union
-import click
+from typing import Callable, Optional
+
+
+class CLIAppTyper(typer.Typer):
+    def __init__(
+        self,
+        cliapp: "CLIApp",
+        pretty_exceptions_enable: bool = False,
+        add_completion:bool=False,
+        **kwargs: Any
+    ):
+        super().__init__(pretty_exceptions_enable=pretty_exceptions_enable, add_completion=add_completion, **kwargs)
+        self.cliapp = cliapp
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        if sys.excepthook != typer.main.except_hook:
+            sys.excepthook = typer.main.except_hook
+        try:
+            command = typer.main.get_command(self)
+            self.patch_command(command)
+            return command(*args, **kwargs)
+        except Exception as e:
+            # Set a custom attribute to tell the hook to show nice exceptions for user
+            # code. An alternative/first implementation was a custom exception with
+            # raise custom_exc from e
+            # but that means the last error shown is the custom exception, not the
+            # actual error. This trick improves developer experience by showing the
+            # actual error last.
+            setattr(
+                e,
+                typer.main._typer_developer_exception_attr_name,
+                typer.main.DeveloperExceptionConfig(
+                    pretty_exceptions_enable=self.pretty_exceptions_enable,
+                    pretty_exceptions_show_locals=self.pretty_exceptions_show_locals,
+                    pretty_exceptions_short=self.pretty_exceptions_short,
+                ),
+            )
+            raise e
+
+    def patch_command(self, cmd: click.Command) -> click.Command:
+        global_option_index = 0
+        for attr_name in dir(self.cliapp):
+            attr = getattr(self.cliapp, attr_name)
+
+            if not isinstance(attr, Method):
+                continue
+
+            if not attr.global_option:
+                continue
+
+            def run_option(ctx, param, value):
+                if value:
+                    result = attr()
+                    if result is not None:
+                        typer.echo(result)
+                    raise typer.Exit()
+
+            cmd.params.insert(
+                global_option_index,
+                click.Option(
+                    ["--version", "-v"],
+                    is_flag=True,
+                    is_eager=True,
+                    expose_value=False,
+                    help="Show version and exit",
+                    callback=run_option,
+                )
+            )
+            global_option_index += 1
 
 
 def launch_gui(typer_app:typer.Typer):
@@ -72,6 +142,7 @@ class Method():
     methods_to_call: list[str]
     main: bool = False    
     tool: bool = False    
+    global_option: bool = False
     signature_ready: bool = False
     obj = None
 
@@ -101,22 +172,22 @@ class Method():
         return self.func.__doc__
 
 
-def method(*args, main:bool=False, tool:bool=False):
+def method(*args, main:bool=False, tool:bool=False, global_option:bool=False):
     if len(args) == 1 and callable(args[0]):
-        return Method(args[0], [], main=main, tool=tool)
+        return Method(args[0], [], main=main, tool=tool, global_option=global_option)
     
     def decorator(func):
-        return Method(func, args, main=main, tool=tool)
+        return Method(func, args, main=main, tool=tool, global_option=global_option)
 
     return decorator
 
 
-def tool(*methods_to_call):
-    return method(*methods_to_call, tool=True)
+def tool(*methods_to_call, **kwargs):
+    return method(*methods_to_call, tool=True, **kwargs)
 
 
-def main(*methods_to_call):
-    return method(*methods_to_call, main=True, tool=True)
+def main(*methods_to_call, **kwargs):
+    return method(*methods_to_call, main=True, tool=True, **kwargs)
 
 
 def collect_arguments(*funcs):
@@ -148,13 +219,14 @@ class CLICommand(TyperCommand):
 class CLIApp:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.main_app = typer.Typer(pretty_exceptions_enable=False)
-        self.tools_app = typer.Typer(pretty_exceptions_enable=False)
+        self.main_app = CLIAppTyper(self)
+        self.tools_app = CLIAppTyper(self)
         self.register_methods()
 
     @classmethod
     def main(cls):
-        cls().main_app()
+        main_app = cls().main_app
+        main_app()
 
     @classmethod
     def tools(cls):
@@ -173,13 +245,16 @@ class CLIApp:
         """ Launches a GUI for the tool commands. """
         launch_gui(self.tools_app)
 
-    def add_to_main(self, func):
-        self.main_app.command(cls=CLICommand)(func)
+    def add_to_app(self, app:typer.Typer, func:Method) -> Method:
+        if not func.global_option:
+            app.command(cls=CLICommand)(func)
         return func
 
-    def add_to_tools(self, func):
-        self.tools_app.command(cls=CLICommand)(func)
-        return func
+    def add_to_main(self, func:Method) -> Method:
+        return self.add_to_app(self.main_app, func)
+
+    def add_to_tools(self, func:Method) -> Method:
+        return self.add_to_app(self.tools_app, func)
 
     def register_methods(self):
         for attr_name in dir(self):

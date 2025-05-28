@@ -173,3 +173,4 @@ mlruns
 torchapp/examples/charlm.py
 logs/
 lightning_logs/
+x*.py
