@@ -383,7 +383,7 @@ class TorchAppTestCase:
     def test_monitor(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
-    def test_pretrained_location(self, interactive: bool):
+    def test_checkpoint(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
     def test_one_batch_size(self, interactive: bool):
@@ -401,23 +401,41 @@ class TorchAppTestCase:
     def test_bibtex(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
-    def cli_commands_to_test(self):
+    def tool_commands_to_test(self):
         return [
             "--help",
             "train --help",
-            "infer --help",
-            "show-batch --help",
+            "predict --help",
+            # "show-batch --help",
             "tune --help",
-            "bibtex",
-            "bibliography",
+            "--bibtex",
+            "--version",
+            "--bibliography",
         ]
 
-    def test_cli(self):
+    def test_tools_cli(self):
         app = self.get_app()
         runner = CliRunner()
-        for command in self.cli_commands_to_test():
+        for command in self.tools_commands_to_test():
             print(command)
-            result = runner.invoke(app.cli(), command.split())
+            result = runner.invoke(app.tools_app, command.split())
+            assert result.exit_code == 0
+            assert result.stdout
+
+    def main_commands_to_test(self):
+        return [
+            "--help",
+            "--bibtex",
+            "--version",
+            "--bibliography",
+        ]
+
+    def test_tools_cli(self):
+        app = self.get_app()
+        runner = CliRunner()
+        for command in self.main_commands_to_test():
+            print(command)
+            result = runner.invoke(app.main_app, command.split())
             assert result.exit_code == 0
             assert result.stdout
 
