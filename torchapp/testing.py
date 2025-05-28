@@ -1,4 +1,5 @@
 import re
+from collections.abc import Iterable
 import sys
 import yaml
 import importlib
@@ -289,12 +290,12 @@ class TorchAppTestCase:
 
             assert_output(file, interactive, params, model_summary, expected_output, regenerate=regenerate)
 
-    def test_dataloaders(self, interactive: bool):
+    def test_data(self, interactive: bool):
         app = self.get_app()
         for params, expected_output, file in self.subtests(app, sys._getframe().f_code.co_name):
             # Make all paths relative to the result of get_expected_dir()
             modified_params = dict(params)
-            hints = get_type_hints(app.dataloaders)
+            hints = get_type_hints(app.data)
             for key, value in hints.items():
                 # if this is a union class, then loop over all options
                 if not isinstance(value, type) and hasattr(value, "__args__"):  # This is the case for unions
@@ -308,9 +309,9 @@ class TorchAppTestCase:
                         modified_params[key] = (self.get_expected_dir() / relative_path).resolve()
                         break
 
-            dataloaders = app.dataloaders(**modified_params)
+            data = app.data(**modified_params)
 
-            assert isinstance(dataloaders, DataLoaders)
+            assert isinstance(data, Iterable)
 
             batch = dataloaders.train.one_batch()
             dataloaders_summary = OrderedDict(
