@@ -567,6 +567,13 @@ class TorchApp(Citable,CLIApp):
     @flag
     def bibtex(self) -> str:
         """
-        Returns the BibTeX entry for this app.
+        The BibTeX entry for this app.
         """
         return super().bibtex()
+    
+    @flag
+    def bibliography(self) -> str:
+        """
+        The bibliography for this app.
+        """
+        return super().bibliography()    
