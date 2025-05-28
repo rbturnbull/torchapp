@@ -54,6 +54,68 @@ class TorchApp(Citable,CLIApp):
     def data(self) -> Iterable|L.LightningDataModule:
         raise NotImplementedError(f"Please ensure that the 'data' method is implemented in {self.__class__.__name__}.")
     
+    @tool("data")
+    def one_batch_size(self, **kwargs) -> torch.Size:
+        """ Returns the size of a single batch. """
+        data = self.data(**kwargs)
+        if isinstance(data, L.LightningDataModule):
+            train_dataloader = data.train_dataloader()
+        else:
+            train_dataloader = data
+
+        if isinstance(train_dataloader, Iterable):
+            first_batch = next(iter(train_dataloader))
+            if isinstance(first_batch, tuple):
+                size = first_batch[0].shape
+            else:
+                size = first_batch.shape
+            return first_batch.shape
+        
+        print(size)
+        return size
+    
+    @tool("data", "lightning_module")
+    def one_batch_loss(self, **kwargs) -> torch.Tensor:
+        """ Returns the loss of a single batch. """
+        data = self.data(**kwargs)
+        module = self.lightning_module(**kwargs)
+        if isinstance(data, L.LightningDataModule):
+            train_dataloader = data.train_dataloader()
+        else:
+            train_dataloader = data
+
+        first_batch = next(iter(train_dataloader))
+        if isinstance(first_batch, tuple):
+            inputs = first_batch[:module.input_count]
+            targets = first_batch[module.input_count]
+        else:
+            inputs = first_batch
+            targets = None
+        
+        return module(inputs, targets)
+    
+    @tool("data", "lightning_module")
+    def one_batch_output_size(
+        self, 
+        **kwargs
+    ) -> torch.Size:
+        """ Returns the size of the output of a single batch. """
+        data = self.data(**kwargs)
+        module = self.lightning_module(**kwargs)
+        if isinstance(data, L.LightningDataModule):
+            train_dataloader = data.train_dataloader()
+        else:
+            train_dataloader = data
+
+        first_batch = next(iter(train_dataloader))
+        if isinstance(first_batch, tuple):
+            inputs = first_batch[:module.input_count]
+        else:
+            inputs = first_batch
+        
+        results = module.model(*inputs)
+        return results.shape if isinstance(results, torch.Tensor) else tuple(result.shape for result in results)
+
     @method
     def validation_dataloader(self) -> Iterable|None:
         return None

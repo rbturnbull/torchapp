@@ -378,7 +378,7 @@ class TorchAppTestCase:
     def test_metrics(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
-    def test_loss_func(self, interactive: bool):
+    def test_loss_function(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
     def test_monitor(self, interactive: bool):

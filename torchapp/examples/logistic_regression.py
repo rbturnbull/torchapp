@@ -79,7 +79,7 @@ class LogisticRegressionApp(ta.TorchApp):
         return nn.Linear(in_features=1, out_features=1, bias=True)
 
     @ta.method
-    def loss_func(self):
+    def loss_function(self):
         return nn.BCEWithLogitsLoss()
     
     @ta.method
