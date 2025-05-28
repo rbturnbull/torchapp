@@ -86,10 +86,10 @@ class LogisticRegressionApp(ta.TorchApp):
     # def metrics(self):
     #     return [logit_accuracy, logit_f1]
 
-    # @ta.method
-    # def monitor(self):
-    #     return "logit_f1"
+    @ta.method
+    def monitor(self):
+        return "logit_f1"
 
 
 if __name__ == "__main__":
-    LogisticRegressionApp.main()
+    LogisticRegressionApp.tools()

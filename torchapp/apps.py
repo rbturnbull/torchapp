@@ -563,3 +563,10 @@ class TorchApp(Citable,CLIApp):
             raise Exception("Cannot find package.")
         
         return version
+
+    @flag
+    def bibtex(self) -> str:
+        """
+        Returns the BibTeX entry for this app.
+        """
+        return super().bibtex()

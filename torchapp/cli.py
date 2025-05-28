@@ -11,6 +11,18 @@ import guigaga
 from guigaga.interface import InterfaceBuilder
 from guigaga.themes import Theme
 from typing import Callable, Optional
+from rich.console import Console
+
+console = Console()
+
+def make_flag_function(attr: Callable) -> Callable:
+    def run_flag_function(ctx, param, value):
+        if value:
+            result = attr()
+            if result is not None:
+                console.print(result.strip())
+            raise typer.Exit()
+    return run_flag_function
 
 
 class CLIAppTyper(typer.Typer):
@@ -64,13 +76,6 @@ class CLIAppTyper(typer.Typer):
             if not attr.flag:
                 continue
 
-            def run_flag_function(ctx, param, value):
-                if value:
-                    result = attr()
-                    if result is not None:
-                        typer.echo(result)
-                    raise typer.Exit()
-
             # Add shortcut and flag to the command
             option_params = [f"--{attr_name}"]
             if attr.shortcut:
@@ -87,7 +92,7 @@ class CLIAppTyper(typer.Typer):
                     is_eager=True,
                     expose_value=False,
                     help=(attr.__doc__ or "").strip().splitlines()[0] if attr.__doc__ else None,
-                    callback=run_flag_function,
+                    callback=make_flag_function(attr),
                 )
             )
             flag_index += 1

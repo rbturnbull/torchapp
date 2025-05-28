@@ -102,7 +102,7 @@ def get_diff(a, b):
 
 
 def clean_output(output):
-    if isinstance(output, (TensorBase, torch.Tensor)):
+    if isinstance(output, (torch.Tensor)):
         output = f"{type(output)} {tuple(output.shape)}"
     output = str(output)
     output = re.sub(r"0[xX][0-9a-fA-F]+", "<HEX>", output)
@@ -170,8 +170,14 @@ def assert_output(file: Path, interactive: bool, params: dict, output, expected,
                 data = OrderedDict(params=params, output=output_for_yaml)
                 yaml.dump(data, f)
                 return
+    # If we get here, then the output does not match the expected output
+    def truncate_single_line(s, max_length=30):
+        """Truncates a single line string to a maximum length, adding '...' if it exceeds the limit."""
+        s = s.strip().replace("\n", " ")
+        return s if len(s) <= max_length else s[:max_length - 3] + '...'
 
-    raise TorchAppTestCaseError(diff)
+    message = f"Expected output '{truncate_single_line(expected)}' does not match actual output '{truncate_single_line(output)}'.\nDiff:\n{diff}"
+    raise TorchAppTestCaseError(message)
 
 
 class TorchAppTestCase:
@@ -192,7 +198,7 @@ class TorchAppTestCase:
         app = self.get_app()
         runner = CliRunner()
         result = runner.invoke(app.main_app, ["--version"])
-        assert result.exit_code == 0
+        assert result.exit_code == 0, f"Expected exit code 0, got {result.exit_code}: {result.stdout}"
         assert re.match(r"^(\d+\.)?(\d+\.)?(\*|\d+)$", result.stdout)
 
     def get_expected_dir(self) -> Path:
@@ -375,9 +381,6 @@ class TorchAppTestCase:
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
     def test_monitor(self, interactive: bool):
-        self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
-
-    def test_activation(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
     def test_pretrained_location(self, interactive: bool):
