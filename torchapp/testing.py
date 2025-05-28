@@ -1,3 +1,4 @@
+import inspect
 import re
 from collections.abc import Iterable
 import sys
@@ -5,9 +6,9 @@ import yaml
 import importlib
 import pytest
 import torch
-from typing import get_type_hints
 from pathlib import Path
 import difflib
+import lightning as L
 from torch import nn
 from collections import OrderedDict
 from rich.console import Console
@@ -174,7 +175,7 @@ def assert_output(file: Path, interactive: bool, params: dict, output, expected,
     # If we get here, then the output does not match the expected output
     def truncate_single_line(s, max_length=30):
         """Truncates a single line string to a maximum length, adding '...' if it exceeds the limit."""
-        s = s.strip().replace("\n", " ")
+        s = str(s).strip().replace("\n", " ")
         return s if len(s) <= max_length else s[:max_length - 3] + '...'
 
     message = f"Expected output '{truncate_single_line(expected)}' does not match actual output '{truncate_single_line(output)}'.\nDiff:\n{diff}"
@@ -295,8 +296,7 @@ class TorchAppTestCase:
         for params, expected_output, file in self.subtests(app, sys._getframe().f_code.co_name):
             # Make all paths relative to the result of get_expected_dir()
             modified_params = dict(params)
-            hints = get_type_hints(app.data)
-            for key, value in hints.items():
+            for key, value in inspect.signature(app.data.func).parameters.items():
                 # if this is a union class, then loop over all options
                 if not isinstance(value, type) and hasattr(value, "__args__"):  # This is the case for unions
                     values = value.__args__
@@ -304,24 +304,23 @@ class TorchAppTestCase:
                     values = [value]
 
                 for v in values:
-                    if key in params and Path in v.__mro__:
+                    if key in params and Path in value.annotation.__mro__:
                         relative_path = params[key]
                         modified_params[key] = (self.get_expected_dir() / relative_path).resolve()
                         break
 
             data = app.data(**modified_params)
 
-            assert isinstance(data, Iterable)
+            assert isinstance(data, (Iterable, L.LightningDataModule))
 
-            batch = dataloaders.train.one_batch()
             dataloaders_summary = OrderedDict(
-                type=type(dataloaders).__name__,
-                train_size=len(dataloaders.train),
-                validation_size=len(dataloaders.valid),
-                batch_x_type=type(batch[0]).__name__,
-                batch_y_type=type(batch[1]).__name__,
-                batch_x_shape=str(batch[0].shape),
-                batch_y_shape=str(batch[1].shape),
+                type=type(data).__name__,
+                # length=len(data),
+                # validation_size=len(dataloaders.valid),
+                # batch_x_type=type(batch[0]).__name__,
+                # batch_y_type=type(batch[1]).__name__,
+                # batch_x_shape=str(batch[0].shape),
+                # batch_y_shape=str(batch[1].shape),
             )
 
             assert_output(file, interactive, params, dataloaders_summary, expected_output)
@@ -355,8 +354,7 @@ class TorchAppTestCase:
 
         for params, expected_output, file in self.subtests(app, name):
             modified_params = dict(params)
-            hints = get_type_hints(method)
-            for key, value in hints.items():
+            for key, value in inspect.signature(method.func).parameters.items():
                 # if this is a union class, then loop over all options
                 if not isinstance(value, type) and hasattr(value, "__args__"):  # This is the case for unions
                     values = value.__args__
@@ -364,7 +362,7 @@ class TorchAppTestCase:
                     values = [value]
 
                 for v in values:
-                    if key in params and Path in v.__mro__:
+                    if key in params and Path in value.annotation.__mro__:
                         relative_path = params[key]
                         modified_params[key] = (self.get_expected_dir() / relative_path).resolve()
                         break

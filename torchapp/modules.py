@@ -18,7 +18,12 @@ class GeneralLightningModule(L.LightningModule):
         self.metrics = metrics or []
 
         self.smooth_loss = AvgSmoothLoss()
-        for name, metric in metrics:
+        for metric in metrics:
+            if isinstance(metric, tuple):
+                assert len(metric) == 2
+                name, metric = metric
+            else:
+                name = str(metric)
             setattr(self, name, metric)        
         self.current_step = 0
         self.strict_loading = False
@@ -101,4 +106,5 @@ class GeneralLightningModule(L.LightningModule):
         }
 
     def forward(self, *args, **kwargs):
+        breakpoint()
         return self.model(*args, **kwargs)

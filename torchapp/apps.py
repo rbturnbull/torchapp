@@ -54,31 +54,10 @@ class TorchApp(Citable,CLIApp):
     def data(self) -> Iterable|L.LightningDataModule:
         raise NotImplementedError(f"Please ensure that the 'data' method is implemented in {self.__class__.__name__}.")
     
-    @tool("data")
-    def one_batch_size(self, **kwargs) -> torch.Size:
-        """ Returns the size of a single batch. """
+    @method("data")
+    def one_batch(self, **kwargs) -> torch.Tensor:
+        """ Returns a single batch of data. """
         data = self.data(**kwargs)
-        if isinstance(data, L.LightningDataModule):
-            train_dataloader = data.train_dataloader()
-        else:
-            train_dataloader = data
-
-        if isinstance(train_dataloader, Iterable):
-            first_batch = next(iter(train_dataloader))
-            if isinstance(first_batch, tuple):
-                size = first_batch[0].shape
-            else:
-                size = first_batch.shape
-            return first_batch.shape
-        
-        print(size)
-        return size
-    
-    @tool("data", "lightning_module")
-    def one_batch_loss(self, **kwargs) -> torch.Tensor:
-        """ Returns the loss of a single batch. """
-        data = self.data(**kwargs)
-        module = self.lightning_module(**kwargs)
         if isinstance(data, L.LightningDataModule):
             train_dataloader = data.train_dataloader()
         else:
@@ -86,13 +65,26 @@ class TorchApp(Citable,CLIApp):
 
         first_batch = next(iter(train_dataloader))
         if isinstance(first_batch, tuple):
-            inputs = first_batch[:module.input_count]
-            targets = first_batch[module.input_count]
+            return first_batch[0]
         else:
-            inputs = first_batch
-            targets = None
+            return first_batch
         
-        return module(inputs, targets)
+    @tool("one_batch")
+    def one_batch_size(self, **kwargs) -> torch.Size:
+        """ Returns the size of a single batch. """
+        batch = self.one_batch(**kwargs)
+        size = [item.size() for item in batch]
+        print(size)
+        return size
+    
+    @tool("one_batch", "lightning_module")
+    def one_batch_loss(self, **kwargs) -> torch.Tensor:
+        """ Returns the loss of a single batch. """
+        module = self.lightning_module(**kwargs)
+        batch = self.one_batch(**kwargs)                
+        loss = module.training_step(batch, batch_idx=0)
+        print(loss)
+        return loss
     
     @tool("data", "lightning_module")
     def one_batch_output_size(
@@ -108,7 +100,7 @@ class TorchApp(Citable,CLIApp):
             train_dataloader = data
 
         first_batch = next(iter(train_dataloader))
-        if isinstance(first_batch, tuple):
+        if isinstance(first_batch, (tuple, list)):
             inputs = first_batch[:module.input_count]
         else:
             inputs = first_batch
