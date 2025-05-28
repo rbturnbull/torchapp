@@ -7,9 +7,9 @@ from torch import nn
 import torchapp as ta
 import torch
 import pandas as pd
-from torchmetrics import Metric, Accuracy
 import lightning as L
 from dataclasses import dataclass
+from torchapp.metrics import accuracy
 
 
 @dataclass
@@ -76,8 +76,8 @@ class IrisApp(ta.TorchApp):
         return data_module
 
     @ta.method
-    def metrics(self) -> list[Metric]:
-        return [Accuracy(task="multiclass", num_classes=4)]
+    def metrics(self):
+        return [accuracy]
 
     @ta.method
     def extra_hyperparameters(self):

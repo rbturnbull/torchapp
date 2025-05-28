@@ -43,3 +43,23 @@ def logit_f1(logits, target):
     predictions = logits > 0.0
     target_binary = target > 0.5
     return f1_score(target_binary.cpu(), predictions.cpu())
+
+
+def accuracy(predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    """
+    Computes the accuracy of predictions against targets.
+    
+    Args:
+        predictions (torch.Tensor): The predicted values.
+        targets (torch.Tensor): The ground truth values.
+    
+    Returns:
+        torch.Tensor: The accuracy as a tensor.
+    """
+    if predictions.shape != targets.shape:
+        predictions = predictions.argmax(dim=-1) if predictions.ndim > 1 else predictions
+    
+    if predictions.shape != targets.shape:
+        raise ValueError("Predictions and targets must have the same shape.")
+    
+    return (predictions == targets).float().mean()

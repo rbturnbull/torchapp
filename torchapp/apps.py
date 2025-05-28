@@ -219,23 +219,29 @@ class TorchApp(Citable,CLIApp):
         run_name:str="",
         wandb:bool=False,
         wandb_entity:str="",
+        wandb_offline:bool=False,
+        wandb_dir:Path=None,
         max_gpus:int=0,
         log_every_n_steps:int=50,
         gradient_clip_val:float=Param(None, help="The value to clip the gradients to. If None, then no clipping is done."),
         **kwargs,
     ) -> L.Trainer:
         output_dir = Path(output_dir)
+        output_dir.mkdir(exist_ok=True, parents=True)
         run_name = run_name or output_dir.name
 
         loggers = [
-            CSVLogger("logs", name=run_name)
+            CSVLogger(save_dir=output_dir),
         ]
         if wandb:
             if wandb_entity:
                 os.environ["WANDB_ENTITY"] = wandb_entity
 
             project_name = self.project_name(**kwargs)
-            wandb_logger = WandbLogger(name=run_name, project=project_name)
+            if wandb_dir:
+                wandb_dir = Path(wandb_dir)
+                wandb_dir.mkdir(exist_ok=True, parents=True)
+            wandb_logger = WandbLogger(name=run_name, project=project_name, offline=wandb_offline, save_dir=wandb_dir)
             loggers.append(wandb_logger)
         
         # If GPUs are available, use all of them; otherwise, use CPUs

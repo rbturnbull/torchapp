@@ -7,26 +7,14 @@ from typing import get_type_hints
 from torch import nn
 import torchvision.models as models
 import lightning as L
-from torchmetrics import Metric, Accuracy
 import torchapp as ta
+from torchapp.metrics import accuracy
 
 from torchapp.examples.vision import VisionApp
 from rich.console import Console
 console = Console()
 
 
-def accuracy(predictions: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-    """
-    Computes the accuracy of predictions against targets.
-    
-    Args:
-        predictions (torch.Tensor): The predicted values.
-        targets (torch.Tensor): The ground truth values.
-    
-    Returns:
-        torch.Tensor: The accuracy as a tensor.
-    """
-    return (predictions == targets).float().mean()
 
 def torchvision_model_choices() -> list[str]:
     """
