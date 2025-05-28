@@ -53,8 +53,11 @@ def optuna_tune(
         tuning_params = app.tuning_params()
 
         for key, value in tuning_params.items():
-            if key not in getattr(app, 'opts', []) or kwargs[key] is None:
-                run_kwargs[key] = suggest(trial, key, value)
+            # Skip parameters that have been passed as arguments the tune of the app
+            if key in app.original_kwargs['tune'] and app.original_kwargs['tune'].get(key) is not None:
+                continue
+
+            run_kwargs[key] = suggest(trial, key, value)
 
         trial_name = f"trial-{trial.number}"
 

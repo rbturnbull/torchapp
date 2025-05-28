@@ -57,4 +57,5 @@ class TuningTestApp(ta.TorchApp):
         c = len(string)
 
         value = c * switch - a * (x - 2.0) ** 2 - a + 1
+        
         return MockLightningModule(), MockTrainer(value=value)

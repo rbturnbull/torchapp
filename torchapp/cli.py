@@ -171,14 +171,16 @@ class Method():
     def __call__(self, *args, **kwargs):
         parameters = signature(self.func).parameters
         func_kwargs = {k: v for k, v in kwargs.items() if k in parameters}
+        original_kwargs = func_kwargs.copy()
         
         # Replace default values if they are OptionInfo
         for key,value in parameters.items(): 
             if key not in func_kwargs and isinstance(value.default, OptionInfo):
                 func_kwargs[key] = value.default.default
 
-        if 'opts' in kwargs:
-            self.obj.opts = kwargs['opts']
+        if not hasattr(self.obj, 'original_kwargs'):
+            self.obj.original_kwargs = dict()
+        self.obj.original_kwargs[self.__name__] = kwargs['opts'] if 'opts' in kwargs else original_kwargs
         return self.func(self.obj, *args, **func_kwargs)
 
     @property
