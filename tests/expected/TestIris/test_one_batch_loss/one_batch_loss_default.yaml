@@ -1,2 +1,2 @@
 params: {}
-output: <class 'fastai.torch_core.TensorBase'> ()
+output: <class 'torch.Tensor'> ()

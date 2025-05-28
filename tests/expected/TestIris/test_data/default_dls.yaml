@@ -1,0 +1,4 @@
+params:
+  batch_size: 4
+output:
+  type: LightningDataModule

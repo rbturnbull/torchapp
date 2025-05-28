@@ -1,2 +1,2 @@
 params: {}
-output: torch.Size([32, 0])
+output: '[torch.Size([32, 4]), torch.Size([32])]'

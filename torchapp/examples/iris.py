@@ -75,9 +75,9 @@ class IrisApp(ta.TorchApp):
         data_module.val_dataloader = lambda: DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
         return data_module
 
-    # @ta.method
-    # def metrics(self) -> list[Metric]:
-    #     return [Accuracy()]
+    @ta.method
+    def metrics(self) -> list[Metric]:
+        return [Accuracy(task="multiclass", num_classes=4)]
 
     @ta.method
     def extra_hyperparameters(self):
