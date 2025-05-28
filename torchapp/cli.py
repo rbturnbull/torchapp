@@ -50,17 +50,17 @@ class CLIAppTyper(typer.Typer):
             raise e
 
     def patch_command(self, cmd: click.Command) -> click.Command:
-        global_option_index = 0
+        flag_index = 0
         for attr_name in dir(self.cliapp):
             attr = getattr(self.cliapp, attr_name)
 
             if not isinstance(attr, Method):
                 continue
 
-            if not attr.global_option:
+            if not attr.flag:
                 continue
 
-            def run_option(ctx, param, value):
+            def run_flag_function(ctx, param, value):
                 if value:
                     result = attr()
                     if result is not None:
@@ -68,17 +68,17 @@ class CLIAppTyper(typer.Typer):
                     raise typer.Exit()
 
             cmd.params.insert(
-                global_option_index,
+                flag_index,
                 click.Option(
                     ["--version", "-v"],
                     is_flag=True,
                     is_eager=True,
                     expose_value=False,
                     help="Show version and exit",
-                    callback=run_option,
+                    callback=run_flag_function,
                 )
             )
-            global_option_index += 1
+            flag_index += 1
 
 
 def launch_gui(typer_app:typer.Typer):
@@ -142,7 +142,7 @@ class Method():
     methods_to_call: list[str]
     main: bool = False    
     tool: bool = False    
-    global_option: bool = False
+    flag: bool = False
     signature_ready: bool = False
     obj = None
 
@@ -172,12 +172,12 @@ class Method():
         return self.func.__doc__
 
 
-def method(*args, main:bool=False, tool:bool=False, global_option:bool=False):
+def method(*args, main:bool=False, tool:bool=False, flag:bool=False):
     if len(args) == 1 and callable(args[0]):
-        return Method(args[0], [], main=main, tool=tool, global_option=global_option)
+        return Method(args[0], [], main=main, tool=tool, flag=flag)
     
     def decorator(func):
-        return Method(func, args, main=main, tool=tool, global_option=global_option)
+        return Method(func, args, main=main, tool=tool, flag=flag)
 
     return decorator
 
@@ -188,6 +188,10 @@ def tool(*methods_to_call, **kwargs):
 
 def main(*methods_to_call, **kwargs):
     return method(*methods_to_call, main=True, tool=True, **kwargs)
+
+
+def flag(*methods_to_call, **kwargs):
+    return method(*methods_to_call, flag=True, **kwargs)
 
 
 def collect_arguments(*funcs):
@@ -246,7 +250,7 @@ class CLIApp:
         launch_gui(self.tools_app)
 
     def add_to_app(self, app:typer.Typer, func:Method) -> Method:
-        if not func.global_option:
+        if not func.flag:
             app.command(cls=CLICommand)(func)
         return func
 

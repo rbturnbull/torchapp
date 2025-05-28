@@ -18,7 +18,7 @@ from rich.console import Console
 
 from .modules import GeneralLightningModule
 from .callbacks import TimeLoggingCallback, LogOptimizerCallback
-from .cli import CLIApp, method, main, tool
+from .cli import CLIApp, method, main, tool, flag
 from .citations import Citable
 from .params import Param
 from .download import cached_download
@@ -533,7 +533,7 @@ class TorchApp(Citable,CLIApp):
                 
         return tuning_params
 
-    @method(global_option=True)
+    @flag
     def version(
         self,
     ) -> str:
