@@ -1,0 +1,9 @@
+params:
+  csv: image_classifier_test.csv
+  batch_size: 2
+  image_column: img
+  category_column: cat
+  validation_value: second
+  validation_column: partition
+  model_name: squeezenet1_0
+output: 'torch.Size([2, 2])'

@@ -17,18 +17,29 @@ from torchapp.metrics import accuracy
 from rich.console import Console
 console = Console()
 
-def replace_last_linear_layer(model, out_features) -> bool:
+def replace_imagenet_classification_layer(model, out_features) -> bool:
     """
-    Recursively replaces the last nn.Linear layer in a model with a new one having `out_features`.
+    Recursively replaces the last classification layer in a model if it outputs 1000 classes.
+    Supports nn.Linear and nn.Conv2d used in torchvision models like ResNet and SqueezeNet.
     """
     for name, module in reversed(list(model.named_children())):
-        if isinstance(module, nn.Linear):
+        # Handle Linear classifier (e.g., ResNet, VGG)
+        if isinstance(module, nn.Linear) and module.out_features == 1000:
             in_features = module.in_features
             setattr(model, name, nn.Linear(in_features, out_features))
-            return True  # replacement done
-        elif replace_last_linear_layer(module, out_features):
             return True
-    return False  # no linear layer found
+
+        # Handle 1x1 Conv2d classifier (e.g., SqueezeNet, MobileNet)
+        elif isinstance(module, nn.Conv2d) and module.out_channels == 1000 and module.kernel_size == (1, 1):
+            in_channels = module.in_channels
+            setattr(model, name, nn.Conv2d(in_channels, out_features, kernel_size=1))
+            return True
+
+        # Recurse into submodules
+        elif replace_imagenet_classification_layer(module, out_features):
+            return True
+
+    return False  # no classification layer found
 
 
 def get_image_paths(directory:Path|str) -> list[Path]:
@@ -139,12 +150,12 @@ class ImageClassifier(ta.TorchApp):
         if not hasattr(models, model_name):
             raise ValueError(f"Model '{model_name}' not recognized.")
 
-        model = getattr(models, model_name)
+        model = getattr(models, model_name)()
 
         # configure last layer
         n_categories = len(self.target_names)
-        result = replace_last_linear_layer(model, n_categories)
-        assert result, f"Model '{model_name}' does not have a linear layer to replace. Please choose another model."
+        result = replace_imagenet_classification_layer(model, n_categories)
+        assert result, f"Model '{model_name}' does not have a classification layer to replace. Please choose another model."
         return model
     
     @ta.method
@@ -310,6 +321,10 @@ class ImageClassifier(ta.TorchApp):
             console.print(df)
 
         return df
+
+    @ta.method
+    def loss_function(self):
+        return nn.CrossEntropyLoss()
 
 
 if __name__ == "__main__":
