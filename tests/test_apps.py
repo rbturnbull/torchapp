@@ -1,3 +1,4 @@
+import re
 import pytest
 from torchapp.testing import CliRunner
 import torchapp as ta
@@ -32,8 +33,11 @@ def test_main_help():
     runner = CliRunner()
     result = runner.invoke(app, ['--help'])
     assert result.exit_code == 0
-    assert "Show this message and exit." in result.output
-    assert 'Usage: predict [OPTIONS]' in result.output
+    ANSI_ESCAPE = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
+    output = ANSI_ESCAPE.sub('', result.output)
+    assert "Show this message and exit." in output
+    assert 'Usage: ' in output
+    assert 'predict [OPTIONS]' in output
 
 
 def test_checkpoint_default():
