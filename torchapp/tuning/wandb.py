@@ -41,8 +41,11 @@ def get_sweep_config(
     tuning_params = app.tuning_params()
 
     for key, value in tuning_params.items():
-        if key not in kwargs or kwargs[key] is None:
-            parameters_config[key] = get_parameter_config(value)
+        # Skip parameters that have been passed as arguments the tune of the app
+        if hasattr(app, 'original_kwargs') and key in app.original_kwargs['tune'] and app.original_kwargs['tune'].get(key) is not None:
+            continue
+        
+        parameters_config[key] = get_parameter_config(value)
 
     method = method or "bayes"
     if method not in ["grid", "random", "bayes"]:

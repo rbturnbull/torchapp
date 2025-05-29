@@ -1,5 +1,9 @@
+from sklearn.base import BaseEstimator, RegressorMixin
 from pathlib import Path
+from skopt.learning import GradientBoostingQuantileRegressor
 from .util import best_model_score
+
+
 
 try:
     import skopt
@@ -9,6 +13,17 @@ except ImportError as err:
     raise Exception(
         f"Error loading 'skopt'. Please install this as an extra dependency or choose a different optimization engine.\n{err}"
     )
+
+
+class WrappedGBQR(RegressorMixin, BaseEstimator):
+    def __init__(self, **kwargs):
+        self.model = GradientBoostingQuantileRegressor(**kwargs)
+
+    def fit(self, X, y):
+        return self.model.fit(X, y)
+
+    def predict(self, *args, **kwargs):
+        return self.model.predict(*args, **kwargs)
 
 
 
@@ -158,6 +173,10 @@ def skopt_tune(
         optimizer_kwargs['callback'].append( checkpoint_saver )
 
     objective = SkoptObjective(app, kwargs, used_tuning_params, name, base_output_dir)
+    
+    if optimizer == skopt.gbrt_minimize:
+        optimizer_kwargs['base_estimator'] = WrappedGBQR()
+
     results = optimizer(objective, search_space, **optimizer_kwargs)
 
     return results
