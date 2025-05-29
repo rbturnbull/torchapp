@@ -172,7 +172,6 @@ class ImageClassifier(ta.TorchApp):
         batch_size: int = ta.Param(default=16, help="The number of items to use in each batch."),
         width: int = ta.Param(default=224, help="The width to resize all the images to."),
         height: int = ta.Param(default=224, help="The height to resize all the images to."),
-        # resize_method: str = ta.Param(default="squish", help="The method to resize images."),
         # max_lighting:float=0.0,
         # max_rotate:float=0.0,
         # max_warp:float=0.0,
@@ -195,8 +194,8 @@ class ImageClassifier(ta.TorchApp):
             # randomly assign validation set based on validation_proportion
             df[validation_column] = df.sample(frac=validation_proportion, random_state=42).index.isin(df.index)
 
-        assert image_column in df
-        assert category_column in df
+        assert image_column in df, f"Image column '{image_column}' not found in the CSV. Columns available {df.columns.tolist()}"
+        assert category_column in df, f"Category column '{category_column}' not found in the CSV. Columns available {df.columns.tolist()}"
 
         training_data = []
         validation_data = []
@@ -215,9 +214,12 @@ class ImageClassifier(ta.TorchApp):
             dataset = validation_data if row[validation_column] else training_data
             dataset.append(item)
 
+        training_dataset = ImageClassifierDataset(items=training_data)
+        validation_dataset = ImageClassifierDataset(items=validation_data)
+
         data_module = L.LightningDataModule()
-        data_module.train_dataloader = lambda: DataLoader(training_data, batch_size=batch_size, shuffle=True)
-        data_module.val_dataloader = lambda: DataLoader(validation_data, batch_size=batch_size, shuffle=False)
+        data_module.train_dataloader = lambda: DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
+        data_module.val_dataloader = lambda: DataLoader(validation_dataset, batch_size=batch_size, shuffle=False)
         return data_module
 
     @ta.method
