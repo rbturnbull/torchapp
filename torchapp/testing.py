@@ -417,7 +417,7 @@ class TorchAppTestCase:
     def test_tools_cli(self):
         app = self.get_app()
         runner = CliRunner()
-        for command in self.tools_commands_to_test():
+        for command in self.tool_commands_to_test():
             print(command)
             result = runner.invoke(app.tools_app, command.split())
             assert result.exit_code == 0
@@ -431,7 +431,7 @@ class TorchAppTestCase:
             "--bibliography",
         ]
 
-    def test_tools_cli(self):
+    def test_main_cli(self):
         app = self.get_app()
         runner = CliRunner()
         for command in self.main_commands_to_test():
