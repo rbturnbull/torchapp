@@ -10,7 +10,6 @@ import lightning as L
 import torchapp as ta
 from torchapp.metrics import accuracy
 
-from torchapp.examples.vision import VisionApp
 from rich.console import Console
 console = Console()
 
@@ -58,7 +57,7 @@ class PathColReader():
         return path
 
 
-class ImageClassifier(VisionApp):
+class ImageClassifier(ta.TorchApp):
     """
     A TorchApp for classifying images.
 
