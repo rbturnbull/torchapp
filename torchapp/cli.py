@@ -1,10 +1,12 @@
 import sys
 from typing import Callable
+import copy
 import click
 from typing import Any
 import typer
 from typer.core import TyperCommand
 from inspect import signature, Parameter
+import types
 from typer.models import OptionInfo
 from dataclasses import dataclass
 import guigaga
@@ -167,8 +169,8 @@ class Method():
     @property
     def __name__(self):
         return self.func.__name__
-
-    def __call__(self, *args, **kwargs):
+    
+    def get_kwargs(self, kwargs):
         parameters = signature(self.func).parameters
         func_kwargs = {k: v for k, v in kwargs.items() if k in parameters}
         original_kwargs = func_kwargs.copy()
@@ -181,6 +183,10 @@ class Method():
         if not hasattr(self.obj, 'original_kwargs'):
             self.obj.original_kwargs = dict()
         self.obj.original_kwargs[self.__name__] = kwargs['opts'] if 'opts' in kwargs else original_kwargs
+        return func_kwargs
+
+    def __call__(self, *args, **kwargs):
+        func_kwargs = self.get_kwargs(kwargs)
         return self.func(self.obj, *args, **func_kwargs)
 
     @property
@@ -240,6 +246,18 @@ class CLICommand(TyperCommand):
         return result
 
 
+def clone_function(f):
+    new_func = types.FunctionType(
+        f.__code__,
+        f.__globals__,
+        name=f.__name__,
+        argdefs=f.__defaults__,
+        closure=f.__closure__
+    )
+    new_func.__annotations__ = dict(f.__annotations__)  # Copy type hints
+    return new_func
+
+
 class CLIApp:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -281,27 +299,40 @@ class CLIApp:
         return self.add_to_app(self.tools_app, func)
 
     def register_methods(self):
+        methods = []
+        # Make copy of the method to avoid modifying the original
         for attr_name in dir(self):
             attr = getattr(self, attr_name)
 
             if not isinstance(attr, Method):
                 continue
 
+            method = copy.deepcopy(attr)
+            method.func = clone_function(attr.func)
+            setattr(self, attr_name, method)
+            methods.append(method)
+
+        for method in methods:
             # Add to the CLI if method is decorated as a command
-            if attr.main:
-                self.add_to_main(attr)
-            if attr.tool:
-                self.add_to_tools(attr)
+            if method.main:
+                self.add_to_main(method)
+            if method.tool:
+                self.add_to_tools(method)
 
             # Modify the signature of the method if necessary
-            if not attr.signature_ready:
-                self.modify_signature(attr)
+            if not method.signature_ready:
+                self.modify_signature(method)
 
     def modify_signature(self, method_to_modify:Method, **kwargs) -> None:
         # Check if the method is already had its signature modified
         if not isinstance(method_to_modify, Method) or method_to_modify.signature_ready:
             return
-        
+                    
+        # if "tune" == method_to_modify.__name__:
+        #     x = collect_arguments(self.tune)
+        #     breakpoint()
+
+
         method_to_modify.obj = self
 
         all_methods = [method_to_modify]
@@ -323,6 +354,9 @@ class CLIApp:
             for name, param in params.items()
             if name not in ["self", "kwargs"] and param.default != Parameter.empty
         ]
+
+        # if "tune" == method_to_modify.__name__:
+        #     breakpoint()
 
         try:
             method_to_modify.func.__signature__ = signature(method_to_modify.func).replace(parameters=new_params)

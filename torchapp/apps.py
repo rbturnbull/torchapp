@@ -54,10 +54,23 @@ class TorchApp(Citable,CLIApp):
     def data(self) -> Iterable|L.LightningDataModule:
         raise NotImplementedError(f"Please ensure that the 'data' method is implemented in {self.__class__.__name__}.")
     
-    @method("data")
+    @method("setup", "data", "validation_dataloader")
+    def setup_and_data(self, **kwargs) -> L.LightningDataModule|Iterable:
+        """ Sets up the app and returns the data. """
+        style = 'bold red'
+        console.rule("Setting up app", style=style)
+        self.setup(**kwargs)
+        
+        console.print("Setting up data")
+        data = self.data(**kwargs)
+        if isinstance(data, L.LightningDataModule):
+            data.setup("fit")
+        return data
+
+    @method("setup_and_data")
     def one_batch(self, **kwargs) -> torch.Tensor:
         """ Returns a single batch of data. """
-        data = self.data(**kwargs)
+        data = self.setup_and_data(**kwargs)
         if isinstance(data, L.LightningDataModule):
             train_dataloader = data.train_dataloader()
         else:
@@ -80,19 +93,19 @@ class TorchApp(Citable,CLIApp):
     @tool("one_batch", "lightning_module")
     def one_batch_loss(self, **kwargs) -> torch.Tensor:
         """ Returns the loss of a single batch. """
+        batch = self.one_batch(**kwargs)   
         module = self.lightning_module(**kwargs)
-        batch = self.one_batch(**kwargs)                
         loss = module.training_step(batch, batch_idx=0)
         print(loss)
         return loss
     
-    @tool("data", "lightning_module")
+    @tool("setup_and_data", "lightning_module")
     def one_batch_output_size(
         self, 
         **kwargs
     ) -> torch.Size:
         """ Returns the size of the output of a single batch. """
-        data = self.data(**kwargs)
+        data = self.setup_and_data(**kwargs)
         module = self.lightning_module(**kwargs)
         if isinstance(data, L.LightningDataModule):
             train_dataloader = data.train_dataloader()
@@ -347,19 +360,15 @@ class TorchApp(Citable,CLIApp):
             **extras,
         )
     
-    @tool("setup", "data", "lightning_module", "trainer")
+    @tool("setup_and_data", "validation_dataloader", "lightning_module", "trainer")
     def train(
         self,
         **kwargs,
     ) -> L.LightningModule:
         """Train the model."""
         style = 'bold red'
-        console.rule("Setting up training", style=style)
-        self.setup(**kwargs)
+        data = self.setup_and_data(**kwargs)
         
-        console.print("Setting up dataloaders")
-        data = self.data(**kwargs)
-        data.setup("fit")
         validation_dataloader = self.validation_dataloader(**kwargs)
 
         console.print("Setting up Module")
@@ -383,18 +392,14 @@ class TorchApp(Citable,CLIApp):
 
         return lightning_module, trainer
 
-    @tool("setup", "data", "load_checkpoint", "trainer")
+    @tool("setup_and_data", "load_checkpoint", "trainer")
     def validate(
         self,
         **kwargs,
     ) -> L.LightningModule:
         """ Validate the model. """
         style = 'bold red'
-        console.rule("Setting up", style=style)
-        self.setup(**kwargs)
-        
-        console.print("Setting up dataloaders")
-        data = self.data(**kwargs)
+        data = self.setup_and_data(**kwargs)
         data.setup("fit")
         validation_dataloader = self.validation_dataloader(**kwargs)
 

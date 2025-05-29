@@ -133,6 +133,7 @@ def skopt_tune(
 
     # Get tuning parameters
     tuning_params = app.tuning_params()
+    
     used_tuning_params = {}
     for key, value in tuning_params.items():
         # Skip parameters that have been passed as arguments the tune of the app

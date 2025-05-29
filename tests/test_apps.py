@@ -3,16 +3,17 @@ from typer.testing import CliRunner
 import torchapp as ta
 
 
+class DummyApp(ta.TorchApp):
+    @ta.method
+    def model(self, size: int = ta.Param(default=2)):
+        assert size == 2
+
+    @ta.method
+    def data(self, **kwargs):
+        pass
+
+
 def test_model_defaults_change():
-    class DummyApp(ta.TorchApp):
-        @ta.method
-        def model(self, size: int = ta.Param(default=2)):
-            assert size == 2
-
-        @ta.method
-        def data(self, **kwargs):
-            pass
-
     DummyApp().model()
 
 

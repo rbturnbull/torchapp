@@ -296,7 +296,7 @@ class TorchAppTestCase:
         for params, expected_output, file in self.subtests(app, sys._getframe().f_code.co_name):
             # Make all paths relative to the result of get_expected_dir()
             modified_params = dict(params)
-            for key, value in inspect.signature(app.data.func).parameters.items():
+            for key, value in inspect.signature(app.setup_and_data.func).parameters.items():
                 # if this is a union class, then loop over all options
                 if not isinstance(value, type) and hasattr(value, "__args__"):  # This is the case for unions
                     values = value.__args__
@@ -309,7 +309,7 @@ class TorchAppTestCase:
                         modified_params[key] = (self.get_expected_dir() / relative_path).resolve()
                         break
 
-            data = app.data(**modified_params)
+            data = app.setup_and_data(**modified_params)
 
             assert isinstance(data, (Iterable, L.LightningDataModule))
 

@@ -32,7 +32,7 @@ def suggest(trial, name, param):
     elif param.annotation == int:
         return trial.suggest_int(name, param.tune_min, param.tune_max, log=param.tune_log)
 
-    raise NotImplementedError("Optuna Tuning Engine cannot understand param '{name}': {param}")
+    raise NotImplementedError(f"Optuna Tuning Engine cannot understand param '{name}': {param}")
 
 
 def optuna_tune(
