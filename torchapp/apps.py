@@ -28,10 +28,6 @@ console = Console()
 BIBTEX_DIR = Path(__file__).parent / "bibtex"
 
 
-def version_callback():
-    print("version callback func - needs to be implemented in the app")
-
-
 class TorchApp(Citable,CLIApp):
     @method
     def setup(self) -> None:
@@ -286,45 +282,6 @@ class TorchApp(Citable,CLIApp):
     def metrics(self) -> list[tuple[str,Metric]]:
         return []
     
-    def version(self, verbose: bool = False):
-        """
-        Prints the version of the package that defines this app.
-
-        Used in the command-line interface.
-
-        Args:
-            verbose (bool, optional): Whether or not to print to stdout. Defaults to False.
-
-        Raises:
-            Exception: If it cannot find the package.
-
-        """
-        if verbose:
-            from importlib import metadata
-
-            module = inspect.getmodule(self)
-            package = ""
-            if module.__package__:
-                package = module.__package__.split('.')[0]
-            else:
-                path = Path(module.__file__).parent
-                while path.name:
-                    try:
-                        if metadata.distribution(path.name):
-                            package = path.name
-                            break
-                    except Exception:
-                        pass
-                    path = path.parent
-
-            if package:
-                version = metadata.version(package)
-                print(version)
-            else:
-                raise Exception("Cannot find package.")
-
-            raise typer.Exit()
-
     @method
     def input_count(self) -> int:
         return 1

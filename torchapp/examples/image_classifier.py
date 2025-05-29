@@ -1,18 +1,87 @@
+from PIL import Image
 import enum
 from pathlib import Path
 import types
 import pandas as pd
 import torch
+from torch.utils.data import DataLoader, Dataset
 from typing import get_type_hints
 from torch import nn
 import torchvision.models as models
+from torchvision import transforms
 import lightning as L
+from dataclasses import dataclass
 import torchapp as ta
 from torchapp.metrics import accuracy
 
 from rich.console import Console
 console = Console()
 
+def replace_last_linear_layer(model, out_features) -> bool:
+    """
+    Recursively replaces the last nn.Linear layer in a model with a new one having `out_features`.
+    """
+    for name, module in reversed(list(model.named_children())):
+        if isinstance(module, nn.Linear):
+            in_features = module.in_features
+            setattr(model, name, nn.Linear(in_features, out_features))
+            return True  # replacement done
+        elif replace_last_linear_layer(module, out_features):
+            return True
+    return False  # no linear layer found
+
+
+def get_image_paths(directory:Path|str) -> list[Path]:
+    directory = Path(directory)
+    extensions = ["jpg", "jpeg", "png", "tif", "tiff"]
+    paths = []
+    for extension in extensions:
+        paths += directory.glob(f"*.{extension.lower()}")
+        paths += directory.glob(f"*.{extension.upper()}")
+        
+    return paths
+
+
+@dataclass
+class ImageItem():
+    path:Path
+    height:int = 224
+    width:int = 224
+
+    def image_as_tensor(self):
+        # Standard ImageNet preprocessing for pretrained torchvision models
+        transform = transforms.Compose([
+            transforms.Resize((self.height, self.width)),  # Resize directly to desired size
+            transforms.ToTensor(),       # converts to [0,1] and puts channel first
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],  # ImageNet mean
+                std=[0.229, 0.224, 0.225]    # ImageNet std
+            )
+        ])
+
+        image = Image.open(self.path).convert("RGB")
+        tensor = transform(image)  # shape: (3, height, width)
+        return tensor
+
+
+@dataclass(kw_only=True)
+class ImageTrainingItem(ImageItem):
+    category_id:int
+
+
+@dataclass(kw_only=True)
+class ImageClassifierDataset(Dataset):
+    items:list[ImageTrainingItem]
+
+    def __len__(self):
+        return len(self.items)
+
+    def __getitem__(self, idx):
+        item = self.items[idx]
+        image_tensor = item.image_as_tensor()
+        if isinstance(item, ImageTrainingItem):
+            return image_tensor, item.category_id
+        return image_tensor
 
 
 def torchvision_model_choices() -> list[str]:
@@ -40,21 +109,11 @@ def torchvision_model_choices() -> list[str]:
 
     return model_choices
 
+
 TorchvisionModelEnum = enum.Enum(
     "TorchvisionModelName",
     {model_name if model_name else "default": model_name for model_name in torchvision_model_choices()},
 )
-
-class PathColReader():
-    def __init__(self, column_name: str, base_dir: Path):
-        self.column_name = column_name
-        self.base_dir = base_dir
-
-    def __call__(self, row, **kwargs):
-        path = Path(row[self.column_name])
-        if not path.is_absolute():
-            path = self.base_dir / path
-        return path
 
 
 class ImageClassifier(ta.TorchApp):
@@ -80,7 +139,13 @@ class ImageClassifier(ta.TorchApp):
         if not hasattr(models, model_name):
             raise ValueError(f"Model '{model_name}' not recognized.")
 
-        return getattr(models, model_name)
+        model = getattr(models, model_name)
+
+        # configure last layer
+        n_categories = len(self.target_names)
+        result = replace_last_linear_layer(model, n_categories)
+        assert result, f"Model '{model_name}' does not have a linear layer to replace. Please choose another model."
+        return model
     
     @ta.method
     def data(
@@ -107,14 +172,14 @@ class ImageClassifier(ta.TorchApp):
         batch_size: int = ta.Param(default=16, help="The number of items to use in each batch."),
         width: int = ta.Param(default=224, help="The width to resize all the images to."),
         height: int = ta.Param(default=224, help="The height to resize all the images to."),
-        resize_method: str = ta.Param(default="squish", help="The method to resize images."),
-        max_lighting:float=0.0,
-        max_rotate:float=0.0,
-        max_warp:float=0.0,
-        max_zoom:float=1.0,
-        do_flip:bool=False,
-        p_affine:float=0.75,
-        p_lighting:float=0.75,
+        # resize_method: str = ta.Param(default="squish", help="The method to resize images."),
+        # max_lighting:float=0.0,
+        # max_rotate:float=0.0,
+        # max_warp:float=0.0,
+        # max_zoom:float=1.0,
+        # do_flip:bool=False,
+        # p_affine:float=0.75,
+        # p_lighting:float=0.75,
     ) -> L.LightningDataModule:
         df = pd.read_csv(csv)
 
@@ -125,33 +190,35 @@ class ImageClassifier(ta.TorchApp):
             validation_column_new = f"{validation_column} is {validation_value}"
             df[validation_column_new] = df[validation_column].astype(str) == validation_value
             validation_column = validation_column_new
-            
-        if validation_column and validation_column in df:
-            splitter = ColSplitter(validation_column)
-        else:
-            splitter = RandomSplitter(validation_proportion)
 
-        batch_transforms = aug_transforms(
-            p_lighting=p_lighting,
-            p_affine=p_affine,
-            max_rotate=max_rotate, 
-            do_flip=do_flip, 
-            max_lighting=max_lighting, 
-            max_zoom=max_zoom,
-            max_warp=max_warp,
-            pad_mode='zeros',
-        )
+        if validation_column not in df:
+            # randomly assign validation set based on validation_proportion
+            df[validation_column] = df.sample(frac=validation_proportion, random_state=42).index.isin(df.index)
 
-        datablock = DataBlock(
-            blocks=[ImageBlock, CategoryBlock],
-            get_x=PathColReader(column_name=image_column, base_dir=base_dir),
-            get_y=ColReader(category_column),
-            splitter=splitter,
-            item_tfms=Resize((height, width), method=resize_method),
-            batch_tfms=batch_transforms,
-        )
+        assert image_column in df
+        assert category_column in df
 
-        return datablock.dataloaders(df, bs=batch_size)
+        training_data = []
+        validation_data = []
+
+        df['category_id'], self.target_names = pd.factorize(df[category_column])
+
+        self.width = width
+        self.height = height
+
+        for _, row in df.iterrows():
+            image_path = Path(row[image_column])
+            if not image_path.is_absolute():
+                image_path = base_dir/image_path
+        
+            item = ImageTrainingItem(path=image_path, category_id=row['category_id'], width=width, height=height)
+            dataset = validation_data if row[validation_column] else training_data
+            dataset.append(item)
+
+        data_module = L.LightningDataModule()
+        data_module.train_dataloader = lambda: DataLoader(training_data, batch_size=batch_size, shuffle=True)
+        data_module.val_dataloader = lambda: DataLoader(validation_data, batch_size=batch_size, shuffle=False)
+        return data_module
 
     @ta.method
     def metrics(self):
@@ -160,12 +227,21 @@ class ImageClassifier(ta.TorchApp):
     @ta.method
     def monitor(self):
         return "accuracy"
+    
+    @ta.method
+    def extra_hyperparameters(self):
+        return dict(
+            target_names=self.target_names,
+            width=self.width,
+            height=self.height,
+        )
 
     @ta.method
     def prediction_dataloader(
         self, 
-        learner, 
+        module, 
         items:list[Path] = None, 
+        batch_size:int = 16,
         csv: Path = ta.Param(default=None, help="A CSV with image paths."),
         image_column: str = ta.Param(default="image", help="The name of the column with the image paths."),
         base_dir: Path = ta.Param(default="./", help="The base directory for images with relative paths."),
@@ -180,7 +256,7 @@ class ImageClassifier(ta.TorchApp):
                     item = Path(item)
                     # If the item is a directory then get all images in that directory
                     if item.is_dir():
-                        self.items.extend( get_image_files(item) )
+                        self.items.extend( get_image_paths(item) )
                     else:
                         self.items.append(item)
             except:
@@ -201,7 +277,12 @@ class ImageClassifier(ta.TorchApp):
         
             self.items = [base_dir / item if not item.is_absolute() else item for item in self.items]
 
-        return learner.dls.test_dl(self.items, **kwargs)
+        width = module.hparams.width
+        height = module.hparams.height
+
+        dataset = ImageClassifierDataset(items=[ImageItem(path=path, width=width, height=height) for path in self.items])
+        self.target_names = module.hparams.target_names
+        return DataLoader(dataset, batch_size=batch_size)
 
     @ta.method
     def output_results(
@@ -212,15 +293,14 @@ class ImageClassifier(ta.TorchApp):
         **kwargs
     ):
         data = []
-        vocab = self.learner_obj.dls.vocab
         for item, scores in zip(self.items, results[0]): 
             probabilities = torch.softmax(torch.as_tensor(scores), dim=-1)           
-            prediction = vocab[torch.argmax(probabilities)]
+            prediction = self.target_names[torch.argmax(probabilities)]
             if verbose:
                 console.print(f"'{item}': '{prediction}'")
             data.append( [item,prediction] + probabilities.tolist() )
 
-        df = pd.DataFrame(data, columns=["path","prediction"]+list(vocab))
+        df = pd.DataFrame(data, columns=["path","prediction"]+list(self.target_names))
         if output_csv:
             df.to_csv(output_csv)
 
