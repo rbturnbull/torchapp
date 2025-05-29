@@ -1,5 +1,5 @@
 import pytest
-from typer.testing import CliRunner
+from torchapp.testing import CliRunner
 import torchapp as ta
 
 
