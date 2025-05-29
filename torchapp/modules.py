@@ -106,5 +106,4 @@ class GeneralLightningModule(L.LightningModule):
         }
 
     def forward(self, *args, **kwargs):
-        breakpoint()
         return self.model(*args, **kwargs)
