@@ -1,20 +1,21 @@
 [tool.poetry]
 name = "torchapp"
-version = "0.4.13"
-description = "A wrapper for fastai projects to create easy command-line inferfaces and manage hyper-parameter tuning."
+version = "0.5.0"
+description = "A wrapper for PyTorch projects to create easy command-line inferfaces and manage hyper-parameter tuning."
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
 readme = "README.rst"
 repository = "https://github.com/rbturnbull/torchapp"
 documentation = "https://rbturnbull.github.io/torchapp/"
 homepage = "https://github.com/rbturnbull/torchapp"
-keywords = ["fastai", "pytorch", "deep learning", "command-line interface"]
+keywords = ["PyTorch", "pytorch", "deep learning", "command-line interface"]
 # For classifiers see https://pypi.org/classifiers/
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Intended Audience :: Science/Research",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Framework :: PyTorch"
 ]
 
 [tool.poetry.dependencies]
