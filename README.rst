@@ -8,8 +8,7 @@ torchapp
 
 |testing badge| |coverage badge| |docs badge| |black badge| |git3moji badge| |torchapp badge|
 
-
-.. |torchapp badge| image:: https://img.shields.io/badge/MLOpps-torchapp-B1230A.svg
+.. |torchapp badge| image:: https://img.shields.io/badge/Torch-App-B1230A.svg
     :target: https://rbturnbull.github.io/torchapp/
 
 .. |testing badge| image:: https://github.com/rbturnbull/torchapp/actions/workflows/testing.yml/badge.svg
