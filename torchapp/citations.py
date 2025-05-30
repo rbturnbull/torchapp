@@ -26,7 +26,8 @@ def from_latex(latex):
 class Citable:
     bibtex_files = None
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.set_bibtex_files()
 
     def get_bibtex_files(self) -> List:

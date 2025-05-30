@@ -1,60 +1,62 @@
-from torchapp.callbacks.wandb import TorchAppWandbCallback, wandb
 from torchapp.examples.iris import IrisApp
 import tempfile
+import wandb
+import os
 
 
 def test_default_no_wandb():
     app = IrisApp()
-    callbacks = app.callbacks()
+    trainer = app.trainer()
 
-    callback = None
-    for c in callbacks:
-        if isinstance(c, TorchAppWandbCallback):
-            callback = c
+    wandb_logger = None
+    for logger in trainer._loggers:
+        if "WandbLogger" in str(logger):
+            wandb_logger = logger
             break
-    assert callback is None
-    assert wandb.run is None
+
+    assert wandb_logger is None
 
 
 def test_wandb_init():
     app = IrisApp()
-    callbacks = app.callbacks(wandb=True, wandb_mode="disabled")
+    trainer = app.trainer(wandb=True, wandb_offline=True)
 
-    callback = None
-    for c in callbacks:
-        if isinstance(c, TorchAppWandbCallback):
-            callback = c
+    wandb_logger = None
+    for logger in trainer._loggers:
+        if "WandbLogger" in str(logger):
+            wandb_logger = logger
             break
-    assert callback is not None
-    assert wandb.run is not None
-    assert callback.run is wandb.run
+
+
+    assert wandb_logger is not None
+    assert wandb_logger._offline
 
 
 def test_wandb_after_epoch():
     with tempfile.TemporaryDirectory() as tmpdir:
         app = IrisApp()
-        app.train(wandb=True, wandb_mode="offline", wandb_dir=tmpdir, epochs=1)
-        assert isinstance(wandb.summary['time'], float)
+        app.train(wandb=True, wandb_offline=True, wandb_dir=tmpdir, max_epochs=1, output_dir=tmpdir)
+        assert isinstance(wandb.summary['epoch_time'], float)
+        assert isinstance(wandb.summary['accuracy'], float)
         wandb.finish()  # needs to be called before deleting tmpdir
 
 
 def test_wandb_kwargs():
     with tempfile.TemporaryDirectory() as tmpdir:
-        IrisApp().callbacks(
+        app = IrisApp()
+        trainer = app.trainer(
             wandb=True,
-            wandb_mode="offline",
+            wandb_offline=True,
             wandb_dir=tmpdir,
-            tag=["Tag1", "Tag2"],
-            run_name="Run",
-            wandb_group="Group",
-            notes="Notes",
             wandb_entity="Entity",
-            wandb_job_type="JobType",
         )
-        assert wandb.run.tags == ("Tag1", "Tag2")
-        assert wandb.run.group == "Group"
-        assert wandb.run.name == "Run"
-        assert wandb.run.entity == "Entity"
-        assert wandb.run.notes == "Notes"
-        assert wandb.run.job_type == "JobType"
-        wandb.finish()
+        wandb_logger = None
+        for logger in trainer._loggers:
+            if "WandbLogger" in str(logger):
+                wandb_logger = logger
+                break
+
+        assert wandb_logger._wandb_init['project'] == "IrisApp"
+        assert wandb_logger._offline == True
+        assert os.environ["WANDB_ENTITY"] == "Entity"
+        assert str(wandb_logger.save_dir) == str(tmpdir)

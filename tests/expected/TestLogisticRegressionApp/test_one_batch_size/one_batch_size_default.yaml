@@ -1,0 +1,7 @@
+params:
+  csv: mice.csv
+  batch_size: 4
+  x: weight
+  y: obese
+  validation_proportion: 0.2
+output: '[torch.Size([4, 1]), torch.Size([4, 1])]'

@@ -1,16 +1,30 @@
+from sklearn.base import BaseEstimator, RegressorMixin
 from pathlib import Path
+from skopt.learning import GradientBoostingQuantileRegressor
+from .util import best_model_score
+
+
 
 try:
     import skopt
     from skopt.space.space import Real, Integer, Categorical
     from skopt.callbacks import CheckpointSaver
-    from skopt.plots import plot_convergence, plot_evaluations, plot_objective
-except:
+except ImportError as err:
     raise Exception(
-        "No module named 'skopt'. Please install this as an extra dependency or choose a different optimization engine."
+        f"Error loading 'skopt'. Please install this as an extra dependency or choose a different optimization engine.\n{err}"
     )
 
-from ..util import call_func
+
+class WrappedGBQR(RegressorMixin, BaseEstimator):
+    def __init__(self, **kwargs):
+        self.model = GradientBoostingQuantileRegressor(**kwargs)
+
+    def fit(self, X, y):
+        return self.model.fit(X, y)
+
+    def predict(self, *args, **kwargs):
+        return self.model.predict(*args, **kwargs)
+
 
 
 def get_optimizer(method):
@@ -50,6 +64,7 @@ class SkoptPlot(object):
         self.format = format
 
     def __call__(self, result):
+        from skopt.plots import plot_convergence, plot_evaluations, plot_objective
         import matplotlib.pyplot as plt
         import matplotlib
         matplotlib.use('Agg')
@@ -92,8 +107,8 @@ class SkoptObjective():
         run_kwargs["run_name"] = trial_name
 
         # Train
-        learner = call_func(self.app.train, **run_kwargs)
-        metric = self.app.get_best_metric(learner)
+        _, trainer = self.app.train(**run_kwargs)
+        metric = best_model_score(trainer)
 
         # make negative if the goal is to maximize this metric
         if self.app.goal()[:3] != "min":
@@ -118,10 +133,14 @@ def skopt_tune(
 
     # Get tuning parameters
     tuning_params = app.tuning_params()
+    
     used_tuning_params = {}
     for key, value in tuning_params.items():
-        if key not in kwargs or kwargs[key] is None:
-            used_tuning_params[key] = value
+        # Skip parameters that have been passed as arguments the tune of the app
+        if key in app.original_kwargs['tune'] and app.original_kwargs['tune'].get(key) is not None:
+            continue
+
+        used_tuning_params[key] = value
 
     # Get search space
     search_space = [get_param_search_space(param, name=key) for key, param in used_tuning_params.items()]
@@ -155,6 +174,10 @@ def skopt_tune(
         optimizer_kwargs['callback'].append( checkpoint_saver )
 
     objective = SkoptObjective(app, kwargs, used_tuning_params, name, base_output_dir)
+    
+    if optimizer == skopt.gbrt_minimize:
+        optimizer_kwargs['base_estimator'] = WrappedGBQR()
+
     results = optimizer(objective, search_space, **optimizer_kwargs)
 
     return results

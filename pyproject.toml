@@ -1,66 +1,67 @@
 [tool.poetry]
 name = "torchapp"
-version = "0.3.10"
-description = "A wrapper for fastai projects to create easy command-line inferfaces and manage hyper-parameter tuning."
+version = "0.5.0"
+description = "A wrapper for PyTorch projects to create easy command-line inferfaces and manage hyper-parameter tuning."
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
 readme = "README.rst"
 repository = "https://github.com/rbturnbull/torchapp"
 documentation = "https://rbturnbull.github.io/torchapp/"
 homepage = "https://github.com/rbturnbull/torchapp"
-keywords = ["fastai", "pytorch", "deep learning", "command-line interface"]
+keywords = ["PyTorch", "pytorch", "deep learning", "command-line interface"]
 # For classifiers see https://pypi.org/classifiers/
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Intended Audience :: Science/Research",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Framework :: PyTorch"
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.10,<3.13"
+numpy = ">=1.22.0,<2.0.0"
+executing = ">=2.0.1"
 torch = ">=1.12.1"
-numpy = ">=1.22.0"
+lightning = ">=2.3.3"
 typer = ">=0.4.0"
 rich = ">=10.16.1"
-fastai = "^2.5.3"
 pandas = ">=1.3.5"
 wandb = ">=0.12.9"
 cookiecutter = ">=2.1.1"
 scikit-learn = ">=1.0.2"
 Pillow = ">=9.0.1"
 PyYAML = ">=6.0"
-click = "8.0.4"
 torchvision = ">=0.13.0"
 pybtex = ">=0.24.0"
 pyjwt = ">=2.4.0"
-mlflow = ">=1.25.1"
 optuna = ">=2.10.0"
 pybtexnbib = ">=0.1.1"
 scikit-optimize = ">=0.9.0"
 scipy = ">=1.9.1"
 appdirs = ">=1.4.4"
-certifi = ">=2023.5.7"
+guigaga = ">=0.0.2"
+cmaes = ">=0.11.1"
 
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
-ipython = "^8.1.1"
-ipykernel = "^6.6.1"
-coverage = "^5.5"
-autopep8 = "^1.5.7"
-Sphinx = "^4.2.0"
-nbsphinx = "^0.8.7"
-sphinx-rtd-theme = "^1.0.0"
-sphinx-autobuild = "^2021.3.14"
-myst-parser = "^0.15.2"
-pre-commit = "^2.15.0"
-sphinx-copybutton = "^0.4.0"
-black = "^21.10b0"
+[tool.poetry.group.dev.dependencies]
+pytest = ">=6.2.5"
+ipython = ">=8.1.1"
+ipykernel = ">=6.6.1"
+coverage = ">=5.5"
+autopep8 = ">=1.5.7"
+Sphinx = ">=4.2.0"
+nbsphinx = ">=0.8.7"
+sphinx-rtd-theme = ">=1.0.0"
+sphinx-autobuild = ">=2021.3.14"
+myst-parser = ">=0.15.2"
+pre-commit = ">=2.15.0"
+sphinx-copybutton = ">=0.4.0"
+black = ">=21.10b0"
 sphinx-click = {git = "https://github.com/rbturnbull/sphinx-click.git"}
-jupyter = "^1.0.0"
-pyment = "^0.3.3"
-plotly = "^5.8.2"
+jupyter = ">=1.0.0"
+pyment = ">=0.3.3"
+plotly = ">=5.8.2"
 
 [tool.black]
 line-length = 120
@@ -77,5 +78,6 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-torchapp = "torchapp.main:app"
+torchapp-generator = "torchapp.cookiecutter:app"
 torchapp-imageclassifier = "torchapp.examples.image_classifier:ImageClassifier.main"
+torchapp-imageclassifier-tools = "torchapp.examples.image_classifier:ImageClassifier.tools"

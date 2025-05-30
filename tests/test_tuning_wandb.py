@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch
 import torchapp as ta
 from torchapp import params
 from torchapp.tuning.wandb import get_parameter_config, get_sweep_config
@@ -96,16 +96,16 @@ def test_get_sweep_config_method_unknonw():
 def mock_agent(sweep_id, function, count, project):
     assert sweep_id == "sweep_id"
     with patch('wandb.config', dict()) as mock_config:
-        learner = function()
-        assert learner.recorder.values[-1][-1] == -9.0
+        module, trainer = function()
+        assert trainer.checkpoint_callback.best_model_score == -9.0
 
     with patch('wandb.config', dict(x=-1.0)) as mock_config:
-        learner = function()
-        assert learner.recorder.values[-1][-1] == -19.0
+        module, trainer = function()
+        assert trainer.checkpoint_callback.best_model_score == -19.0
 
     with patch('wandb.config', dict(x=2.0, string="abcdefghij")) as mock_config:
-        learner = function()
-        assert learner.recorder.values[-1][-1] == -1.0
+        module, trainer = function()
+        assert trainer.checkpoint_callback.best_model_score == -1.0
 
 
 @patch('wandb.sweep', lambda *args, **kwargs: "sweep_id")

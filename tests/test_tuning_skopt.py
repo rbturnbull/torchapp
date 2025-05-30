@@ -3,8 +3,11 @@ import skopt
 from torchapp.tuning.skopt import get_optimizer
 import torchapp as ta
 from .tuning_test_app import TuningTestApp
+from torchapp.examples.iris import IrisApp
 
 TOLERANCE = 0.1
+
+IrisApp()  # hack for now
 
 def test_skopt_tune_random():
     app = TuningTestApp()

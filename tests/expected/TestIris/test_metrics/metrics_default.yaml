@@ -1,2 +1,2 @@
 params: {}
-output: '[<function accuracy at <HEX>>, <function error_rate at <HEX>>]'
+output: '[<function accuracy at <HEX>>]'

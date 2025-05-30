@@ -1,0 +1,8 @@
+params:
+  csv: image_classifier_test.csv
+  batch_size: 2
+  image_column: img
+  category_column: cat
+  validation_value: second
+  validation_column: partition
+output: '[torch.Size([2, 3, 224, 224]), torch.Size([2])]'

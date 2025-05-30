@@ -171,3 +171,6 @@ mlruns
 *.csv
 .vscode
 torchapp/examples/charlm.py
+logs/
+lightning_logs/
+x*.py

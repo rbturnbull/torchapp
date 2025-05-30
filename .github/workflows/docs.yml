@@ -2,7 +2,7 @@ name: docs
 
 on:
   push:
-    branches: master
+    branches: main
       
 jobs:
   build:
@@ -10,21 +10,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.11"]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install poetry
       run: pipx install poetry
     - name: Install dependencies for Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'poetry'
-    - run: |
-        poetry env use "${{ matrix.python-version }}"
-        poetry install
-        # install a version of pytorch that does not require a GPU / CUDA
-        poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cpu --force
+    - run: poetry install
     - name: Docs
       run: |
         poetry run sphinx-build -b html docs gh-pages
@@ -33,21 +29,12 @@ jobs:
         poetry run coverage run -m pytest
         echo "COVERAGE=$(poetry run coverage report --precision 2 | grep TOTAL | tr -s ' ' | cut -f 4 -d " ")" >> $GITHUB_ENV
         poetry run coverage html --directory gh-pages/coverage
-        rm -f gh-pages/coverage/.gitignore
-    - name: Build draft PDF
-      uses: openjournals/openjournals-draft-action@master
-      with:
-        journal: joss
-        # This should be the path to the paper within your repo.
-        paper-path: paper.md
-    - name: Move PDF
-      run: |
-        mv paper.pdf gh-pages/joss-draft.pdf
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:
         branch: gh-pages # The branch the action should deploy to.
         folder: gh-pages # The folder the action should deploy.
+    
     - name: Create Coverage Badge
       uses: schneegans/dynamic-badges-action@v1.1.0
       with:
@@ -57,3 +44,4 @@ jobs:
         label: coverage
         message: ${{ env.COVERAGE }}
         color: green
+    

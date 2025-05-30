@@ -1,20 +1,22 @@
+import inspect
 import re
+from collections.abc import Iterable
 import sys
 import yaml
 import importlib
 import pytest
 import torch
-from typing import get_type_hints
-from click.testing import CliRunner
 from pathlib import Path
 import difflib
+import lightning as L
 from torch import nn
 from collections import OrderedDict
-from fastai.data.core import DataLoaders
-from fastai.learner import Learner
 from rich.console import Console
-from fastai.torch_core import TensorBase
+from typing import IO, Any, Mapping, Optional, Sequence, Union
+from click.testing import CliRunner as ClickCliRunner  # noqa
+from click.testing import Result
 
+from .cli import CLIAppTyper 
 from .apps import TorchApp
 
 console = Console()
@@ -22,6 +24,29 @@ console = Console()
 ######################################################################
 ## pytest fixtures
 ######################################################################
+
+
+class CliRunner(ClickCliRunner):
+    def invoke(  # type: ignore
+        self,
+        app: CLIAppTyper,
+        args: Optional[Union[str, Sequence[str]]] = None,
+        input: Optional[Union[bytes, str, IO[Any]]] = None,
+        env: Optional[Mapping[str, str]] = None,
+        catch_exceptions: bool = True,
+        color: bool = False,
+        **extra: Any,
+    ) -> Result:
+        use_cli = app.getcommand()
+        return super().invoke(
+            use_cli,
+            args=args,
+            input=input,
+            env=env,
+            catch_exceptions=catch_exceptions,
+            color=color,
+            **extra,
+        )
 
 
 @pytest.fixture
@@ -79,7 +104,7 @@ def get_diff(a, b):
 
 
 def clean_output(output):
-    if isinstance(output, (TensorBase, torch.Tensor)):
+    if isinstance(output, (torch.Tensor)):
         output = f"{type(output)} {tuple(output.shape)}"
     output = str(output)
     output = re.sub(r"0[xX][0-9a-fA-F]+", "<HEX>", output)
@@ -147,8 +172,14 @@ def assert_output(file: Path, interactive: bool, params: dict, output, expected,
                 data = OrderedDict(params=params, output=output_for_yaml)
                 yaml.dump(data, f)
                 return
+    # If we get here, then the output does not match the expected output
+    def truncate_single_line(s, max_length=30):
+        """Truncates a single line string to a maximum length, adding '...' if it exceeds the limit."""
+        s = str(s).strip().replace("\n", " ")
+        return s if len(s) <= max_length else s[:max_length - 3] + '...'
 
-    raise TorchAppTestCaseError(diff)
+    message = f"Expected output '{truncate_single_line(expected)}' does not match actual output '{truncate_single_line(output)}'.\nDiff:\n{diff}"
+    raise TorchAppTestCaseError(message)
 
 
 class TorchAppTestCase:
@@ -165,11 +196,11 @@ class TorchAppTestCase:
         self.expected_base = Path(self.expected_base)
         return self.expected_base
 
-    def test_cli_version(self):
+    def test_version_main(self):
         app = self.get_app()
         runner = CliRunner()
-        result = runner.invoke(app.cli(), "--version")
-        assert result.exit_code == 0
+        result = runner.invoke(app.main_app, ["--version"])
+        assert result.exit_code == 0, f"Expected exit code 0, got {result.exit_code}: {result.stdout}"
         assert re.match(r"^(\d+\.)?(\d+\.)?(\*|\d+)$", result.stdout)
 
     def get_expected_dir(self) -> Path:
@@ -260,13 +291,12 @@ class TorchAppTestCase:
 
             assert_output(file, interactive, params, model_summary, expected_output, regenerate=regenerate)
 
-    def test_dataloaders(self, interactive: bool):
+    def test_data(self, interactive: bool):
         app = self.get_app()
         for params, expected_output, file in self.subtests(app, sys._getframe().f_code.co_name):
             # Make all paths relative to the result of get_expected_dir()
             modified_params = dict(params)
-            hints = get_type_hints(app.dataloaders)
-            for key, value in hints.items():
+            for key, value in inspect.signature(app.setup_and_data.func).parameters.items():
                 # if this is a union class, then loop over all options
                 if not isinstance(value, type) and hasattr(value, "__args__"):  # This is the case for unions
                     values = value.__args__
@@ -274,24 +304,23 @@ class TorchAppTestCase:
                     values = [value]
 
                 for v in values:
-                    if key in params and Path in v.__mro__:
+                    if key in params and Path in value.annotation.__mro__:
                         relative_path = params[key]
                         modified_params[key] = (self.get_expected_dir() / relative_path).resolve()
                         break
 
-            dataloaders = app.dataloaders(**modified_params)
+            data = app.setup_and_data(**modified_params)
 
-            assert isinstance(dataloaders, DataLoaders)
+            assert isinstance(data, (Iterable, L.LightningDataModule))
 
-            batch = dataloaders.train.one_batch()
             dataloaders_summary = OrderedDict(
-                type=type(dataloaders).__name__,
-                train_size=len(dataloaders.train),
-                validation_size=len(dataloaders.valid),
-                batch_x_type=type(batch[0]).__name__,
-                batch_y_type=type(batch[1]).__name__,
-                batch_x_shape=str(batch[0].shape),
-                batch_y_shape=str(batch[1].shape),
+                type=type(data).__name__,
+                # length=len(data),
+                # validation_size=len(dataloaders.valid),
+                # batch_x_type=type(batch[0]).__name__,
+                # batch_y_type=type(batch[1]).__name__,
+                # batch_x_shape=str(batch[0].shape),
+                # batch_y_shape=str(batch[1].shape),
             )
 
             assert_output(file, interactive, params, dataloaders_summary, expected_output)
@@ -325,8 +354,9 @@ class TorchAppTestCase:
 
         for params, expected_output, file in self.subtests(app, name):
             modified_params = dict(params)
-            hints = get_type_hints(method)
-            for key, value in hints.items():
+
+            function = method.func if hasattr(method, 'func') else method
+            for key, value in inspect.signature(function).parameters.items():
                 # if this is a union class, then loop over all options
                 if not isinstance(value, type) and hasattr(value, "__args__"):  # This is the case for unions
                     values = value.__args__
@@ -334,7 +364,7 @@ class TorchAppTestCase:
                     values = [value]
 
                 for v in values:
-                    if key in params and Path in v.__mro__:
+                    if key in params and Path in value.annotation.__mro__:
                         relative_path = params[key]
                         modified_params[key] = (self.get_expected_dir() / relative_path).resolve()
                         break
@@ -348,16 +378,13 @@ class TorchAppTestCase:
     def test_metrics(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
-    def test_loss_func(self, interactive: bool):
+    def test_loss_function(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
     def test_monitor(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
-    def test_activation(self, interactive: bool):
-        self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
-
-    def test_pretrained_location(self, interactive: bool):
+    def test_checkpoint(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
     def test_one_batch_size(self, interactive: bool):
@@ -375,23 +402,41 @@ class TorchAppTestCase:
     def test_bibtex(self, interactive: bool):
         self.perform_subtests(interactive=interactive, name=sys._getframe().f_code.co_name)
 
-    def cli_commands_to_test(self):
+    def tool_commands_to_test(self):
         return [
             "--help",
             "train --help",
-            "infer --help",
-            "show-batch --help",
+            "predict --help",
+            # "show-batch --help",
             "tune --help",
-            "bibtex",
-            "bibliography",
+            "--bibtex",
+            "--version",
+            "--bibliography",
         ]
 
-    def test_cli(self):
+    def test_tools_cli(self):
         app = self.get_app()
         runner = CliRunner()
-        for command in self.cli_commands_to_test():
+        for command in self.tool_commands_to_test():
             print(command)
-            result = runner.invoke(app.cli(), command.split())
+            result = runner.invoke(app.tools_app, command.split())
+            assert result.exit_code == 0
+            assert result.stdout
+
+    def main_commands_to_test(self):
+        return [
+            "--help",
+            "--bibtex",
+            "--version",
+            "--bibliography",
+        ]
+
+    def test_main_cli(self):
+        app = self.get_app()
+        runner = CliRunner()
+        for command in self.main_commands_to_test():
+            print(command)
+            result = runner.invoke(app.main_app, command.split())
             assert result.exit_code == 0
             assert result.stdout
 
