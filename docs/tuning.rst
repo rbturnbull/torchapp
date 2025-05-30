@@ -2,10 +2,6 @@
 Hyper-parameter Tuning
 =======================
 
-Parameters
-==========
-
-
 Tuning Engines
 ==============
 

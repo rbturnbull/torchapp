@@ -57,65 +57,164 @@ Writing an App
 Inherit a class from :code:`TorchApp` to make an app. The parent class includes several methods for training and hyper-parameter tuning. 
 The minimum requirement is that you fill out the dataloaders method and the model method.
 
-The :code:`dataloaders` method requires that you return a fastai Dataloaders object. This is a collection of dataloader objects. 
-Typically it contains one dataloader for training and another for testing. For more information see https://docs.fast.ai/data.core.html#DataLoaders
-You can add parameter values with typing hints in the function signature and these will be automatically added to the train and show_batch methods.
+The :code:`data` method requires that you return a ``LightningDataModule`` object. This is a collection of dataloader objects. 
+Typically it contains one dataloader for training and another for testing. For more information see https://lightning.ai/docs/pytorch/stable/data/datamodule.html
+You can add parameter values with typing hints in the function signature and these will be automatically added to any mehtod that requires the training data (e.g. ``train``).
 
-The :code:`model` method requires that you return a pytorch module. Parameters in the function signature will be added to the train method.
+The :code:`model` method requires that you return a PyTorch module. Parameters in the function signature will be added to the ``train`` method.
 
-Here's an example for doing logistic regression:
+Here's an example for doing training on the Iris dataset, a classic dataset for classification tasks:
 
 .. code-block:: Python
    
-    #!/usr/bin/env python3
     from pathlib import Path
-    import pandas as pd
+    from torch.utils.data import DataLoader, Dataset
+    from sklearn.datasets import load_iris
     from torch import nn
-    from fastai.data.block import DataBlock, TransformBlock
-    from fastai.data.transforms import ColReader, RandomSplitter
     import torchapp as ta
-    from torchapp.blocks import BoolBlock
+    import torch
+    import pandas as pd
+    import lightning as L
+    from dataclasses import dataclass
+    from torchapp.metrics import accuracy
 
 
-    class LogisticRegressionApp(ta.TorchApp):
+    @dataclass
+    class IrisDataset(Dataset):
+        df: pd.DataFrame
+        feature_names: list[str]
+
+        def __len__(self):
+            return len(self.df)
+
+        def __getitem__(self, idx):
+            row = self.df.iloc[idx]
+            x = torch.tensor(row[self.feature_names].values, dtype=torch.float32)
+            y = torch.tensor(row['target'], dtype=int)
+            return x, y
+
+
+    @dataclass
+    class Standardize():
+        mean:torch.Tensor
+        std:torch.Tensor
+
+        def __call__(self, x:torch.Tensor|float) -> torch.Tensor|float:
+            return (x - self.mean) / self.std
+
+        def reverse(self, x:torch.Tensor|float) -> torch.Tensor|float:
+            return x * self.std + self.mean
+
+
+    def standardize_and_get_transform(x:torch.Tensor|pd.Series) -> tuple[torch.Tensor|pd.Series, Standardize]:
+        transform = Standardize(mean=x.mean(), std=x.std())
+        return transform(x), transform
+
+
+    class IrisApp(ta.TorchApp):
         """
-        Creates a basic app to do logistic regression.
-        """
+        A classification app to predict the type of iris from sepal and petal lengths and widths.
 
-        def dataloaders(
-            self,
-            csv: Path = ta.Param(help="The path to a CSV file with the data."),
-            x: str = ta.Param(default="x", help="The column name of the independent variable."),
-            y: str = ta.Param(default="y", help="The column name of the dependent variable."),
-            validation_proportion: float = ta.Param(
-                default=0.2, help="The proportion of the dataset to use for validation."
-            ),
-            batch_size: int = ta.Param(
-                default=32,
-                help="The number of items to use in each batch.",
-            ),
+        A classic dataset publised in:
+            Fisher, R.A. “The Use of Multiple Measurements in Taxonomic Problems” Annals of Eugenics, 7, Part II, 179–188 (1936).
+        For more information about the dataset, see:
+            https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-plants-dataset
+        """
+        @ta.method
+        def setup(self):
+            iris_data = load_iris(as_frame=True)
+            df = iris_data['frame']
+            self.feature_names = iris_data['feature_names']
+            self.target_names = iris_data['target_names']
+            self.df = df
+
+        @ta.method
+        def data(self, validation_fraction: float = 0.2, batch_size: int = 32, seed: int = 42):
+            df = self.df
+
+            # Standardize and save the transforms
+            self.transforms = {}
+            for column in self.feature_names:
+                df[column], self.transforms[column] = standardize_and_get_transform(df[column])
+
+            validation_df = df.sample(frac=validation_fraction, random_state=seed)
+            train_df = df.drop(validation_df.index)
+            train_dataset = IrisDataset(train_df, self.feature_names)
+            val_dataset = IrisDataset(validation_df, self.feature_names)
+            data_module = L.LightningDataModule()
+
+            data_module.train_dataloader = lambda: DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+            data_module.val_dataloader = lambda: DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+            return data_module
+
+        @ta.method
+        def metrics(self):
+            return [accuracy]
+
+        @ta.method
+        def extra_hyperparameters(self):
+            return dict(target_names=self.target_names, transforms=self.transforms)
+
+        @ta.method
+        def model(
+            self, 
+            hidden_size:int=ta.Param(default=8, tune=True, tune_min=4, tune_max=128, tune_log=True),
+            intermediate_layers:int=ta.Param(default=1, tune=True, tune_min=0, tune_max=3),
         ):
+            in_features = 4
+            output_categories = 3
 
-            datablock = DataBlock(
-                blocks=[TransformBlock, BoolBlock],
-                get_x=ColReader(x),
-                get_y=ColReader(y),
-                splitter=RandomSplitter(validation_proportion),
-            )
-            df = pd.read_csv(csv)
+            modules = [nn.Linear(in_features, hidden_size)]
+            for _ in range(intermediate_layers):
+                modules.append(nn.ReLU())
+                modules.append(nn.Linear(hidden_size, hidden_size))
 
-            return datablock.dataloaders(df, bs=batch_size)
+            modules.append(nn.ReLU())
+            modules.append(nn.Linear(hidden_size, output_categories))
+            return nn.Sequential(*modules)
 
-        def model(self) -> nn.Module:
-            """Builds a simple logistic regression model."""
-            return nn.Linear(in_features=1, out_features=1, bias=True)
+        @ta.method
+        def loss_function(self):
+            return nn.CrossEntropyLoss()
 
-        def loss_func(self):
-            return nn.BCEWithLogitsLoss()
+        @ta.method
+        def get_bibtex_files(self):
+            files = super().get_bibtex_files()
+            files.append(Path(__file__).parent / "iris.bib")
+            return files
 
+        @ta.method
+        def prediction_dataloader(
+            self, 
+            module, 
+            sepal_length:float=ta.Param(...,help="The sepal length in cm."), 
+            sepal_width:float=ta.Param(...,help="The sepal width in cm."), 
+            petal_length:float=ta.Param(...,help="The petal length in cm."), 
+            petal_width:float=ta.Param(...,help="The petal width in cm."), 
+        ) -> list:
+            assert sepal_width is not None
+            assert sepal_length is not None
+            assert petal_width is not None
+            assert petal_length is not None
 
-    if __name__ == "__main__":
-        LogisticRegressionApp.main()
+            self.target_names = module.hparams.target_names
+
+            # data must be in the same order as the feature_names
+            data = [sepal_length, sepal_width, petal_length, petal_width]
+            transformed_data = [transform(x) for x,transform in zip(data, module.hparams.transforms.values())]
+            dataset = [torch.tensor(transformed_data, dtype=torch.float32)]
+            return DataLoader(dataset, batch_size=1)
+
+        @ta.method
+        def output_results(
+            self, 
+            results,
+        ):
+            assert results.shape == (3,)
+            probabilities = torch.softmax(results, dim=0)
+            predicted_class = results.argmax().item()
+            predicted_name = self.target_names[predicted_class]
+            print(f"Predicted class: {predicted_name} ({probabilities[predicted_class]:.2%})")
    
 
 Programmatic Interface
@@ -125,15 +224,15 @@ To use the app in Python, simply instantiate it:
 
 .. code-block:: Python
 
-   app = LogisticRegressionApp()
+   app = IrisApp()
 
 Then you can train with the method:
 
 .. code-block:: Python
 
-   app.train(training_csv_path)
+   app.train(csv=training_csv_path)
 
-This takes the arguments of both the :code:`dataloaders` method and the :code:`train` method. The function signature is modified so these arguments show up in auto-completion in a Jupyter notebook.
+This takes the arguments of both the :code:`data` method and the :code:`train` method.
 
 Predictions are made by simply calling the app object.
 
@@ -144,34 +243,41 @@ Predictions are made by simply calling the app object.
 Command-Line Interface
 =======================
 
-Command-line interfaces are created simply by using the Poetry package management tool. Just add a line like this in :code:`pyproject.toml`
+Command-line interfaces are created simply by using the Poetry package management tool. Just add line like this in :code:`pyproject.toml` (assuming your package is called ``iris``):
 
 .. code-block:: toml
 
-    logistic = "logistic.apps:LogisticRegressionApp.main"
+    iris = "iris.apps:IrisApp.main"
+    iris-tools = "iris.apps:IrisApp.tools"
 
 Now we can train with the command line:
 
 .. code-block:: bash
 
-    logistic train training_csv_path
+    iris-tools train --csv training_csv_path
 
 All the arguments for the dataloader and the model can be set through arguments in the CLI. To see them run
 
 .. code-block:: bash
 
-    logistic train -h
+    iris-tools train --help
 
 Predictions are made like this:
 
 .. code-block:: bash
 
-    logistic predict data_csv_path
+    iris --csv data_csv_path
+
+See information for other commands by running:
+
+    iris-tools --help
 
 Hyperparameter Tuning
 =======================
 
-All the arguments in the dataloader and the model can be tuned using Weights & Biases (W&B) hyperparameter sweeps (https://docs.wandb.ai/guides/sweeps). In Python, simply run:
+All the arguments in the dataloader and the model can be tuned using a variety of hyperparameter tuning libraries including.
+
+In Python run this:
 
 .. code-block:: python
 
@@ -181,7 +287,7 @@ Or from the command line, run
 
 .. code-block:: bash
 
-    logistic tune --runs 10
+    iris-tools tune --runs 10
 
 These commands will connect with W&B and your runs will be visible on the wandb.ai site.
 
@@ -192,7 +298,7 @@ To use a template to construct a package for your app, simply run:
 
 .. code-block:: bash
 
-    torchapp
+    torchapp-generator
 
 .. end-quickstart
 
@@ -201,7 +307,7 @@ Credits
 
 .. start-credits
 
-torchapp was created created by Robert Turnbull with contributions from Jonathan Garber and Simone Bae.
+torchapp was created created by Robert Turnbull with contributions from Wytamma Wirth, Jonathan Garber and Simone Bae.
 
 Citation details to follow.
 
