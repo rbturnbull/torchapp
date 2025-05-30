@@ -1,24 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Setup &mdash; torchapp 0.1.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,10 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Project Setup</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#automatic-generation">Automatic Generation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#automatic-generation-reference">Automatic Generation Reference</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#torchapp">torchapp</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#automatic-generation-reference">Automatic Generation Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#manual-setup">Manual Setup</a></li>
@@ -62,7 +60,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vision.html">Computer Vision Apps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -92,35 +89,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="project-setup">
-<h1>Project Setup<a class="headerlink" href="#project-setup" title="Permalink to this headline"></a></h1>
+  <section id="project-setup">
+<h1>Project Setup<a class="headerlink" href="#project-setup" title="Link to this heading"></a></h1>
 <p>You can set up a TorchApp project automatically using the built in cookiecutter template or you can add it manually to an existing Python package.</p>
 <section id="automatic-generation">
-<h2>Automatic Generation<a class="headerlink" href="#automatic-generation" title="Permalink to this headline"></a></h2>
+<h2>Automatic Generation<a class="headerlink" href="#automatic-generation" title="Link to this heading"></a></h2>
 <p>To generate a project using torchapp, then run the command-line utility.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>torchapp
 </pre></div>
@@ -142,140 +115,11 @@ Then to install the dependencies, run:</p>
 </div>
 <p>The command-line utility should be installed to your path automatically in that environment.</p>
 <section id="automatic-generation-reference">
-<h3>Automatic Generation Reference<a class="headerlink" href="#automatic-generation-reference" title="Permalink to this headline"></a></h3>
-<section id="torchapp">
-<h4>torchapp<a class="headerlink" href="#torchapp" title="Permalink to this headline"></a></h4>
-<p>Generate a torchapp project using Cookiecutter (<a class="reference external" href="https://github.com/audreyr/cookiecutter">https://github.com/audreyr/cookiecutter</a>)</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>torchapp<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</pre></div>
-</div>
-<p class="rubric">Options</p>
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-template">
-<span class="sig-name descname"><span class="pre">--template</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;template&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-template" title="Permalink to this definition"></a></dt>
-<dd><p>The Cookiecutter template to use. If left blank then it uses the default template in this version of torchapp. If ‘gh’ or ‘github’ then it uses the latest torchapp cookiecutter template at <a class="reference external" href="https://github.com/rbturnbull/torchapp-cookiecutter">https://github.com/rbturnbull/torchapp-cookiecutter</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Default</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-checkout">
-<span class="sig-name descname"><span class="pre">--checkout</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;checkout&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-checkout" title="Permalink to this definition"></a></dt>
-<dd><p>A branch, tag or commit to checkout after git clone</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-no-input">
-<span class="sig-name descname"><span class="pre">--no-input</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-no-input</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-torchapp-no-input" title="Permalink to this definition"></a></dt>
-<dd><p>Do not prompt for parameters and only use cookiecutter.json file content</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default</dt>
-<dd class="field-odd"><p>False</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-extra-context">
-<span class="sig-name descname"><span class="pre">--extra-context</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;extra_context&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-extra-context" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-replay">
-<span class="sig-name descname"><span class="pre">--replay</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-replay</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-torchapp-replay" title="Permalink to this definition"></a></dt>
-<dd><p>Do not prompt for parameters and only use information entered previously</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default</dt>
-<dd class="field-odd"><p>False</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-overwrite-if-exists">
-<span class="sig-name descname"><span class="pre">--overwrite-if-exists</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-overwrite-if-exists</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-torchapp-overwrite-if-exists" title="Permalink to this definition"></a></dt>
-<dd><p>Overwrite the contents of the output directory if it already exists</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default</dt>
-<dd class="field-odd"><p>False</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-output-dir">
-<span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_dir&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-output-dir" title="Permalink to this definition"></a></dt>
-<dd><p>Where to output the generated project dir into</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default</dt>
-<dd class="field-odd"><p>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-config-file">
-<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config_file&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-config-file" title="Permalink to this definition"></a></dt>
-<dd><p>User configuration file</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-default-config">
-<span class="sig-name descname"><span class="pre">--default-config</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-config</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-torchapp-default-config" title="Permalink to this definition"></a></dt>
-<dd><p>Do not load a config file. Use the defaults instead</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default</dt>
-<dd class="field-odd"><p>False</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-directory">
-<span class="sig-name descname"><span class="pre">--directory</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;directory&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-directory" title="Permalink to this definition"></a></dt>
-<dd><p>Directory within repo that holds cookiecutter.json file for advanced repositories with multi templates in it</p>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-skip-if-file-exists">
-<span class="sig-name descname"><span class="pre">--skip-if-file-exists</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-skip-if-file-exists</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-torchapp-skip-if-file-exists" title="Permalink to this definition"></a></dt>
-<dd><p>Skip the files in the corresponding directories if they already exist</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default</dt>
-<dd class="field-odd"><p>False</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-install-completion">
-<span class="sig-name descname"><span class="pre">--install-completion</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;install_completion&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-install-completion" title="Permalink to this definition"></a></dt>
-<dd><p>Install completion for the specified shell.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Options</dt>
-<dd class="field-odd"><p>bash | zsh | fish | powershell | pwsh</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-torchapp-show-completion">
-<span class="sig-name descname"><span class="pre">--show-completion</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;show_completion&gt;</span></span><a class="headerlink" href="#cmdoption-torchapp-show-completion" title="Permalink to this definition"></a></dt>
-<dd><p>Show completion for the specified shell, to copy it or customize the installation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Options</dt>
-<dd class="field-odd"><p>bash | zsh | fish | powershell | pwsh</p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
+<h3>Automatic Generation Reference<a class="headerlink" href="#automatic-generation-reference" title="Link to this heading"></a></h3>
 </section>
 </section>
 <section id="manual-setup">
-<h2>Manual Setup<a class="headerlink" href="#manual-setup" title="Permalink to this headline"></a></h2>
+<h2>Manual Setup<a class="headerlink" href="#manual-setup" title="Link to this heading"></a></h2>
 <p>You can use TorchApp in an existing project, by following these steps.</p>
 <p>If you are using the poetry dependency management system, the install the app like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>add<span class="w"> </span>git+https://github.com/rbturnbull/torchapp.git#main
@@ -286,13 +130,13 @@ Then to install the dependencies, run:</p>
 </pre></div>
 </div>
 <p>Then in your code (perhaps in a file named <code class="docutils literal notranslate"><span class="pre">apps.py</span></code>) subclass TorchApp and implement at least the <code class="docutils literal notranslate"><span class="pre">dataloaders</span></code> and the <code class="docutils literal notranslate"><span class="pre">model</span></code> methods.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torchapp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
 
-<span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">dataloaders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dataloaders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="o">...</span>
 
-    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="o">...</span>
 </pre></div>
 </div>
@@ -303,24 +147,24 @@ Then to install the dependencies, run:</p>
 </div>
 <p>If you wish to include the app in a python package, it is easiest to use the poetry dependency management system. In the pyproject.toml file add the main method of your app to the scripts section like this:</p>
 <div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span>
-<span class="n">executable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;path.to.script:MyApp.main&quot;</span>
+<span class="n">executable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;path.to.script:MyApp.main&quot;</span>
 </pre></div>
 </div>
 <p>For example, if the name of the executable was going to be <code class="docutils literal notranslate"><span class="pre">logistic</span></code> and the path to the file from the base directory was <code class="docutils literal notranslate"><span class="pre">logistic/apps.py</span></code> and the subclass of TorchApp was called <code class="docutils literal notranslate"><span class="pre">LogisticApp</span></code>, then the following would be added to pyproject.toml:</p>
 <div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span>
-<span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;logistic.apps:LogisticApp.main&quot;</span>
+<span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;logistic.apps:LogisticApp.main&quot;</span>
 </pre></div>
 </div>
 </section>
 <section id="pre-commit-hooks">
-<h2>Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Permalink to this headline"></a></h2>
+<h2>Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Link to this heading"></a></h2>
 <p>To set up black code formatting with a pre-commit hook, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
 </section>
 <section id="coverage-badge">
-<h2>Coverage Badge<a class="headerlink" href="#coverage-badge" title="Permalink to this headline"></a></h2>
+<h2>Coverage Badge<a class="headerlink" href="#coverage-badge" title="Link to this heading"></a></h2>
 <p>To set up the automatic coverage badge on Github, you need to create a Github authorization token (<a class="reference external" href="https://github.com/settings/tokens/new">https://github.com/settings/tokens/new</a>)
 and give it permission to modify gists. Then add this token as the secret in <code class="docutils literal notranslate"><span class="pre">Settings/Secrets/Actions</span></code> with the variable name:  <code class="docutils literal notranslate"><span class="pre">GIST_SECRET</span></code>.</p>
 </section>

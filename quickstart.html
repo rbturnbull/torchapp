@@ -1,24 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quickstart &mdash; torchapp 0.1.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -58,7 +59,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Project Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vision.html">Computer Vision Apps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -88,34 +88,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="quickstart">
-<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h1>
+  <section id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h1>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The software can be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>torchapp
 </pre></div>
@@ -126,117 +102,222 @@
 </div>
 </section>
 <section id="writing-an-app">
-<h2>Writing an App<a class="headerlink" href="#writing-an-app" title="Permalink to this headline"></a></h2>
+<h2>Writing an App<a class="headerlink" href="#writing-an-app" title="Link to this heading"></a></h2>
 <p>Inherit a class from <code class="code docutils literal notranslate"><span class="pre">TorchApp</span></code> to make an app. The parent class includes several methods for training and hyper-parameter tuning.
 The minimum requirement is that you fill out the dataloaders method and the model method.</p>
-<p>The <code class="code docutils literal notranslate"><span class="pre">dataloaders</span></code> method requires that you return a fastai Dataloaders object. This is a collection of dataloader objects.
-Typically it contains one dataloader for training and another for testing. For more information see <a class="reference external" href="https://docs.fast.ai/data.core.html#DataLoaders">https://docs.fast.ai/data.core.html#DataLoaders</a>
-You can add parameter values with typing hints in the function signature and these will be automatically added to the train and show_batch methods.</p>
-<p>The <code class="code docutils literal notranslate"><span class="pre">model</span></code> method requires that you return a pytorch module. Parameters in the function signature will be added to the train method.</p>
-<p>Here’s an example for doing logistic regression:</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">fastai.data.block</span> <span class="kn">import</span> <span class="n">DataBlock</span><span class="p">,</span> <span class="n">TransformBlock</span>
-<span class="kn">from</span> <span class="nn">fastai.data.transforms</span> <span class="kn">import</span> <span class="n">ColReader</span><span class="p">,</span> <span class="n">RandomSplitter</span>
-<span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
-<span class="kn">from</span> <span class="nn">torchapp.blocks</span> <span class="kn">import</span> <span class="n">BoolBlock</span>
+<p>The <code class="code docutils literal notranslate"><span class="pre">data</span></code> method requires that you return a <code class="docutils literal notranslate"><span class="pre">LightningDataModule</span></code> object. This is a collection of dataloader objects.
+Typically it contains one dataloader for training and another for testing. For more information see <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/data/datamodule.html">https://lightning.ai/docs/pytorch/stable/data/datamodule.html</a>
+You can add parameter values with typing hints in the function signature and these will be automatically added to any mehtod that requires the training data (e.g. <code class="docutils literal notranslate"><span class="pre">train</span></code>).</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">model</span></code> method requires that you return a PyTorch module. Parameters in the function signature will be added to the <code class="docutils literal notranslate"><span class="pre">train</span></code> method.</p>
+<p>Here’s an example for doing training on the Iris dataset, a classic dataset for classification tasks:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchapp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">lightning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">L</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchapp.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy</span>
 
 
-<span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IrisDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">feature_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Standardize</span><span class="p">():</span>
+    <span class="n">mean</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="n">std</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">standardize_and_get_transform</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">Standardize</span><span class="p">]:</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Standardize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">std</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">transform</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">IrisApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a basic app to do logistic regression.</span>
+<span class="sd">    A classification app to predict the type of iris from sepal and petal lengths and widths.</span>
+
+<span class="sd">    A classic dataset publised in:</span>
+<span class="sd">        Fisher, R.A. “The Use of Multiple Measurements in Taxonomic Problems” Annals of Eugenics, 7, Part II, 179–188 (1936).</span>
+<span class="sd">    For more information about the dataset, see:</span>
+<span class="sd">        https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-plants-dataset</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">iris_data</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;feature_names&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;target_names&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">dataloaders</span><span class="p">(</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validation_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+
+        <span class="c1"># Standardize and save the transforms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">standardize_and_get_transform</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
+
+        <span class="n">validation_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="n">validation_fraction</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">train_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">validation_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">IrisDataset</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+        <span class="n">val_dataset</span> <span class="o">=</span> <span class="n">IrisDataset</span><span class="p">(</span><span class="n">validation_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+        <span class="n">data_module</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">LightningDataModule</span><span class="p">()</span>
+
+        <span class="n">data_module</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_module</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data_module</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">accuracy</span><span class="p">]</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extra_hyperparameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">target_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">)</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">csv</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to a CSV file with the data.&quot;</span><span class="p">),</span>
-        <span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the independent variable.&quot;</span><span class="p">),</span>
-        <span class="n">y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the dependent variable.&quot;</span><span class="p">),</span>
-        <span class="n">validation_proportion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
-            <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The proportion of the dataset to use for validation.&quot;</span>
-        <span class="p">),</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
-            <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of items to use in each batch.&quot;</span><span class="p">,</span>
-        <span class="p">),</span>
+        <span class="n">hidden_size</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tune_min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">tune_max</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">tune_log</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">intermediate_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tune_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tune_max</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
     <span class="p">):</span>
+        <span class="n">in_features</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">output_categories</span> <span class="o">=</span> <span class="mi">3</span>
 
-        <span class="n">datablock</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span>
-            <span class="n">blocks</span><span class="o">=</span><span class="p">[</span><span class="n">TransformBlock</span><span class="p">,</span> <span class="n">BoolBlock</span><span class="p">],</span>
-            <span class="n">get_x</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
-            <span class="n">get_y</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
-            <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(</span><span class="n">validation_proportion</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">intermediate_layers</span><span class="p">):</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">())</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">datablock</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">())</span>
+        <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_categories</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">modules</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds a simple logistic regression model.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">loss_func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bibtex_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_bibtex_files</span><span class="p">()</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;iris.bib&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">files</span>
 
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prediction_dataloader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">module</span><span class="p">,</span>
+        <span class="n">sepal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The sepal length in cm.&quot;</span><span class="p">),</span>
+        <span class="n">sepal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The sepal width in cm.&quot;</span><span class="p">),</span>
+        <span class="n">petal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The petal length in cm.&quot;</span><span class="p">),</span>
+        <span class="n">petal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The petal width in cm.&quot;</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">sepal_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">sepal_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">petal_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">petal_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">LogisticRegressionApp</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">target_names</span>
+
+        <span class="c1"># data must be in the same order as the feature_names</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">sepal_length</span><span class="p">,</span> <span class="n">sepal_width</span><span class="p">,</span> <span class="n">petal_length</span><span class="p">,</span> <span class="n">petal_width</span><span class="p">]</span>
+        <span class="n">transformed_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">transform</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">results</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">predicted_class</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">predicted_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">[</span><span class="n">predicted_class</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Predicted class: </span><span class="si">{</span><span class="n">predicted_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">probabilities</span><span class="p">[</span><span class="n">predicted_class</span><span class="p">]</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="programmatic-interface">
-<h2>Programmatic Interface<a class="headerlink" href="#programmatic-interface" title="Permalink to this headline"></a></h2>
+<h2>Programmatic Interface<a class="headerlink" href="#programmatic-interface" title="Link to this heading"></a></h2>
 <p>To use the app in Python, simply instantiate it:</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">LogisticRegressionApp</span><span class="p">()</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">IrisApp</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Then you can train with the method:</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">training_csv_path</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">csv</span><span class="o">=</span><span class="n">training_csv_path</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This takes the arguments of both the <code class="code docutils literal notranslate"><span class="pre">dataloaders</span></code> method and the <code class="code docutils literal notranslate"><span class="pre">train</span></code> method. The function signature is modified so these arguments show up in auto-completion in a Jupyter notebook.</p>
+<p>This takes the arguments of both the <code class="code docutils literal notranslate"><span class="pre">data</span></code> method and the <code class="code docutils literal notranslate"><span class="pre">train</span></code> method.</p>
 <p>Predictions are made by simply calling the app object.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="p">(</span><span class="n">data_csv_path</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="command-line-interface">
-<h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline"></a></h2>
-<p>Command-line interfaces are created simply by using the Poetry package management tool. Just add a line like this in <code class="code docutils literal notranslate"><span class="pre">pyproject.toml</span></code></p>
-<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;logistic.apps:LogisticRegressionApp.main&quot;</span>
+<h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
+<p>Command-line interfaces are created simply by using the Poetry package management tool. Just add line like this in <code class="code docutils literal notranslate"><span class="pre">pyproject.toml</span></code> (assuming your package is called <code class="docutils literal notranslate"><span class="pre">iris</span></code>):</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">iris</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;iris.apps:IrisApp.main&quot;</span>
+<span class="n">iris-tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;iris.apps:IrisApp.tools&quot;</span>
 </pre></div>
 </div>
 <p>Now we can train with the command line:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>train<span class="w"> </span>training_csv_path
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>iris-tools<span class="w"> </span>train<span class="w"> </span>--csv<span class="w"> </span>training_csv_path
 </pre></div>
 </div>
 <p>All the arguments for the dataloader and the model can be set through arguments in the CLI. To see them run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>train<span class="w"> </span>-h
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>iris-tools<span class="w"> </span>train<span class="w"> </span>--help
 </pre></div>
 </div>
 <p>Predictions are made like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>predict<span class="w"> </span>data_csv_path
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>iris<span class="w"> </span>--csv<span class="w"> </span>data_csv_path
+</pre></div>
+</div>
+<p>See information for other commands by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>iris-tools<span class="w"> </span>--help
 </pre></div>
 </div>
 </section>
 <section id="hyperparameter-tuning">
-<h2>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Permalink to this headline"></a></h2>
-<p>All the arguments in the dataloader and the model can be tuned using Weights &amp; Biases (W&amp;B) hyperparameter sweeps (<a class="reference external" href="https://docs.wandb.ai/guides/sweeps">https://docs.wandb.ai/guides/sweeps</a>). In Python, simply run:</p>
+<h2>Hyperparameter Tuning<a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading"></a></h2>
+<p>All the arguments in the dataloader and the model can be tuned using a variety of hyperparameter tuning libraries including.</p>
+<p>In Python run this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">tune</span><span class="p">(</span><span class="n">runs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Or from the command line, run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logistic<span class="w"> </span>tune<span class="w"> </span>--runs<span class="w"> </span><span class="m">10</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>iris-tools<span class="w"> </span>tune<span class="w"> </span>--runs<span class="w"> </span><span class="m">10</span>
 </pre></div>
 </div>
 <p>These commands will connect with W&amp;B and your runs will be visible on the wandb.ai site.</p>
 </section>
 <section id="project-generation">
-<h2>Project Generation<a class="headerlink" href="#project-generation" title="Permalink to this headline"></a></h2>
+<h2>Project Generation<a class="headerlink" href="#project-generation" title="Link to this heading"></a></h2>
 <p>To use a template to construct a package for your app, simply run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>torchapp
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>torchapp-generator
 </pre></div>
 </div>
 </section>

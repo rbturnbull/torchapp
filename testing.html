@@ -1,28 +1,29 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Testing &mdash; torchapp 0.1.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Computer Vision Apps" href="vision.html" />
+    <link rel="next" title="Examples" href="examples.html" />
     <link rel="prev" title="Project Setup" href="setup.html" /> 
 </head>
 
@@ -51,10 +52,18 @@
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Project Setup</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Testing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#logistic-regression-app-example">Logistic Regression App Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#torchapptestcase-reference">TorchAppTestCase Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#torchapptestcase-reference">TorchAppTestCase Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#torchapp.testing.TorchAppTestCase"><code class="docutils literal notranslate"><span class="pre">TorchAppTestCase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#torchapp.testing.TorchAppTestCase.get_app"><code class="docutils literal notranslate"><span class="pre">TorchAppTestCase.get_app()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#torchapp.testing.TorchAppTestCase.get_expected_dir"><code class="docutils literal notranslate"><span class="pre">TorchAppTestCase.get_expected_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#torchapp.testing.TorchAppTestCase.perform_subtests"><code class="docutils literal notranslate"><span class="pre">TorchAppTestCase.perform_subtests()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#torchapp.testing.TorchAppTestCase.test_model"><code class="docutils literal notranslate"><span class="pre">TorchAppTestCase.test_model()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="vision.html">Computer Vision Apps</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
@@ -84,32 +93,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="testing">
-<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline"></a></h1>
+  <section id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h1>
 <p>Classes inheriting from <code class="docutils literal notranslate"><span class="pre">TorchApp</span></code> can be tested automatically by inheriting from the <code class="docutils literal notranslate"><span class="pre">TorchAppTestCase</span></code>.
 This creates a number of automated tests designed to be used in conjunction with <code class="docutils literal notranslate"><span class="pre">pytest</span></code>.
 The expected results of the tests are definied in yaml files in a directory named <code class="docutils literal notranslate"><span class="pre">expected</span></code> next to the scripts with the testing code
@@ -126,13 +111,13 @@ For example the expected output for the model method is the string representatio
 One way to automatically create expectation files is to add blank files and prompt for adding the expected result.
 The resulting file should be read to make sure that it is correct.</p>
 <section id="logistic-regression-app-example">
-<h2>Logistic Regression App Example<a class="headerlink" href="#logistic-regression-app-example" title="Permalink to this headline"></a></h2>
+<h2>Logistic Regression App Example<a class="headerlink" href="#logistic-regression-app-example" title="Link to this heading"></a></h2>
 <p>For instance, the LogisticRegression app included as an example in this project is tested as follows in <code class="docutils literal notranslate"><span class="pre">tests/test_logistic.py</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchapp.testing</span> <span class="kn">import</span> <span class="n">TorchAppTestCase</span>
-<span class="kn">from</span> <span class="nn">torchapp.examples.logistic_regression</span> <span class="kn">import</span> <span class="n">LogisticRegressionApp</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchapp.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TorchAppTestCase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchapp.examples.logistic_regression</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegressionApp</span>
 
 
-<span class="k">class</span> <span class="nc">TestLogisticRegressionApp</span><span class="p">(</span><span class="n">TorchAppTestCase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestLogisticRegressionApp</span><span class="p">(</span><span class="n">TorchAppTestCase</span><span class="p">):</span>
     <span class="n">app_class</span> <span class="o">=</span> <span class="n">LogisticRegressionApp</span>
 </pre></div>
 </div>
@@ -144,14 +129,14 @@ The file for testing the model is in <code class="docutils literal notranslate">
 </div>
 </section>
 <section id="torchapptestcase-reference">
-<h2>TorchAppTestCase Reference<a class="headerlink" href="#torchapptestcase-reference" title="Permalink to this headline"></a></h2>
+<h2>TorchAppTestCase Reference<a class="headerlink" href="#torchapptestcase-reference" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="torchapp.testing.TorchAppTestCase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torchapp.testing.</span></span><span class="sig-name descname"><span class="pre">TorchAppTestCase</span></span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torchapp.testing.</span></span><span class="sig-name descname"><span class="pre">TorchAppTestCase</span></span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase" title="Link to this definition"></a></dt>
 <dd><p>Automated tests for TorchApp classes</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="torchapp.testing.TorchAppTestCase.get_app">
-<span class="sig-name descname"><span class="pre">get_app</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torchapp.apps.TorchApp</span></span></span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.get_app" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_app</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TorchApp</span></span></span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.get_app" title="Link to this definition"></a></dt>
 <dd><p>Returns an instance of the app for this test case.</p>
 <p>It instantiates an object from <cite>app_class</cite>.
 Override <cite>app_class</cite> or this method so the correct app is returned from calling this method.</p>
@@ -159,17 +144,17 @@ Override <cite>app_class</cite> or this method so the correct app is returned fr
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchapp.testing.TorchAppTestCase.get_expected_dir">
-<span class="sig-name descname"><span class="pre">get_expected_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pathlib.Path</span></span></span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.get_expected_dir" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_expected_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.get_expected_dir" title="Link to this definition"></a></dt>
 <dd><p>Returns the path to the directory where the expected files.</p>
 <p>It creates the directory if it doesn’t already exist.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchapp.testing.TorchAppTestCase.perform_subtests">
-<span class="sig-name descname"><span class="pre">perform_subtests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interactive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.perform_subtests" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">perform_subtests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interactive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.perform_subtests" title="Link to this definition"></a></dt>
 <dd><p>Performs a number of subtests for a method on the app.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>interactive</strong> (<em>bool</em>) – Whether or not the user should be prompted for creating or regenerating expected files.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – The name of the method to be tested with the string <cite>test_</cite> prepended to it.</p></li>
@@ -180,11 +165,11 @@ Override <cite>app_class</cite> or this method so the correct app is returned fr
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchapp.testing.TorchAppTestCase.test_model">
-<span class="sig-name descname"><span class="pre">test_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interactive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.test_model" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">test_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interactive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchapp.testing.TorchAppTestCase.test_model" title="Link to this definition"></a></dt>
 <dd><p>Tests the method of a TorchApp to create a pytorch model.</p>
 <p>The expected output is the string representation of the model created.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>interactive</strong> (<em>bool</em>) – Whether or not failed tests should prompt the user to regenerate the expected files.</p>
 </dd>
 </dl>
@@ -200,7 +185,7 @@ Override <cite>app_class</cite> or this method so the correct app is returned fr
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="setup.html" class="btn btn-neutral float-left" title="Project Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="vision.html" class="btn btn-neutral float-right" title="Computer Vision Apps" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

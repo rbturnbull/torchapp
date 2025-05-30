@@ -1,29 +1,30 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Examples &mdash; torchapp 0.1.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Contributing" href="contributing.html" />
-    <link rel="prev" title="Computer Vision Apps" href="vision.html" /> 
+    <link rel="prev" title="Testing" href="testing.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,10 +51,10 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Project Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vision.html">Computer Vision Apps</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#logistic-regression">Logistic Regression</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#iris">Iris</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#image-classifier">Image Classifier</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -84,67 +85,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h1>
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
 <section id="logistic-regression">
-<h2>Logistic Regression<a class="headerlink" href="#logistic-regression" title="Permalink to this headline"></a></h2>
+<h2>Logistic Regression<a class="headerlink" href="#logistic-regression" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">fastai.data.block</span> <span class="kn">import</span> <span class="n">DataBlock</span><span class="p">,</span> <span class="n">TransformBlock</span>
-<span class="kn">from</span> <span class="nn">fastai.data.transforms</span> <span class="kn">import</span> <span class="n">ColReader</span><span class="p">,</span> <span class="n">RandomSplitter</span><span class="p">,</span> <span class="n">Transform</span>
-<span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
-<span class="kn">from</span> <span class="nn">torchapp.blocks</span> <span class="kn">import</span> <span class="n">BoolBlock</span><span class="p">,</span> <span class="n">Float32Block</span>
-<span class="kn">from</span> <span class="nn">torchapp.metrics</span> <span class="kn">import</span> <span class="n">logit_accuracy</span><span class="p">,</span> <span class="n">logit_f1</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchapp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchapp.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">logit_accuracy</span><span class="p">,</span> <span class="n">logit_f1</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchapp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">lightning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">L</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 
 
-<span class="k">class</span> <span class="nc">Normalize</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>    
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">std</span>
+<span class="c1"># class Normalize():    </span>
+<span class="c1">#     def __init__(self, mean=None, std=None): </span>
+<span class="c1">#         self.mean = mean</span>
+<span class="c1">#         self.std = std</span>
 
-    <span class="k">def</span> <span class="nf">encodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> 
-        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span>
+<span class="c1">#     def encodes(self, x): </span>
+<span class="c1">#         return (x-self.mean) / self.std</span>
     
-    <span class="k">def</span> <span class="nf">decodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+<span class="c1">#     def decodes(self, x):</span>
+<span class="c1">#         return x * self.std + self.mean</span>
 
 
-<span class="k">class</span> <span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LogisticRegressionDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">x_columns</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">y_column</span><span class="p">:</span><span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x_columns</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+    
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LogisticRegressionApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a basic app to do logistic regression.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">dataloaders</span><span class="p">(</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">csv</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The path to a CSV file with the data.&quot;</span><span class="p">),</span>
         <span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the independent variable.&quot;</span><span class="p">),</span>
         <span class="n">y</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column name of the dependent variable.&quot;</span><span class="p">),</span>
-        <span class="n">validation_proportion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+        <span class="n">validation_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The proportion of the dataset to use for validation.&quot;</span>
         <span class="p">),</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The random seed to use for splitting the data.&quot;</span><span class="p">),</span>
@@ -157,48 +155,88 @@
             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of items to use in each batch.&quot;</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>      
+        <span class="n">validation_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="n">validation_fraction</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">train_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">validation_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">LogisticRegressionDataset</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">val_dataset</span> <span class="o">=</span> <span class="n">LogisticRegressionDataset</span><span class="p">(</span><span class="n">validation_df</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">data_module</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">LightningDataModule</span><span class="p">()</span>
+        <span class="n">data_module</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_module</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data_module</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>
-        <span class="n">datablock</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span>
-            <span class="n">blocks</span><span class="o">=</span><span class="p">[</span><span class="n">Float32Block</span><span class="p">(</span><span class="n">type_tfms</span><span class="o">=</span><span class="p">[</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">std</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())]),</span> <span class="n">BoolBlock</span><span class="p">],</span>
-            <span class="n">get_x</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
-            <span class="n">get_y</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
-            <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(</span><span class="n">validation_proportion</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">),</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">datablock</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">:</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds a simple logistic regression model.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">loss_func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">logit_accuracy</span><span class="p">,</span> <span class="n">logit_f1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;logit_f1&quot;</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">LogisticRegressionApp</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+    <span class="n">LogisticRegressionApp</span><span class="o">.</span><span class="n">tools</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
 <section id="iris">
-<h2>Iris<a class="headerlink" href="#iris" title="Permalink to this headline"></a></h2>
+<h2>Iris<a class="headerlink" href="#iris" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">fastai.tabular.data</span> <span class="kn">import</span> <span class="n">TabularDataLoaders</span>
-<span class="kn">from</span> <span class="nn">fastai.tabular.all</span> <span class="kn">import</span> <span class="n">tabular_learner</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">error_rate</span>
-<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
-<span class="kn">import</span> <span class="nn">torchapp</span> <span class="k">as</span> <span class="nn">ta</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchapp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">lightning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">L</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchapp.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy</span>
 
 
-<span class="k">class</span> <span class="nc">IrisApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IrisDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">feature_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Standardize</span><span class="p">():</span>
+    <span class="n">mean</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="n">std</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">standardize_and_get_transform</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">|</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">Standardize</span><span class="p">]:</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Standardize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">std</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">transform</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">IrisApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A classification app to predict the type of iris from sepal and petal lengths and widths.</span>
 
@@ -207,39 +245,442 @@
 <span class="sd">    For more information about the dataset, see:</span>
 <span class="sd">        https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-plants-dataset</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">iris_data</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;feature_names&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;target_names&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">dataloaders</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">tune_min</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">tune_max</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validation_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+
+        <span class="c1"># Standardize and save the transforms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">standardize_and_get_transform</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
+
+        <span class="n">validation_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="n">validation_fraction</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">train_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">validation_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">IrisDataset</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+        <span class="n">val_dataset</span> <span class="o">=</span> <span class="n">IrisDataset</span><span class="p">(</span><span class="n">validation_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
+        <span class="n">data_module</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">LightningDataModule</span><span class="p">()</span>
+
+        <span class="n">data_module</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_module</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data_module</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">accuracy</span><span class="p">]</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extra_hyperparameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">target_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">)</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">hidden_size</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tune_min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">tune_max</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">tune_log</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">intermediate_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tune_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tune_max</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
     <span class="p">):</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">in_features</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">output_categories</span> <span class="o">=</span> <span class="mi">3</span>
 
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">][</span><span class="s2">&quot;target_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;target_names&quot;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">])</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">intermediate_layers</span><span class="p">):</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">())</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">TabularDataLoaders</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">],</span>
-            <span class="n">cont_names</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;feature_names&quot;</span><span class="p">],</span>
-            <span class="n">y_names</span><span class="o">=</span><span class="s2">&quot;target_name&quot;</span><span class="p">,</span>
-            <span class="n">bs</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">())</span>
+        <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_categories</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">modules</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">error_rate</span><span class="p">]</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">build_learner_func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">tabular_learner</span>
-
-    <span class="k">def</span> <span class="nf">get_bibtex_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bibtex_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">files</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_bibtex_files</span><span class="p">()</span>
         <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;iris.bib&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">files</span>
 
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prediction_dataloader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">module</span><span class="p">,</span> 
+        <span class="n">sepal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The sepal length in cm.&quot;</span><span class="p">),</span> 
+        <span class="n">sepal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The sepal width in cm.&quot;</span><span class="p">),</span> 
+        <span class="n">petal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The petal length in cm.&quot;</span><span class="p">),</span> 
+        <span class="n">petal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The petal width in cm.&quot;</span><span class="p">),</span> 
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">sepal_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">sepal_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">petal_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">petal_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">target_names</span>
+
+        <span class="c1"># data must be in the same order as the feature_names</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">sepal_length</span><span class="p">,</span> <span class="n">sepal_width</span><span class="p">,</span> <span class="n">petal_length</span><span class="p">,</span> <span class="n">petal_width</span><span class="p">]</span>
+        <span class="n">transformed_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">transform</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">values</span><span class="p">())]</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">transformed_data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">results</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">predicted_class</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">predicted_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">[</span><span class="n">predicted_class</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Predicted class: </span><span class="si">{</span><span class="n">predicted_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">probabilities</span><span class="p">[</span><span class="n">predicted_class</span><span class="p">]</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">IrisApp</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+    <span class="n">IrisApp</span><span class="o">.</span><span class="n">tools</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="image-classifier">
+<h2>Image Classifier<a class="headerlink" href="#image-classifier" title="Link to this heading"></a></h2>
+<p>This example is available from the CLI with the command <code class="docutils literal notranslate"><span class="pre">torchapp-imageclassifier</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_type_hints</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">transforms</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">lightning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">L</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchapp</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchapp.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">replace_imagenet_classification_layer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">out_features</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively replaces the last classification layer in a model if it outputs 1000 classes.</span>
+<span class="sd">    Supports nn.Linear and nn.Conv2d used in torchvision models like ResNet and SqueezeNet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_children</span><span class="p">())):</span>
+        <span class="c1"># Handle Linear classifier (e.g., ResNet, VGG)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">out_features</span> <span class="o">==</span> <span class="mi">1000</span><span class="p">:</span>
+            <span class="n">in_features</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">in_features</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="c1"># Handle 1x1 Conv2d classifier (e.g., SqueezeNet, MobileNet)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">==</span> <span class="mi">1000</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">kernel_size</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">in_channels</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">in_channels</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="c1"># Recurse into submodules</span>
+        <span class="k">elif</span> <span class="n">replace_imagenet_classification_layer</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">out_features</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># no classification layer found</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_image_paths</span><span class="p">(</span><span class="n">directory</span><span class="p">:</span><span class="n">Path</span><span class="o">|</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+    <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;tif&quot;</span><span class="p">,</span> <span class="s2">&quot;tiff&quot;</span><span class="p">]</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">:</span>
+        <span class="n">paths</span> <span class="o">+=</span> <span class="n">directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*.</span><span class="si">{</span><span class="n">extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">paths</span> <span class="o">+=</span> <span class="n">directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*.</span><span class="si">{</span><span class="n">extension</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">paths</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageItem</span><span class="p">():</span>
+    <span class="n">path</span><span class="p">:</span><span class="n">Path</span>
+    <span class="n">height</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">224</span>
+    <span class="n">width</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">224</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_as_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Standard ImageNet preprocessing for pretrained torchvision models</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)),</span>  <span class="c1"># Resize directly to desired size</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>       <span class="c1"># converts to [0,1] and puts channel first</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span>
+                <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span>  <span class="c1"># ImageNet mean</span>
+                <span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">]</span>    <span class="c1"># ImageNet std</span>
+            <span class="p">)</span>
+        <span class="p">])</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>  <span class="c1"># shape: (3, height, width)</span>
+        <span class="k">return</span> <span class="n">tensor</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageTrainingItem</span><span class="p">(</span><span class="n">ImageItem</span><span class="p">):</span>
+    <span class="n">category_id</span><span class="p">:</span><span class="nb">int</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageClassifierDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="n">items</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">ImageTrainingItem</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">image_tensor</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">image_as_tensor</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ImageTrainingItem</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">image_tensor</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">category_id</span>
+        <span class="k">return</span> <span class="n">image_tensor</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">torchvision_model_choices</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of function names in torchvision.models which can produce torch modules.</span>
+
+<span class="sd">    For more information see: https://pytorch.org/vision/stable/models.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_choices</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># Allow for blank option</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="c1"># Only accept functions</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">):</span>
+
+            <span class="c1"># Only accept if the return value is a pytorch module</span>
+            <span class="n">hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="n">return_value</span> <span class="o">=</span> <span class="n">hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;return&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mro</span> <span class="o">=</span> <span class="n">return_value</span><span class="o">.</span><span class="n">mro</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
+                    <span class="n">model_choices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">model_choices</span>
+
+
+<span class="n">TorchvisionModelEnum</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span>
+    <span class="s2">&quot;TorchvisionModelName&quot;</span><span class="p">,</span>
+    <span class="p">{</span><span class="n">model_name</span> <span class="k">if</span> <span class="n">model_name</span> <span class="k">else</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">model_name</span> <span class="k">for</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">torchvision_model_choices</span><span class="p">()},</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageClassifier</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A TorchApp for classifying images.</span>
+
+<span class="sd">    For training, it expects a CSV with image paths and categories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_model_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;resnet18&quot;</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="n">TorchvisionModelEnum</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The name of a model architecture in torchvision.models (https://pytorch.org/vision/stable/models.html). If not given, then it is given by `default_model_name`&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model_name</span><span class="p">:</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_model_name</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model &#39;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&#39; not recognized.&quot;</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)()</span>
+
+        <span class="c1"># configure last layer</span>
+        <span class="n">n_categories</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">replace_imagenet_classification_layer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">n_categories</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Model &#39;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&#39; does not have a classification layer to replace. Please choose another model.&quot;</span>
+        <span class="k">return</span> <span class="n">model</span>
+    
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">csv</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A CSV with image paths and categories.&quot;</span><span class="p">),</span>
+        <span class="n">image_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The name of the column with the image paths.&quot;</span><span class="p">),</span>
+        <span class="n">category_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The name of the column with the category of the image.&quot;</span>
+        <span class="p">),</span>
+        <span class="n">base_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The base directory for images with relative paths. If not given, then it is relative to the csv directory.&quot;</span><span class="p">),</span>
+        <span class="n">validation_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;validation&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The column in the dataset to use for validation. &quot;</span>
+            <span class="s2">&quot;If the column is not in the dataset, then a validation set will be chosen randomly according to `validation_proportion`.&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">validation_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+            <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If set, then the value in the `validation_column` must equal this string for the item to be in the validation set. &quot;</span>
+        <span class="p">),</span>
+        <span class="n">validation_proportion</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The proportion of the dataset to keep for validation. Used if `validation_column` is not in the dataset.&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of items to use in each batch.&quot;</span><span class="p">),</span>
+        <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">224</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The width to resize all the images to.&quot;</span><span class="p">),</span>
+        <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">224</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The height to resize all the images to.&quot;</span><span class="p">),</span>
+        <span class="c1"># max_lighting:float=0.0,</span>
+        <span class="c1"># max_rotate:float=0.0,</span>
+        <span class="c1"># max_warp:float=0.0,</span>
+        <span class="c1"># max_zoom:float=1.0,</span>
+        <span class="c1"># do_flip:bool=False,</span>
+        <span class="c1"># p_affine:float=0.75,</span>
+        <span class="c1"># p_lighting:float=0.75,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">L</span><span class="o">.</span><span class="n">LightningDataModule</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>
+
+        <span class="n">base_dir</span> <span class="o">=</span> <span class="n">base_dir</span> <span class="ow">or</span> <span class="n">Path</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        
+        <span class="c1"># Create splitter for training/validation images</span>
+        <span class="k">if</span> <span class="n">validation_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">validation_column_new</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">validation_column</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">validation_value</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">validation_column_new</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">validation_column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="n">validation_value</span>
+            <span class="n">validation_column</span> <span class="o">=</span> <span class="n">validation_column_new</span>
+
+        <span class="k">if</span> <span class="n">validation_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+            <span class="c1"># randomly assign validation set based on validation_proportion</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">validation_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="n">validation_proportion</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">image_column</span> <span class="ow">in</span> <span class="n">df</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Image column &#39;</span><span class="si">{</span><span class="n">image_column</span><span class="si">}</span><span class="s2">&#39; not found in the CSV. Columns available </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">category_column</span> <span class="ow">in</span> <span class="n">df</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Category column &#39;</span><span class="si">{</span><span class="n">category_column</span><span class="si">}</span><span class="s2">&#39; not found in the CSV. Columns available </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">training_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">validation_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;category_id&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">factorize</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">category_column</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">image_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">image_column</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">image_path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
+                <span class="n">image_path</span> <span class="o">=</span> <span class="n">base_dir</span><span class="o">/</span><span class="n">image_path</span>
+        
+            <span class="n">item</span> <span class="o">=</span> <span class="n">ImageTrainingItem</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">,</span> <span class="n">category_id</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;category_id&#39;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">validation_data</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">validation_column</span><span class="p">]</span> <span class="k">else</span> <span class="n">training_data</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="n">training_dataset</span> <span class="o">=</span> <span class="n">ImageClassifierDataset</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="n">training_data</span><span class="p">)</span>
+        <span class="n">validation_dataset</span> <span class="o">=</span> <span class="n">ImageClassifierDataset</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="n">validation_data</span><span class="p">)</span>
+
+        <span class="n">data_module</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">LightningDataModule</span><span class="p">()</span>
+        <span class="n">data_module</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">training_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data_module</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">validation_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data_module</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">accuracy</span><span class="p">]</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;accuracy&quot;</span>
+    
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extra_hyperparameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">target_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prediction_dataloader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">module</span><span class="p">,</span> 
+        <span class="n">items</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+        <span class="n">batch_size</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="n">csv</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A CSV with image paths.&quot;</span><span class="p">),</span>
+        <span class="n">image_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The name of the column with the image paths.&quot;</span><span class="p">),</span>
+        <span class="n">base_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The base directory for images with relative paths.&quot;</span><span class="p">),</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                    <span class="c1"># If the item is a directory then get all images in that directory</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span> <span class="n">get_image_paths</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot interpret list of items.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Read CSV if available</span>
+        <span class="k">if</span> <span class="n">csv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">image_column</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No items found.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set relative to base dir</span>
+        <span class="k">if</span> <span class="n">base_dir</span><span class="p">:</span>
+            <span class="n">base_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
+        
+            <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">base_dir</span> <span class="o">/</span> <span class="n">item</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">]</span>
+
+        <span class="n">width</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">width</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">height</span>
+
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">ImageClassifierDataset</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="p">[</span><span class="n">ImageItem</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">hparams</span><span class="o">.</span><span class="n">target_names</span>
+        <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">results</span><span class="p">,</span> 
+        <span class="n">output_csv</span><span class="p">:</span><span class="n">Path</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to write predictions in CSV format&quot;</span><span class="p">),</span> 
+        <span class="n">verbose</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">scores</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> 
+            <span class="n">probabilities</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>           
+            <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39;: &#39;</span><span class="si">{</span><span class="n">prediction</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">[</span><span class="n">item</span><span class="p">,</span><span class="n">prediction</span><span class="p">]</span> <span class="o">+</span> <span class="n">probabilities</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">,</span><span class="s2">&quot;prediction&quot;</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">output_csv</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_csv</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">ImageClassifier</span><span class="o">.</span><span class="n">tools</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
@@ -249,7 +690,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="vision.html" class="btn btn-neutral float-left" title="Computer Vision Apps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="testing.html" class="btn btn-neutral float-left" title="Testing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
