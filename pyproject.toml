@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "torchapp"
-version = "0.5.0"
-description = "A wrapper for PyTorch projects to create easy command-line inferfaces and manage hyper-parameter tuning."
+version = "0.5.1"
+description = "A wrapper for PyTorch projects to create easy command-line interfaces and manage hyper-parameter tuning."
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
 readme = "README.rst"
@@ -13,9 +13,9 @@ keywords = ["PyTorch", "pytorch", "deep learning", "command-line interface"]
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Intended Audience :: Science/Research",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Framework :: PyTorch"
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
 
 [tool.poetry.dependencies]
