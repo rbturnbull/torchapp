@@ -6,7 +6,11 @@ torchapp
 
 .. start-badges
 
-|testing badge| |coverage badge| |docs badge| |black badge| |git3moji badge| |torchapp badge|
+|pypi badge| |testing badge| |coverage badge| |docs badge| |black badge| |git3moji badge| |torchapp badge|
+
+.. |pypi badge| image:: https://img.shields.io/pypi/v/torchapp?color=blue
+   :alt: PyPI - Version
+   :target: https://pypi.org/project/torchapp/
 
 .. |torchapp badge| image:: https://img.shields.io/badge/Torch-App-B1230A.svg
     :target: https://rbturnbull.github.io/torchapp/
