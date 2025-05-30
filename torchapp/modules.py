@@ -74,8 +74,11 @@ class GeneralLightningModule(L.LightningModule):
                 self.log(name, result, on_step=False, on_epoch=True, sync_dist=True)
     
     def predict_step(self, batch):
-        x = batch[:self.input_count]
-        return self(*x)
+        if isinstance(batch, tuple):
+            assert len(batch) >= self.input_count
+            x = batch[:self.input_count]
+            return self(*x)
+        return self(batch)
 
     def on_epoch_end(self):
         self.current_step = 0

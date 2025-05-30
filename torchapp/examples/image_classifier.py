@@ -147,6 +147,9 @@ class ImageClassifier(ta.TorchApp):
         if not model_name:
             model_name = self.default_model_name()
 
+        if isinstance(model_name, TorchvisionModelEnum):
+            model_name = model_name.value
+
         if not hasattr(models, model_name):
             raise ValueError(f"Model '{model_name}' not recognized.")
 
@@ -183,13 +186,7 @@ class ImageClassifier(ta.TorchApp):
         batch_size: int = ta.Param(default=16, help="The number of items to use in each batch."),
         width: int = ta.Param(default=224, help="The width to resize all the images to."),
         height: int = ta.Param(default=224, help="The height to resize all the images to."),
-        # max_lighting:float=0.0,
-        # max_rotate:float=0.0,
-        # max_warp:float=0.0,
-        # max_zoom:float=1.0,
-        # do_flip:bool=False,
-        # p_affine:float=0.75,
-        # p_lighting:float=0.75,
+        num_workers:int = 4,
     ) -> L.LightningDataModule:
         df = pd.read_csv(csv)
 
@@ -229,8 +226,8 @@ class ImageClassifier(ta.TorchApp):
         validation_dataset = ImageClassifierDataset(items=validation_data)
 
         data_module = L.LightningDataModule()
-        data_module.train_dataloader = lambda: DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
-        data_module.val_dataloader = lambda: DataLoader(validation_dataset, batch_size=batch_size, shuffle=False)
+        data_module.train_dataloader = lambda: DataLoader(training_dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True)
+        data_module.val_dataloader = lambda: DataLoader(validation_dataset, batch_size=batch_size, num_workers=num_workers, shuffle=False)
         return data_module
 
     @ta.method
@@ -258,6 +255,7 @@ class ImageClassifier(ta.TorchApp):
         csv: Path = ta.Param(default=None, help="A CSV with image paths."),
         image_column: str = ta.Param(default="image", help="The name of the column with the image paths."),
         base_dir: Path = ta.Param(default="./", help="The base directory for images with relative paths."),
+        num_workers:int = 4,
         **kwargs
     ):
         self.items = []
@@ -294,8 +292,8 @@ class ImageClassifier(ta.TorchApp):
         height = module.hparams.height
 
         dataset = ImageClassifierDataset(items=[ImageItem(path=path, width=width, height=height) for path in self.items])
-        self.target_names = module.hparams.target_names
-        return DataLoader(dataset, batch_size=batch_size)
+        self.target_names = list(module.hparams.target_names)
+        return DataLoader(dataset, batch_size=batch_size, num_workers=num_workers)
 
     @ta.method
     def output_results(
@@ -306,7 +304,7 @@ class ImageClassifier(ta.TorchApp):
         **kwargs
     ):
         data = []
-        for item, scores in zip(self.items, results[0]): 
+        for item, scores in zip(self.items, results): 
             probabilities = torch.softmax(torch.as_tensor(scores), dim=-1)           
             prediction = self.target_names[torch.argmax(probabilities)]
             if verbose:
