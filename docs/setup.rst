@@ -61,7 +61,7 @@ If using pip then:
 
 .. code:: bash
 
-    pip install git+https://github.com/rbturnbull/torchapp.git#main
+    pip install git+https://github.com/rbturnbull/torchapp.git
 
 
 Then in your code (in a file usually named ``apps.py``) subclass TorchApp and implement at least the ``data`` and the ``model`` methods.
