@@ -50,6 +50,11 @@ To install the latest version from the repository, you can use this command:
     pip install git+https://github.com/rbturnbull/torchapp.git
 
 
+.. warning::
+
+    Earlier versions of torchapp used fastai but current versions use Lightning. 
+    If you used torchapp before, please check your code for compatibility with the new version or restrict to using torch below version 0.4.
+
 Writing an App
 =======================
 
