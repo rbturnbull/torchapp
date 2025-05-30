@@ -270,6 +270,8 @@ Predictions are made like this:
 
 See information for other commands by running:
 
+.. code-block:: bash
+
     iris-tools --help
 
 Hyperparameter Tuning
