@@ -1,6 +1,6 @@
 from typer.testing import CliRunner
 from unittest.mock import patch
-from torchapp.cookiecutter import app
+from torchapp.generator import app
 
 runner = CliRunner()
 
@@ -11,7 +11,7 @@ def test_help():
     assert "Generate a torchapp project" in result.stdout
 
 
-@patch("torchapp.cookiecutter.cookiecutter_main")
+@patch("torchapp.generator.cookiecutter")
 def test_generate(cookiecutter_main):
     result = runner.invoke(app, [])
     assert result.exit_code == 0
@@ -22,7 +22,7 @@ def test_generate(cookiecutter_main):
     assert "torchapp" in kwargs['template']
 
 
-@patch("torchapp.cookiecutter.cookiecutter_main")
+@patch("torchapp.generator.cookiecutter")
 def test_template_path(cookiecutter_main):
     result = runner.invoke(app, ["--template", "path/to/template"])
     assert result.exit_code == 0
@@ -31,7 +31,7 @@ def test_template_path(cookiecutter_main):
     assert "path/to/template" in kwargs['template']
 
 
-@patch("torchapp.cookiecutter.cookiecutter_main")
+@patch("torchapp.generator.cookiecutter")
 def test_template_github(cookiecutter_main):
     for gh in ['gh', 'github']:
         result = runner.invoke(app, ["--template", gh])

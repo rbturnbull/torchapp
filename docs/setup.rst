@@ -11,19 +11,19 @@ To generate a project using torchapp, then run the command-line utility.
 
 .. code:: bash
 
-    torchapp
+    torchapp-generator
 
-This uses `https://cookiecutter.readthedocs.io/` cookiecutter to generate a project for you.
+This uses `Cookiecutter <https://cookiecutter.readthedocs.io/>`_ to generate a project for you.
 
 This will use the template that comes with your torchapp installation. If you wish to use the most up-to-date template, then run
 
 .. code:: bash
 
-    torchapp gh
+    torchapp-generator gh
 
 This will use the template from the torchapp-cookiecutter repository on Github. If you wish to create your own template, feel free to fork that repository and use the new URL as the command-line argument.
 
-The dependency management is handeled using poetry. Install poetry using the instructions here: https://python-poetry.org/docs/#installation 
+The dependency management is handled using Poetry. Install Poetry using the `instructions <https://python-poetry.org/docs/#installation>`_.
 Then to install the dependencies, run:
 
 .. code:: bash
@@ -34,7 +34,7 @@ Enter the virtual environment with:
 
 .. code:: bash
 
-    poetry setup
+    poetry env activate
 
 The command-line utility should be installed to your path automatically in that environment.
 
@@ -55,7 +55,7 @@ If you are using the poetry dependency management system, the install the app li
 
 .. code:: bash
 
-    poetry add git+https://github.com/rbturnbull/torchapp.git#main
+    poetry add git+https://github.com/rbturnbull/torchapp.git
 
 If using pip then:
 
@@ -64,16 +64,19 @@ If using pip then:
     pip install git+https://github.com/rbturnbull/torchapp.git#main
 
 
-Then in your code (perhaps in a file named ``apps.py``) subclass TorchApp and implement at least the ``dataloaders`` and the ``model`` methods.
+Then in your code (in a file usually named ``apps.py``) subclass TorchApp and implement at least the ``data`` and the ``model`` methods.
 
 .. code:: python
 
     import torchapp as ta
 
     class MyApp(ta.TorchApp):
-        def dataloaders(self):
-            ...
 
+        @ta.method
+        def data(self):
+            ...
+        
+        @ta.method
         def model(self):
             ...
 
@@ -84,19 +87,23 @@ If you are using a file as the main script then instantiate the app and call the
     if __name__ == "__main__":
         MyApp().main()
 
-If you wish to include the app in a python package, it is easiest to use the poetry dependency management system. In the pyproject.toml file add the main method of your app to the scripts section like this:
+If you wish to include the app in a Python package, it is easiest to use the Poetry dependency management system. 
+In the ``pyproject.toml`` file add the main method of your app to the scripts section like this:
 
 .. code:: toml
 
     [tool.poetry.scripts]
-    executable = "path.to.script:MyApp.main"
+    myapp = "path.to.script:MyApp.main"
+    myapp-tools = "path.to.script:MyApp.tools"
 
-For example, if the name of the executable was going to be ``logistic`` and the path to the file from the base directory was ``logistic/apps.py`` and the subclass of TorchApp was called ``LogisticApp``, then the following would be added to pyproject.toml:
+For example, if the name of the executable was going to be ``logistic`` and the path to the file from the base directory was ``logistic/apps.py`` 
+and the subclass of TorchApp was called ``LogisticApp``, then the following should be added to ``pyproject.toml``:
 
 .. code:: toml
 
     [tool.poetry.scripts]
     logistic = "logistic.apps:LogisticApp.main"
+    logistic-tools = "logistic.apps:LogisticApp.tools"
 
 
 Pre-commit Hooks

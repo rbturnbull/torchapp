@@ -1,13 +1,13 @@
 from pathlib import Path
 import typer
 
-from cookiecutter.main import cookiecutter as cookiecutter_main
+from cookiecutter.main import cookiecutter
 
 app = typer.Typer()
 
 
 @app.command()
-def cookiecutter(
+def generator(
     template: str = typer.Option(
         "",
         help="The Cookiecutter template to use. "
@@ -50,7 +50,7 @@ def cookiecutter(
     elif template in ["gh", "github"]:
         template = "https://github.com/rbturnbull/torchapp-cookiecutter"
 
-    return cookiecutter_main(
+    return cookiecutter(
         template=str(template),
         checkout=checkout,
         no_input=no_input,
