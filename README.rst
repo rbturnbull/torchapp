@@ -308,7 +308,7 @@ Credits
 
 .. start-credits
 
-torchapp was created created by Robert Turnbull with contributions from Wytamma Wirth, Jonathan Garber and Simone Bae.
+torchapp was created created by `Robert Turnbull <https://robturnbull.com>`_ with contributions from Wytamma Wirth, Jonathan Garber and Simone Bae.
 
 Citation details to follow.
 
