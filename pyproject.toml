@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "torchapp"
-version = "0.5.1"
+version = "0.5.2"
 description = "A wrapper for PyTorch projects to create easy command-line interfaces and manage hyper-parameter tuning."
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
@@ -40,7 +40,6 @@ pybtexnbib = ">=0.1.1"
 scikit-optimize = ">=0.9.0"
 scipy = ">=1.9.1"
 appdirs = ">=1.4.4"
-guigaga = ">=0.0.2"
 cmaes = ">=0.11.1"
 
 

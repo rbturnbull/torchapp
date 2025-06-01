@@ -12,7 +12,7 @@ torchapp
    :alt: PyPI - Version
    :target: https://pypi.org/project/torchapp/
 
-.. |torchapp badge| image:: https://img.shields.io/badge/Torch-App-B1230A.svg
+.. |torchapp badge| image:: https://img.shields.io/badge/torch-app-B1230A.svg
     :target: https://rbturnbull.github.io/torchapp/
 
 .. |testing badge| image:: https://github.com/rbturnbull/torchapp/actions/workflows/testing.yml/badge.svg
