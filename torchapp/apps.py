@@ -1,4 +1,5 @@
 from typing import Type
+from importlib import metadata
 from pathlib import Path
 import os
 import sys
@@ -555,15 +556,7 @@ class TorchApp(Citable,CLIApp):
                 
         return tuning_params
 
-    @flag(shortcut="-v")
-    def version(
-        self,
-    ) -> str:
-        """
-        The version of this package.
-        """
-        from importlib import metadata
-
+    def package_name(self) -> str:
         module = inspect.getmodule(self)
         package = ""
         if module.__package__:
@@ -578,11 +571,24 @@ class TorchApp(Citable,CLIApp):
                 except Exception:
                     pass
                 path = path.parent
-
+        return package
+    
+    @flag(shortcut="-v")
+    def version(self) -> str:
+        """
+        The version of this package.
+        """
+        package = self.package_name()
         if package:
+            try:
+                version = metadata.version(package)
+            except metadata.PackageNotFoundError as e:   
+                print(e)
+                return ""
             version = metadata.version(package)
         else:
-            raise Exception("Cannot find package.")
+            print("Package name could not be determined.")
+            return ""
         
         return version
 
