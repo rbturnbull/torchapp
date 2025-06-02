@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "torchapp"
-version = "0.5.2"
+version = "0.5.3"
 description = "A wrapper for PyTorch projects to create easy command-line interfaces and manage hyper-parameter tuning."
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"

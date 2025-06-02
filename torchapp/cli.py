@@ -119,6 +119,7 @@ class Method():
 
     def __post_init__(self):
         self.__code__ = self.func.__code__
+        self.__defaults__ = self.func.__defaults__
 
     @property
     def __name__(self):
