@@ -117,10 +117,6 @@ class Method():
     signature_ready: bool = False
     obj = None
 
-    # def __post_init__(self):
-    #     self.__code__ = self.func.__code__
-    #     self.__defaults__ = self.func.__defaults__
-
     @property
     def __name__(self):
         return self.func.__name__
@@ -274,11 +270,6 @@ class CLIApp:
         # Check if the method is already had its signature modified
         if not isinstance(method_to_modify, Method) or method_to_modify.signature_ready:
             return
-                    
-        # if "tune" == method_to_modify.__name__:
-        #     x = collect_arguments(self.tune)
-        #     breakpoint()
-
 
         method_to_modify.obj = self
 
@@ -301,9 +292,6 @@ class CLIApp:
             for name, param in params.items()
             if name not in ["self", "kwargs"] and param.default != Parameter.empty
         ]
-
-        # if "tune" == method_to_modify.__name__:
-        #     breakpoint()
 
         try:
             method_to_modify.func.__signature__ = signature(method_to_modify.func).replace(parameters=new_params)
