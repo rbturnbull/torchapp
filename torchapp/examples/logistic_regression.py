@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-import pandas as pd
-from torch import nn
-import torch
+from typing import TYPE_CHECKING
 import torchapp as ta
-from torchapp.metrics import logit_accuracy, logit_f1
-import torchapp as ta
-from torch.utils.data import DataLoader, Dataset
-import lightning as L
-import numpy as np
 from dataclasses import dataclass
 
+if TYPE_CHECKING:
+    import pandas as pd
 
 # class Normalize():    
 #     def __init__(self, mean=None, std=None): 
@@ -26,19 +21,21 @@ from dataclasses import dataclass
 
 
 @dataclass
-class LogisticRegressionDataset(Dataset):
-    df: pd.DataFrame
-    x_columns:list[str]
-    y_column:str
+class LogisticRegressionDataset:
+    df: 'pd.DataFrame'          # type: ignore  (pd will be imported in data())
+    x_columns: list[str]
+    y_column: str
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.df)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int):
+        import torch  # only import torch at access time
         row = self.df.iloc[idx]
         x = torch.tensor([row[self.x_columns].item()], dtype=torch.float32)
         y = torch.tensor([row[self.y_column]], dtype=torch.float32)
         return x, y
+
     
 
 class LogisticRegressionApp(ta.TorchApp):
@@ -64,6 +61,10 @@ class LogisticRegressionApp(ta.TorchApp):
             help="The number of items to use in each batch.",
         ),
     ):
+        import lightning as L
+        from torch.utils.data import DataLoader
+        import pandas as pd
+
         df = pd.read_csv(csv)      
         validation_df = df.sample(frac=validation_fraction, random_state=seed)
         train_df = df.drop(validation_df.index)
@@ -75,16 +76,22 @@ class LogisticRegressionApp(ta.TorchApp):
         return data_module
 
     @ta.method
-    def model(self) -> nn.Module:
+    def model(self):
         """Builds a simple logistic regression model."""
+        from torch import nn
+
         return nn.Linear(in_features=1, out_features=1, bias=True)
 
     @ta.method
     def loss_function(self):
+        from torch import nn
+
         return nn.BCEWithLogitsLoss()
     
     @ta.method
     def metrics(self):
+        from torchapp.metrics import logit_accuracy, logit_f1
+
         return [logit_accuracy, logit_f1]
 
     @ta.method
