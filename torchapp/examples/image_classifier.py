@@ -1,27 +1,27 @@
-from PIL import Image
+#!/usr/bin/env python3
+
 import enum
 from pathlib import Path
 import types
-import pandas as pd
-import torch
-from torch.utils.data import DataLoader, Dataset
-from typing import get_type_hints
-from torch import nn
-import torchvision.models as models
-from torchvision import transforms
-import lightning as L
+from typing import get_type_hints, TYPE_CHECKING
 from dataclasses import dataclass
 import torchapp as ta
-from torchapp.metrics import accuracy
-
 from rich.console import Console
+
+if TYPE_CHECKING:
+    import lightning as L
+
+
 console = Console()
+
 
 def replace_imagenet_classification_layer(model, out_features) -> bool:
     """
     Recursively replaces the last classification layer in a model if it outputs 1000 classes.
     Supports nn.Linear and nn.Conv2d used in torchvision models like ResNet and SqueezeNet.
     """
+    import torch.nn as nn
+
     for name, module in reversed(list(model.named_children())):
         # Handle Linear classifier (e.g., ResNet, VGG)
         if isinstance(module, nn.Linear) and module.out_features == 1000:
@@ -29,38 +29,39 @@ def replace_imagenet_classification_layer(model, out_features) -> bool:
             setattr(model, name, nn.Linear(in_features, out_features))
             return True
 
-        # Handle 1x1 Conv2d classifier (e.g., SqueezeNet, MobileNet)
-        elif isinstance(module, nn.Conv2d) and module.out_channels == 1000 and module.kernel_size == (1, 1):
+        # Handle 1×1 Conv2d classifier (e.g., SqueezeNet, MobileNet)
+        if isinstance(module, nn.Conv2d) and module.out_channels == 1000 and module.kernel_size == (1, 1):
             in_channels = module.in_channels
             setattr(model, name, nn.Conv2d(in_channels, out_features, kernel_size=1))
             return True
 
         # Recurse into submodules
-        elif replace_imagenet_classification_layer(module, out_features):
+        if replace_imagenet_classification_layer(module, out_features):
             return True
 
     return False  # no classification layer found
 
 
-def get_image_paths(directory:Path|str) -> list[Path]:
+def get_image_paths(directory: Path | str) -> list[Path]:
     directory = Path(directory)
     extensions = ["jpg", "jpeg", "png", "tif", "tiff"]
     paths = []
     for extension in extensions:
         paths += directory.glob(f"*.{extension.lower()}")
         paths += directory.glob(f"*.{extension.upper()}")
-        
     return paths
 
 
 @dataclass
 class ImageItem():
-    path:Path
-    height:int = 224
-    width:int = 224
+    path: Path
+    height: int = 224
+    width: int = 224
 
     def image_as_tensor(self):
-        # Standard ImageNet preprocessing for pretrained torchvision models
+        from PIL import Image
+        from torchvision import transforms
+
         transform = transforms.Compose([
             transforms.Resize((self.height, self.width)),  # Resize directly to desired size
             transforms.ToTensor(),       # converts to [0,1] and puts channel first
@@ -77,12 +78,12 @@ class ImageItem():
 
 @dataclass(kw_only=True)
 class ImageTrainingItem(ImageItem):
-    category_id:int
+    category_id: int
 
 
 @dataclass(kw_only=True)
-class ImageClassifierDataset(Dataset):
-    items:list[ImageTrainingItem]
+class ImageClassifierDataset:
+    items: list[ImageTrainingItem]
 
     def __len__(self):
         return len(self.items)
@@ -102,6 +103,7 @@ def torchvision_model_choices() -> list[str]:
     For more information see: https://pytorch.org/vision/stable/models.html
     """
     model_choices = [""]  # Allow for blank option
+    import torchvision.models as models
     for item in dir(models):
         obj = getattr(models, item)
 
@@ -113,9 +115,10 @@ def torchvision_model_choices() -> list[str]:
             return_value = hints.get("return", "")
             try:
                 mro = return_value.mro()
-                if nn.Module in mro:
+                import torch.nn as _nn
+                if _nn.Module in mro:
                     model_choices.append(item)
-            except TypeError:
+            except (TypeError, AttributeError):
                 pass
 
     return model_choices
@@ -144,6 +147,9 @@ class ImageClassifier(ta.TorchApp):
             help="The name of a model architecture in torchvision.models (https://pytorch.org/vision/stable/models.html). If not given, then it is given by `default_model_name`",
         ),
     ):
+        import torchvision.models as models
+        import torch.nn as nn
+
         if not model_name:
             model_name = self.default_model_name()
 
@@ -160,7 +166,7 @@ class ImageClassifier(ta.TorchApp):
         result = replace_imagenet_classification_layer(model, n_categories)
         assert result, f"Model '{model_name}' does not have a classification layer to replace. Please choose another model."
         return model
-    
+
     @ta.method
     def data(
         self,
@@ -186,12 +192,16 @@ class ImageClassifier(ta.TorchApp):
         batch_size: int = ta.Param(default=16, help="The number of items to use in each batch."),
         width: int = ta.Param(default=224, help="The width to resize all the images to."),
         height: int = ta.Param(default=224, help="The height to resize all the images to."),
-        num_workers:int = 4,
-    ) -> L.LightningDataModule:
+        num_workers: int = ta.Param(default=4),
+    ) -> "L.LightningDataModule":
+        import pandas as pd
+        import lightning as L
+        from torch.utils.data import DataLoader
+
         df = pd.read_csv(csv)
 
         base_dir = base_dir or Path(csv).parent
-        
+
         # Create splitter for training/validation images
         if validation_value is not None:
             validation_column_new = f"{validation_column} is {validation_value}"
@@ -216,8 +226,8 @@ class ImageClassifier(ta.TorchApp):
         for _, row in df.iterrows():
             image_path = Path(row[image_column])
             if not image_path.is_absolute():
-                image_path = base_dir/image_path
-        
+                image_path = base_dir / image_path
+
             item = ImageTrainingItem(path=image_path, category_id=row['category_id'], width=width, height=height)
             dataset = validation_data if row[validation_column] else training_data
             dataset.append(item)
@@ -232,12 +242,13 @@ class ImageClassifier(ta.TorchApp):
 
     @ta.method
     def metrics(self):
+        from torchapp.metrics import accuracy
         return [accuracy]
 
     @ta.method
     def monitor(self):
         return "accuracy"
-    
+
     @ta.method
     def extra_hyperparameters(self):
         return dict(
@@ -248,17 +259,21 @@ class ImageClassifier(ta.TorchApp):
 
     @ta.method
     def prediction_dataloader(
-        self, 
-        module, 
-        items:list[Path] = None, 
-        batch_size:int = 16,
+        self,
+        module,
+        items: list[Path] = None,
+        batch_size: int = 16,
         csv: Path = ta.Param(default=None, help="A CSV with image paths."),
         image_column: str = ta.Param(default="image", help="The name of the column with the image paths."),
         base_dir: Path = ta.Param(default="./", help="The base directory for images with relative paths."),
-        num_workers:int = 4,
+        num_workers: int = ta.Param(default=4),
         **kwargs
     ):
         self.items = []
+
+        import pandas as pd
+        from torch.utils.data import DataLoader
+
         if isinstance(items, (Path, str)):
             self.items.append(Path(items))
         else:
@@ -267,7 +282,7 @@ class ImageClassifier(ta.TorchApp):
                     item = Path(item)
                     # If the item is a directory then get all images in that directory
                     if item.is_dir():
-                        self.items.extend( get_image_paths(item) )
+                        self.items.extend(get_image_paths(item))
                     else:
                         self.items.append(item)
             except:
@@ -285,7 +300,7 @@ class ImageClassifier(ta.TorchApp):
         # Set relative to base dir
         if base_dir:
             base_dir = Path(base_dir)
-        
+
             self.items = [base_dir / item if not item.is_absolute() else item for item in self.items]
 
         width = module.hparams.width
@@ -297,21 +312,24 @@ class ImageClassifier(ta.TorchApp):
 
     @ta.method
     def output_results(
-        self, 
-        results, 
-        output_csv:Path = ta.Param(None, help="Path to write predictions in CSV format"), 
-        verbose:bool = True, 
+        self,
+        results,
+        output_csv: Path = ta.Param(default=None, help="Path to write predictions in CSV format"),
+        verbose: bool = True,
         **kwargs
     ):
+        import pandas as pd
+        import torch
+
         data = []
-        for item, scores in zip(self.items, results): 
-            probabilities = torch.softmax(torch.as_tensor(scores), dim=-1)           
+        for item, scores in zip(self.items, results):
+            probabilities = torch.softmax(torch.as_tensor(scores), dim=-1)
             prediction = self.target_names[torch.argmax(probabilities)]
             if verbose:
                 console.print(f"'{item}': '{prediction}'")
-            data.append( [item,prediction] + probabilities.tolist() )
+            data.append([item, prediction] + probabilities.tolist())
 
-        df = pd.DataFrame(data, columns=["path","prediction"]+list(self.target_names))
+        df = pd.DataFrame(data, columns=["path", "prediction"] + list(self.target_names))
         if output_csv:
             df.to_csv(output_csv)
 
@@ -322,6 +340,7 @@ class ImageClassifier(ta.TorchApp):
 
     @ta.method
     def loss_function(self):
+        import torch.nn as nn
         return nn.CrossEntropyLoss()
 
 
