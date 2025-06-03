@@ -1,5 +1,4 @@
 from enum import Enum
-from torch import nn
 
 
 class ActivationError(Exception):
@@ -57,6 +56,8 @@ class Activation(str, Enum):
         Returns:
             nn.Module: The pytorch module for this activation function.
         """
+        from torch import nn
+        
         if not hasattr(nn, self.value):
             raise ActivationError(f"Activation function '{self.value}' not available.")
 
