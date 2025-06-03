@@ -416,7 +416,6 @@ class TorchApp(Citable, CLIApp):
         Returns `(lightning_module, trainer)` after training completes.
         """
         import torch
-        from lightning import Trainer
         from lightning import LightningDataModule
 
         style = 'bold red'
@@ -457,7 +456,7 @@ class TorchApp(Citable, CLIApp):
         """
         Validate the model on the validation set.
         """
-        from lightning import Trainer, LightningDataModule
+        from lightning import LightningDataModule
 
         style = 'bold red'
         data = self.setup_and_data(**kwargs)
