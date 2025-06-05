@@ -201,7 +201,8 @@ class TorchAppTestCase:
         runner = CliRunner()
         result = runner.invoke(app.main_app, ["--version"])
         assert result.exit_code == 0, f"Expected exit code 0, got {result.exit_code}: {result.stdout}"
-        assert re.match(r"^(\d+\.)?(\d+\.)?(\*|\d+)$", result.stdout)
+        pep440_regex = r"^\d+(\.\d+)*([a-zA-Z]+\d+)?([+-][\w\.]+)?$"
+        assert re.match(pep440_regex, result.stdout)
 
     def get_expected_dir(self) -> Path:
         """
