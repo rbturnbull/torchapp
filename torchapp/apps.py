@@ -554,10 +554,7 @@ class TorchApp(Citable, CLIApp):
 
     @main("load_checkpoint", "prediction_trainer", "prediction_dataloader", "output_results")
     def predict(self, **kwargs):
-        """
-        Run `trainer.predict(...)` on the data returned by `prediction_dataloader(...)`, 
-        then collate and send to `output_results(...)`.
-        """
+        """ Runs predictions with model and outputs the results. """
         import torch
 
         module = self.load_checkpoint(**kwargs)
