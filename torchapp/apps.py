@@ -238,7 +238,7 @@ class TorchApp(Citable, CLIApp):
 
         # If stdout is a TTY, add a nice progress bar
         if sys.stdout.isatty():
-            from rich.progress import RichProgressBar
+            from lightning.pytorch.callbacks import RichProgressBar
             callbacks.append(RichProgressBar(leave=True))
 
         # Insert both weight-only and full checkpoints
