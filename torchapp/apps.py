@@ -184,7 +184,7 @@ class TorchApp(Citable, CLIApp):
         from lightning.pytorch.callbacks import ModelCheckpoint
 
         monitor = self.monitor(**kwargs)
-        goal = self.goal().lower()[:3]
+        goal = self.goal(**kwargs).lower()[:3]
         assert goal in ["min", "max"], f"Goal '{goal}' not recognized."
 
         class WeightsOnlyCheckpoint(ModelCheckpoint):
