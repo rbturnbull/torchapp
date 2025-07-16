@@ -710,6 +710,7 @@ class TorchApp(Citable, CLIApp):
                     pass
                 path = path.parent
         return package
+    
     @flag(shortcut="-v")
     def version(self) -> str:
         """
