@@ -155,12 +155,12 @@ class TorchApp(Citable, CLIApp):
         )
 
     @method
-    def monitor(self) -> str:
+    def monitor(self, **kwargs) -> str:
         return "valid_loss"
 
-    @method
-    def goal(self) -> str:
-        monitor = self.monitor() or "valid_loss"
+    @method("monitor")
+    def goal(self, **kwargs) -> str:
+        monitor = self.monitor(**kwargs) or "valid_loss"
         return "minimize" if "loss" in monitor else "maximize"
 
     @method
@@ -175,15 +175,15 @@ class TorchApp(Citable, CLIApp):
             )
         return checkpoint
 
-    @method("monitor")
-    def checkpoint_callback(self, save_top_k: int = 1) -> 'ModelCheckpoint|list[ModelCheckpoint]':
+    @method("monitor", "goal")
+    def checkpoint_callback(self, save_top_k: int = 1, **kwargs) -> 'ModelCheckpoint|list[ModelCheckpoint]':
         """
         Build both a Weights-only checkpoint and a full-state checkpoint,
         saving the top K models based on `monitor`.
         """
         from lightning.pytorch.callbacks import ModelCheckpoint
 
-        monitor = self.monitor()
+        monitor = self.monitor(**kwargs)
         goal = self.goal().lower()[:3]
         assert goal in ["min", "max"], f"Goal '{goal}' not recognized."
 
@@ -218,7 +218,7 @@ class TorchApp(Citable, CLIApp):
 
         return checkpoints
 
-    @method("extra_callbacks")
+    @method("extra_callbacks", "checkpoint_callback")
     def callbacks(self, **kwargs):
         """
         Combine all callbacks: 
