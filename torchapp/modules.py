@@ -8,13 +8,25 @@ import lightning as L
 from .metrics import AvgSmoothLoss
 
 class GeneralLightningModule(L.LightningModule):
-    def __init__(self, model, loss_function, max_learning_rate:float, input_count:int=1, metrics:list[tuple[str,Metric]]|None=None, **kwargs):
+    def __init__(
+            self, 
+            model,
+            loss_function,
+            max_learning_rate:float,
+            input_count:int=1,
+            weight_decay:float=0.01,
+            grokadamw:bool=False,
+            metrics:list[tuple[str,Metric]]|None=None,
+            **kwargs,
+        ):
         super().__init__()
         self.save_hyperparameters(logger=False)
         self.model = model
         self.loss_function = loss_function
         self.max_learning_rate = max_learning_rate
         self.input_count = input_count
+        self.weight_decay = weight_decay
+        self.grokadamw = grokadamw
         self.metrics = metrics or []
 
         self.smooth_loss = AvgSmoothLoss()
@@ -30,7 +42,7 @@ class GeneralLightningModule(L.LightningModule):
 
     @cached_property
     def steps_per_epoch(self) -> int:
-        # HACK assumes DDP strategy
+        # Assumes DDP strategy
         devices = torch.cuda.device_count() or 1
         return len(self.trainer.datamodule.train_dataloader())//devices
 
@@ -84,7 +96,13 @@ class GeneralLightningModule(L.LightningModule):
         self.current_step = 0
     
     def optimizer(self) -> optim.Optimizer:
-        return torch.optim.AdamW(self.parameters(), lr=0.1*self.max_learning_rate, weight_decay=0.01, eps=1e-5)
+        optimizer_class = torch.optim.AdamW
+        if self.grokadamw:
+            # GrokAdamW optimizer
+            from grokadamw import GrokAdamW
+            optimizer_class = GrokAdamW
+        
+        return optimizer_class(self.parameters(), lr=0.1*self.max_learning_rate, weight_decay=self.weight_decay, eps=1e-5)
 
     def scheduler(self, optimizer) -> lr_scheduler._LRScheduler:
         return lr_scheduler.OneCycleLR(

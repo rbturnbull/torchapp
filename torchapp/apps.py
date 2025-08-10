@@ -381,6 +381,8 @@ class TorchApp(Citable, CLIApp):
     def lightning_module(
         self,
         max_learning_rate: float = 1e-4,
+        weight_decay: float = 0.01,
+        grokadamw: bool = False,
         **kwargs,
     ) -> 'LightningModule':
         """
@@ -399,6 +401,8 @@ class TorchApp(Citable, CLIApp):
             loss_function=loss_function,
             max_learning_rate=max_learning_rate,
             input_count=input_count,
+            weight_decay=weight_decay,
+            grokadamw=grokadamw,
             metrics=metrics,
             **extras,
         )
