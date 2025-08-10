@@ -41,6 +41,7 @@ scikit-optimize = ">=0.9.0"
 scipy = ">=1.9.1"
 appdirs = ">=1.4.4"
 cmaes = ">=0.11.1"
+grokadamw = ">=0.1.2"
 
 
 [tool.poetry.group.dev.dependencies]
