@@ -741,6 +741,22 @@ files = [
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
+name = "cluey"
+version = "0.1.0"
+description = "Build clever, class-based command line apps with minimal boilerplate."
+optional = false
+python-versions = "<4.0,>=3.10"
+groups = ["main"]
+files = [
+    {file = "cluey-0.1.0-py3-none-any.whl", hash = "sha256:ade7e297bbd6d50b45751dcc32c68a682855adeb24c5ab34fcae2b36d9d8a475"},
+    {file = "cluey-0.1.0.tar.gz", hash = "sha256:f772b1c4b1f5cd0e18eaa779ed2f6aa718033d0a7f54c5fc93b1df7dba2aa884"},
+]
+
+[package.dependencies]
+rich = ">=10.16.1"
+typer = ">=0.4.0"
+
+[[package]]
 name = "cmaes"
 version = "0.11.1"
 description = "Lightweight Covariance Matrix Adaptation Evolution Strategy (CMA-ES) implementation for Python 3."
@@ -6033,4 +6049,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "e7585f9a4ff50bae39778ca425d808746508a37bd15d2f5944d5ad8fef204161"
+content-hash = "2c620c566d1854712da2a69522849b27eb70141ce5681bc0d2b4da575b64788f"

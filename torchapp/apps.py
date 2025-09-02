@@ -1,10 +1,9 @@
 from typing import Type, TYPE_CHECKING
 from pathlib import Path
 import os
-
 from rich.console import Console
+from cluey import Cluey, method, main, tool, flag
 
-from .cli import CLIApp, method, main, tool, flag
 from .citations import Citable
 from .params import Param
 
@@ -25,7 +24,7 @@ console = Console()
 BIBTEX_DIR = Path(__file__).parent / "bibtex"
 
 
-class TorchApp(Citable, CLIApp):
+class TorchApp(Citable, Cluey):
     @method
     def setup(self) -> None:
         pass

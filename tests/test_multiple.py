@@ -1,7 +1,7 @@
 
 from torchapp.examples.iris import IrisApp
 from torchapp import TorchApp
-from torchapp.cli import collect_arguments
+from cluey.cli import collect_arguments
 
 def test_multiple_apps():
     basic_app = TorchApp()

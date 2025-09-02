@@ -42,6 +42,7 @@ scipy = ">=1.9.1"
 appdirs = ">=1.4.4"
 cmaes = ">=0.11.1"
 grokadamw = ">=0.1.2"
+cluey = ">=0.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

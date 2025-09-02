@@ -12,11 +12,8 @@ import lightning as L
 from torch import nn
 from collections import OrderedDict
 from rich.console import Console
-from typing import IO, Any, Mapping, Optional, Sequence, Union
-from click.testing import CliRunner as ClickCliRunner  # noqa
-from click.testing import Result
+from cluey.testing import CliRunner
 
-from .cli import CLIAppTyper 
 from .apps import TorchApp
 
 console = Console()
@@ -26,27 +23,6 @@ console = Console()
 ######################################################################
 
 
-class CliRunner(ClickCliRunner):
-    def invoke(  # type: ignore
-        self,
-        app: CLIAppTyper,
-        args: Optional[Union[str, Sequence[str]]] = None,
-        input: Optional[Union[bytes, str, IO[Any]]] = None,
-        env: Optional[Mapping[str, str]] = None,
-        catch_exceptions: bool = True,
-        color: bool = False,
-        **extra: Any,
-    ) -> Result:
-        use_cli = app.getcommand()
-        return super().invoke(
-            use_cli,
-            args=args,
-            input=input,
-            env=env,
-            catch_exceptions=catch_exceptions,
-            color=color,
-            **extra,
-        )
 
 
 @pytest.fixture

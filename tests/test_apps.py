@@ -1,6 +1,6 @@
 import re
 import pytest
-from torchapp.testing import CliRunner
+from cluey.testing import CliRunner
 import torchapp as ta
 
 
