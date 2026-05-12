@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "torchapp"
-version = "0.5.8"
+version = "0.5.9"
 description = "A wrapper for PyTorch projects to create easy command-line interfaces and manage hyper-parameter tuning."
 authors = ["Robert Turnbull <robert.turnbull@unimelb.edu.au>"]
 license = "Apache-2.0"
@@ -19,11 +19,11 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.10,<3.14"
 numpy = ">=1.22.0,<2.0.0"
 executing = ">=2.0.1"
 torch = ">=1.12.1"
-lightning = ">=2.3.3"
+lightning = ">=2.3.3,!=2.6.2,!=2.6.3"
 typer = ">=0.4.0"
 rich = ">=10.16.1"
 pandas = ">=1.3.5"

@@ -526,7 +526,7 @@ class TorchApp(Citable, CLIApp):
             raise FileNotFoundError(f"Cannot find pretrained model at '{path}'")
 
         # The class method `load_from_checkpoint` expects the local file path
-        return module_class.load_from_checkpoint(str(path))
+        return module_class.load_from_checkpoint(str(path), weights_only=False)
 
     def cache_dir(self) -> Path:
         """
