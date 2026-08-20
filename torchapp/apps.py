@@ -408,7 +408,13 @@ class TorchApp(Citable, CLIApp):
         )
 
     @tool("setup_and_data", "validation_dataloader", "lightning_module", "trainer")
-    def train(self, **kwargs) -> 'LightningModule':
+    def train(
+            self,
+            resume_checkpoint: Path = Param(
+                None,
+                help="Full checkpoint from which to resume training.",
+            ), 
+            **kwargs) -> 'LightningModule':
         """
         Train for `max_epochs`.  
         Steps:  
@@ -451,7 +457,12 @@ class TorchApp(Citable, CLIApp):
             model(*dummy_inputs)
 
         console.rule("Training", style=style)
-        trainer.fit(lightning_module, data, validation_dataloader)
+        trainer.fit(
+            lightning_module,
+            data,
+            validation_dataloader,
+            ckpt_path=str(resume_checkpoint) if resume_checkpoint else None,
+        )
 
         return lightning_module, trainer
 
@@ -526,7 +537,7 @@ class TorchApp(Citable, CLIApp):
             raise FileNotFoundError(f"Cannot find pretrained model at '{path}'")
 
         # The class method `load_from_checkpoint` expects the local file path
-        return module_class.load_from_checkpoint(str(path))
+        return module_class.load_from_checkpoint(str(path), weights_only=False)
 
     def cache_dir(self) -> Path:
         """
