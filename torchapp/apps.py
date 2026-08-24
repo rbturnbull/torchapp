@@ -231,7 +231,7 @@ class TorchApp(Citable, CLIApp):
         from lightning.pytorch.callbacks import ModelCheckpoint  # needed for isinstance
         from .callbacks import TimeLoggingCallback, LogOptimizerCallback
         import sys
-        
+
         callbacks = [
             TimeLoggingCallback(),
             LogOptimizerCallback(),
@@ -420,7 +420,7 @@ class TorchApp(Citable, CLIApp):
         pretrained_checkpoint: Path | None = Param(
             None,
             help=(
-                "Initialize a new training run from pretrained model weights in a previous checkpoint. Optimizer, scheduler, and epoch are reset."
+                "Initialise a new training run from pretrained model weights in a previous checkpoint. Optimizer, scheduler, and epoch are reset."
             ),
         ),
         **kwargs,
