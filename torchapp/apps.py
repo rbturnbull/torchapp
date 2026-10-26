@@ -176,10 +176,13 @@ class TorchApp(Citable, CLIApp):
         return checkpoint
 
     @method("monitor", "goal")
-    def checkpoint_callback(self, save_last:bool = False, save_top_k: int = 1, **kwargs) -> 'ModelCheckpoint|list[ModelCheckpoint]':
+    def checkpoint_callback(self, save_last: bool = True, save_top_k: int = 1, **kwargs) -> 'ModelCheckpoint|list[ModelCheckpoint]':
         """
         Build both a Weights-only checkpoint and a full-state checkpoint,
         saving the top K models based on `monitor`.
+
+        If `save_last` is true, the full-state checkpoint also writes `last.ckpt`
+        so that an interrupted run can be resumed.
         """
         from lightning.pytorch.callbacks import ModelCheckpoint
 
@@ -202,7 +205,6 @@ class TorchApp(Citable, CLIApp):
             save_weights_only=True,
             filename="weights-{epoch:02d}-{"+monitor+":.2g}",
             verbose=True,
-            save_last=save_last,
         )
         checkpoints.append(weights_ckpt)
 
@@ -212,7 +214,7 @@ class TorchApp(Citable, CLIApp):
             monitor=monitor,
             mode=goal,
             save_weights_only=False,
-            save_last=True,
+            save_last=save_last,
             filename="checkpoint-{epoch:02d}-{"+monitor+":.2g}",
             verbose=True,
         )
