@@ -260,8 +260,9 @@ def test_train_checkpoint_options_in_cli_help():
         env={"COLUMNS": "200"},
     )
     assert result.exit_code == 0
-    assert "--resume-checkpoint" in result.output
-    assert "--pretrained-checkpoint" in result.output
+    output = re.sub(r"\x1b\[[0-9;]*m", "", result.output)  # strip ANSI colour codes added on CI
+    assert "--resume-checkpoint" in output
+    assert "--pretrained-checkpoint" in output
 
 
 def test_checkpoint_callback_save_last_weights():
