@@ -23,7 +23,7 @@ Deploying machine learning models remains a challenge, particularly in scientifi
    quickstart
    setup
    .. parameters
-   .. training
+   training
    .. tuning
    testing
    vision

@@ -1,4 +1,4 @@
-from typing import Type, TYPE_CHECKING
+from typing import Type, TYPE_CHECKING, Optional
 from pathlib import Path
 import os
 
@@ -212,6 +212,7 @@ class TorchApp(Citable, CLIApp):
             monitor=monitor,
             mode=goal,
             save_weights_only=False,
+            save_last=True,
             filename="checkpoint-{epoch:02d}-{"+monitor+":.2g}",
             verbose=True,
         )
@@ -231,7 +232,7 @@ class TorchApp(Citable, CLIApp):
         from lightning.pytorch.callbacks import ModelCheckpoint  # needed for isinstance
         from .callbacks import TimeLoggingCallback, LogOptimizerCallback
         import sys
-        
+
         callbacks = [
             TimeLoggingCallback(),
             LogOptimizerCallback(),
@@ -409,19 +410,51 @@ class TorchApp(Citable, CLIApp):
         )
 
     @tool("setup_and_data", "validation_dataloader", "lightning_module", "trainer")
-    def train(self, **kwargs) -> 'LightningModule':
+    def train(
+        self,
+        resume_checkpoint: Path | None = Param(
+            None,
+            help=(
+                "Resume an interrupted training run from a checkpoint. Restores model, optimizer, scheduler, epoch, etc."
+            ),
+        ),
+        pretrained_checkpoint: Path | None = Param(
+            None,
+            help=(
+                "Initialise a new training run from pretrained model weights in a previous checkpoint. Optimizer, scheduler, and epoch are reset."
+            ),
+        ),
+        **kwargs,
+    ) -> 'LightningModule':
         """
-        Train for `max_epochs`.  
-        Steps:  
-          1. call setup_and_data → get DataModule or DataLoader  
-          2. call validation_dataloader()  
-          3. instantiate LightningModule + Trainer  
-          4. do a dummy forward-pass (so Lightning can count params)  
-          5. `trainer.fit(...)`  
+        Train for `max_epochs`.
+        Steps:
+          1. call setup_and_data → get DataModule or DataLoader
+          2. call validation_dataloader()
+          3. instantiate LightningModule + Trainer
+          4. do a dummy forward-pass (so Lightning can count params)
+          5. `trainer.fit(...)`
         Returns `(lightning_module, trainer)` after training completes.
         """
         import torch
         from lightning import LightningDataModule
+
+        if resume_checkpoint and pretrained_checkpoint:
+            raise ValueError(
+                "--resume-checkpoint and --pretrained-checkpoint are mutually exclusive. "
+                "Use --resume-checkpoint to continue an interrupted run, or "
+                "--pretrained-checkpoint to start a new fine-tuning run."
+            )
+
+        if resume_checkpoint:
+            resume_checkpoint = Path(resume_checkpoint)
+            if not resume_checkpoint.exists():
+                raise FileNotFoundError(f"Resume checkpoint does not exist: {resume_checkpoint}")
+
+        if pretrained_checkpoint:
+            pretrained_checkpoint = Path(pretrained_checkpoint)
+            if not pretrained_checkpoint.exists():
+                raise FileNotFoundError(f"Pretrained checkpoint does not exist: {pretrained_checkpoint}")
 
         style = 'bold red'
         data = self.setup_and_data(**kwargs)
@@ -429,9 +462,6 @@ class TorchApp(Citable, CLIApp):
 
         console.print("Setting up Module")
         lightning_module = self.lightning_module(**kwargs)
-
-        console.print("Setting up Trainer")
-        trainer = self.trainer(**kwargs)
 
         # Do one dummy forward to let Lightning “see” the model structure
         console.print("Training Dummy Batch")
@@ -450,11 +480,90 @@ class TorchApp(Citable, CLIApp):
             dummy_inputs = [x.to(device) for x in dummy_inputs]
             model = lightning_module.model.to(device)
             model(*dummy_inputs)
+        
+        if pretrained_checkpoint:
+            console.print(
+                f"Loading pretrained model weights: {pretrained_checkpoint}"
+            )
+
+            checkpoint = torch.load(
+                pretrained_checkpoint,
+                map_location="cpu",
+            )
+
+            if "state_dict" not in checkpoint:
+                raise ValueError(
+                    "Checkpoint does not contain a Lightning state_dict: "
+                    f"{pretrained_checkpoint}"
+                )
+
+            pretrained_model_state = {
+                name.removeprefix("model."): value
+                for name, value in checkpoint["state_dict"].items()
+                if name.startswith("model.")
+            }
+
+            if not pretrained_model_state:
+                raise ValueError(
+                    "No model.* parameters were found in checkpoint: "
+                    f"{pretrained_checkpoint}"
+                )
+
+            self.transfer_pretrained_weights(
+                model=model,
+                pretrained_model_state=pretrained_model_state,
+                checkpoint=checkpoint,
+                **kwargs,
+            )
+
+            provenance = []
+
+            if "epoch" in checkpoint:
+                provenance.append(f"epoch={checkpoint['epoch']}")
+
+            if "global_step" in checkpoint:
+                provenance.append(
+                    f"global_step={checkpoint['global_step']}"
+                )
+
+            provenance_text = (
+                f" ({', '.join(provenance)})"
+                if provenance
+                else ""
+            )
+
+            console.print(
+                f"Loaded pretrained model{provenance_text}"
+            ) 
+
+        console.print("Setting up Trainer")
+        trainer = self.trainer(**kwargs)
 
         console.rule("Training", style=style)
-        trainer.fit(lightning_module, data, validation_dataloader)
+        if resume_checkpoint:
+            console.print(f"Resuming full training state: {resume_checkpoint}")
+            trainer.fit(
+                lightning_module,
+                data,
+                validation_dataloader,
+                ckpt_path=str(resume_checkpoint),
+            )
+        else:
+            trainer.fit(lightning_module, data, validation_dataloader)
 
         return lightning_module, trainer
+    
+    def transfer_pretrained_weights(
+        self,
+        model,
+        pretrained_model_state,
+        checkpoint=None,
+        **kwargs,
+    ):
+        model.load_state_dict(
+            pretrained_model_state,
+            strict=True,
+        )
 
     @tool("setup_and_data", "load_checkpoint", "trainer")
     def validate(self, **kwargs) -> 'LightningModule':
