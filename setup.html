@@ -8,22 +8,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Setup &mdash; torchapp 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Testing" href="testing.html" />
+    <link rel="next" title="Training" href="training.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" /> 
 </head>
 
@@ -59,6 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#coverage-badge">Coverage Badge</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -144,22 +145,22 @@ Then to install the dependencies, run:</p>
 </pre></div>
 </div>
 <p>If you are using a file as the main script then instantiate the app and call the main function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">MyApp</span><span class="p">()</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If you wish to include the app in a Python package, it is easiest to use the Poetry dependency management system.
 In the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file add the main method of your app to the scripts section like this:</p>
 <div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span>
-<span class="n">myapp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;path.to.script:MyApp.main&quot;</span>
-<span class="n">myapp-tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;path.to.script:MyApp.tools&quot;</span>
+<span class="n">myapp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"path.to.script:MyApp.main"</span>
+<span class="n">myapp-tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"path.to.script:MyApp.tools"</span>
 </pre></div>
 </div>
 <p>For example, if the name of the executable was going to be <code class="docutils literal notranslate"><span class="pre">logistic</span></code> and the path to the file from the base directory was <code class="docutils literal notranslate"><span class="pre">logistic/apps.py</span></code>
 and the subclass of TorchApp was called <code class="docutils literal notranslate"><span class="pre">LogisticApp</span></code>, then the following should be added to <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>:</p>
 <div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[tool.poetry.scripts]</span>
-<span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;logistic.apps:LogisticApp.main&quot;</span>
-<span class="n">logistic-tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;logistic.apps:LogisticApp.tools&quot;</span>
+<span class="n">logistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"logistic.apps:LogisticApp.main"</span>
+<span class="n">logistic-tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"logistic.apps:LogisticApp.tools"</span>
 </pre></div>
 </div>
 </section>
@@ -182,7 +183,7 @@ and give it permission to modify gists. Then add this token as the secret in <co
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="quickstart.html" class="btn btn-neutral float-left" title="Quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="testing.html" class="btn btn-neutral float-right" title="Testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="training.html" class="btn btn-neutral float-right" title="Training" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

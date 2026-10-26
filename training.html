@@ -8,21 +8,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Training &mdash; torchapp 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Testing" href="testing.html" />
+    <link rel="prev" title="Project Setup" href="setup.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,9 +47,16 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Project Setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Training</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#checkpoint-modes">Checkpoint modes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#custom-pretrained-weight-transfer">Custom pretrained weight transfer</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -80,12 +89,67 @@
              
   <section id="training">
 <h1>Training<a class="headerlink" href="#training" title="Link to this heading"></a></h1>
+<p>Define the application’s <code class="docutils literal notranslate"><span class="pre">setup</span></code>, <code class="docutils literal notranslate"><span class="pre">data</span></code>, <code class="docutils literal notranslate"><span class="pre">model</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">loss_function</span></code> methods before calling <code class="docutils literal notranslate"><span class="pre">train</span></code>; add <code class="docutils literal notranslate"><span class="pre">metrics</span></code> and
+override <code class="docutils literal notranslate"><span class="pre">monitor</span></code> when model selection should use something other than
+validation loss. Start with a short run using <code class="docutils literal notranslate"><span class="pre">--max-epochs</span></code> and a dedicated
+<code class="docutils literal notranslate"><span class="pre">--output-dir</span></code> to verify the data and model paths, then increase the training
+duration once the logged losses and metrics behave as expected. TorchApp
+creates CSV logs and monitored checkpoints in the output directory, so keep
+each experiment in a separate directory and retain a full checkpoint whenever
+the run may need to be resumed.</p>
+<section id="checkpoint-modes">
+<h2>Checkpoint modes<a class="headerlink" href="#checkpoint-modes" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">train</span></code> supports two mutually exclusive checkpoint modes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--pretrained-checkpoint</span> <span class="pre">PATH</span></code> initializes only the application model
+weights from a Lightning checkpoint. Training starts as a new run with a
+fresh optimizer, scheduler, epoch, and global step.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--resume-checkpoint</span> <span class="pre">PATH</span></code> delegates full-state restoration to Lightning,
+including the model, optimizer, scheduler, epoch, global step, callbacks,
+and training-loop state.</p></li>
+</ul>
+<p>Full-state checkpointing writes <code class="docutils literal notranslate"><span class="pre">last.ckpt</span></code> in addition to monitored
+top-K checkpoints. Use <code class="docutils literal notranslate"><span class="pre">last.ckpt</span></code> to resume the latest interrupted run.</p>
+<section id="custom-pretrained-weight-transfer">
+<h3>Custom pretrained weight transfer<a class="headerlink" href="#custom-pretrained-weight-transfer" title="Link to this heading"></a></h3>
+<p>By default, pretrained loading requires the checkpoint’s <code class="docutils literal notranslate"><span class="pre">model.*</span></code> state to
+match the new model exactly. Applications that need to rename, filter, or
+partially load parameters can override <code class="docutils literal notranslate"><span class="pre">transfer_pretrained_weights</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="p">(</span><span class="n">TorchApp</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transfer_pretrained_weights</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">pretrained_model_state</span><span class="p">,</span>
+        <span class="n">checkpoint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">remapped_state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">"backbone."</span><span class="p">):</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pretrained_model_state</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"backbone."</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">remapped_state</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pretrained_model_state</span></code> contains only checkpoint entries below the
+<code class="docutils literal notranslate"><span class="pre">model.</span></code> prefix, with that prefix removed. <code class="docutils literal notranslate"><span class="pre">checkpoint</span></code> is the complete
+loaded Lightning checkpoint and can provide transfer metadata when needed.
+The hook runs after the dummy forward has initialized lazy parameters and
+before the trainer is constructed. Overriding it changes only pretrained
+initialization; resume mode continues to delegate complete state restoration
+to Lightning.</p>
+</section>
+</section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="setup.html" class="btn btn-neutral float-left" title="Project Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="testing.html" class="btn btn-neutral float-right" title="Testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

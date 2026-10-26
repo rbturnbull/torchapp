@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quickstart &mdash; torchapp 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -58,6 +58,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">Project Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -138,7 +139,7 @@ You can add parameter values with typing hints in the function signature and the
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'target'</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
 
 
@@ -160,20 +161,20 @@ You can add parameter values with typing hints in the function signature and the
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">IrisApp</span><span class="p">(</span><span class="n">ta</span><span class="o">.</span><span class="n">TorchApp</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A classification app to predict the type of iris from sepal and petal lengths and widths.</span>
 
 <span class="sd">    A classic dataset publised in:</span>
 <span class="sd">        Fisher, R.A. “The Use of Multiple Measurements in Taxonomic Problems” Annals of Eugenics, 7, Part II, 179–188 (1936).</span>
 <span class="sd">    For more information about the dataset, see:</span>
 <span class="sd">        https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-plants-dataset</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">iris_data</span> <span class="o">=</span> <span class="n">load_iris</span><span class="p">(</span><span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;feature_names&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">&#39;target_names&#39;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">'frame'</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">'feature_names'</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span> <span class="o">=</span> <span class="n">iris_data</span><span class="p">[</span><span class="s1">'target_names'</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
 
     <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
@@ -228,17 +229,17 @@ You can add parameter values with typing hints in the function signature and the
     <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bibtex_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">files</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_bibtex_files</span><span class="p">()</span>
-        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;iris.bib&quot;</span><span class="p">)</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"iris.bib"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">files</span>
 
     <span class="nd">@ta</span><span class="o">.</span><span class="n">method</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">prediction_dataloader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">module</span><span class="p">,</span>
-        <span class="n">sepal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The sepal length in cm.&quot;</span><span class="p">),</span>
-        <span class="n">sepal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The sepal width in cm.&quot;</span><span class="p">),</span>
-        <span class="n">petal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The petal length in cm.&quot;</span><span class="p">),</span>
-        <span class="n">petal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;The petal width in cm.&quot;</span><span class="p">),</span>
+        <span class="n">sepal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">"The sepal length in cm."</span><span class="p">),</span>
+        <span class="n">sepal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">"The sepal width in cm."</span><span class="p">),</span>
+        <span class="n">petal_length</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">"The petal length in cm."</span><span class="p">),</span>
+        <span class="n">petal_width</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="n">ta</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s2">"The petal width in cm."</span><span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">sepal_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="n">sepal_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -262,7 +263,7 @@ You can add parameter values with typing hints in the function signature and the
         <span class="n">probabilities</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">predicted_class</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="n">predicted_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_names</span><span class="p">[</span><span class="n">predicted_class</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Predicted class: </span><span class="si">{</span><span class="n">predicted_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">probabilities</span><span class="p">[</span><span class="n">predicted_class</span><span class="p">]</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Predicted class: </span><span class="si">{</span><span class="n">predicted_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">probabilities</span><span class="p">[</span><span class="n">predicted_class</span><span class="p">]</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -285,8 +286,8 @@ You can add parameter values with typing hints in the function signature and the
 <section id="command-line-interface">
 <h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
 <p>Command-line interfaces are created simply by using the Poetry package management tool. Just add line like this in <code class="code docutils literal notranslate"><span class="pre">pyproject.toml</span></code> (assuming your package is called <code class="docutils literal notranslate"><span class="pre">iris</span></code>):</p>
-<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">iris</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;iris.apps:IrisApp.main&quot;</span>
-<span class="n">iris-tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;iris.apps:IrisApp.tools&quot;</span>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">iris</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"iris.apps:IrisApp.main"</span>
+<span class="n">iris-tools</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"iris.apps:IrisApp.tools"</span>
 </pre></div>
 </div>
 <p>Now we can train with the command line:</p>
