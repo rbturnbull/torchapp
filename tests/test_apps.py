@@ -262,3 +262,11 @@ def test_train_checkpoint_options_in_cli_help():
     assert result.exit_code == 0
     assert "--resume-checkpoint" in result.output
     assert "--pretrained-checkpoint" in result.output
+
+
+def test_checkpoint_callback_save_last_weights():
+    weights_checkpoint, full_checkpoint = ta.TorchApp().checkpoint_callback(save_last_weights=True)
+
+    assert weights_checkpoint.save_last is True
+    assert weights_checkpoint.CHECKPOINT_NAME_LAST != full_checkpoint.CHECKPOINT_NAME_LAST
+    assert full_checkpoint.save_last is True
