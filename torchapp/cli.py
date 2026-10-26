@@ -6,11 +6,20 @@ import copy
 from inspect import signature, Parameter
 import click
 import typer
+import typer.core
 from typer.models import OptionInfo
 from typer.core import TyperCommand
 from rich.console import Console
 
 console = Console()
+
+# Typer >= 0.27 bundles its own copy of click, so options must use Typer's classes
+try:
+    from typer._click import Command as ClickCommand
+    ClickOption = lambda param_decls, **kwargs: typer.core.TyperOption(param_decls=param_decls, **kwargs)
+except ImportError:
+    ClickCommand = click.Command
+    ClickOption = click.Option
 
 def make_flag_function(attr: Callable) -> Callable:
     def run_flag_function(ctx, param, value):
@@ -33,7 +42,7 @@ class CLIAppTyper(typer.Typer):
         super().__init__(pretty_exceptions_enable=pretty_exceptions_enable, add_completion=add_completion, **kwargs)
         self.cliapp = cliapp
 
-    def getcommand(self) -> click.Command:
+    def getcommand(self) -> ClickCommand:
         command = typer.main.get_command(self)
         self.patch_command(command)
         return command
@@ -62,7 +71,7 @@ class CLIAppTyper(typer.Typer):
             )
             raise e
 
-    def patch_command(self, cmd: click.Command) -> click.Command:
+    def patch_command(self, cmd: ClickCommand) -> ClickCommand:
         flag_index = 0
         for attr_name in dir(self.cliapp):
             attr = getattr(self.cliapp, attr_name)
@@ -83,7 +92,7 @@ class CLIAppTyper(typer.Typer):
                 
             cmd.params.insert(
                 flag_index,
-                click.Option(
+                ClickOption(
                     option_params,
                     is_flag=True,
                     is_eager=True,

@@ -1,4 +1,5 @@
 import inspect
+from unittest import mock
 import re
 from collections.abc import Iterable
 import sys
@@ -13,8 +14,15 @@ from torch import nn
 from collections import OrderedDict
 from rich.console import Console
 from typing import IO, Any, Mapping, Optional, Sequence, Union
-from click.testing import CliRunner as ClickCliRunner  # noqa
-from click.testing import Result
+try:
+    # Typer >= 0.27 bundles its own copy of click
+    import typer.testing as typer_testing
+    from typer.testing import CliRunner as ClickCliRunner  # noqa
+    from typer.testing import Result
+except ImportError:
+    typer_testing = None
+    from click.testing import CliRunner as ClickCliRunner  # noqa
+    from click.testing import Result
 
 from .cli import CLIAppTyper 
 from .apps import TorchApp
@@ -38,8 +46,7 @@ class CliRunner(ClickCliRunner):
         **extra: Any,
     ) -> Result:
         use_cli = app.getcommand()
-        return super().invoke(
-            use_cli,
+        kwargs = dict(
             args=args,
             input=input,
             env=env,
@@ -47,6 +54,11 @@ class CliRunner(ClickCliRunner):
             color=color,
             **extra,
         )
+        if typer_testing is not None and hasattr(typer_testing, "_get_command"):
+            # Typer >= 0.27 builds the command from the Typer app itself, so hand it the patched command
+            with mock.patch.object(typer_testing, "_get_command", lambda _app: use_cli):
+                return super().invoke(app, **kwargs)
+        return super().invoke(use_cli, **kwargs)
 
 
 @pytest.fixture

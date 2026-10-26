@@ -15,6 +15,38 @@ except ImportError as err:
     )
 
 
+def _patch_skopt_is_regressor():
+    """
+    scikit-optimize 0.10.2 calls ``sklearn.base.is_regressor(None)`` which raises in scikit-learn >= 1.6.
+    This makes it return False for objects without estimator tags so that a ``None`` estimator is accepted.
+    """
+    import skopt.optimizer.optimizer as skopt_optimizer
+    from sklearn.base import is_regressor
+
+    if getattr(skopt_optimizer.is_regressor, "_torchapp_patched", False):
+        return
+
+    def tolerant_is_regressor(estimator):
+        if estimator is None:
+            return False
+        return is_regressor(estimator)
+
+    tolerant_is_regressor._torchapp_patched = True
+    skopt_optimizer.is_regressor = tolerant_is_regressor
+
+
+def _patch_numpy_in1d():
+    """ scikit-optimize 0.10.2 uses ``np.in1d`` which was removed in numpy 2.4. """
+    import numpy as np
+
+    if not hasattr(np, "in1d"):
+        np.in1d = lambda ar1, ar2, *args, **kwargs: np.isin(np.ravel(ar1), ar2, *args, **kwargs)
+
+
+_patch_skopt_is_regressor()
+_patch_numpy_in1d()
+
+
 class WrappedGBQR(RegressorMixin, BaseEstimator):
     def __init__(self, **kwargs):
         self.model = GradientBoostingQuantileRegressor(**kwargs)
