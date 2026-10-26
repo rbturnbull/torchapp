@@ -176,7 +176,7 @@ class TorchApp(Citable, CLIApp):
         return checkpoint
 
     @method("monitor", "goal")
-    def checkpoint_callback(self, save_top_k: int = 1, **kwargs) -> 'ModelCheckpoint|list[ModelCheckpoint]':
+    def checkpoint_callback(self, save_last:bool = False, save_top_k: int = 1, **kwargs) -> 'ModelCheckpoint|list[ModelCheckpoint]':
         """
         Build both a Weights-only checkpoint and a full-state checkpoint,
         saving the top K models based on `monitor`.
@@ -202,6 +202,7 @@ class TorchApp(Citable, CLIApp):
             save_weights_only=True,
             filename="weights-{epoch:02d}-{"+monitor+":.2g}",
             verbose=True,
+            save_last=save_last,
         )
         checkpoints.append(weights_ckpt)
 
