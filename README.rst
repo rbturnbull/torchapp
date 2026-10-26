@@ -49,6 +49,12 @@ The software can be installed using ``pip``
 
     pip install torchapp
 
+torchapp is also available on `conda-forge <https://anaconda.org/conda-forge/torchapp>`_:
+
+.. code-block:: bash
+
+    conda install -c conda-forge torchapp
+
 To install the latest version from the repository, you can use this command:
 
 .. code-block:: bash
@@ -313,6 +319,24 @@ To use a template to construct a package for your app, simply run:
     torchapp-generator
 
 .. end-quickstart
+
+Maintaining the conda-forge package
+=======================================
+
+The conda-forge package is built from the `torchapp-feedstock <https://github.com/conda-forge/torchapp-feedstock>`_ repository.
+Nothing needs to be uploaded to conda-forge by hand. After a new version is published to PyPI:
+
+1. Within a few hours the ``regro-cf-autotick-bot`` opens a pull request on the feedstock titled ``torchapp vX.Y.Z``
+   which updates ``recipe/meta.yaml`` with the new version number and the sha256 of the PyPI source distribution.
+2. Review that pull request. The bot only updates the version and hash, so edit ``recipe/meta.yaml`` on the PR branch if the dependencies
+   in ``pyproject.toml`` have changed (``requirements: run``), if the supported Python versions have changed (``python_min``), or if entry points have been added or removed.
+   Dependency names on conda-forge can differ from PyPI (e.g. ``torch`` is ``pytorch``).
+3. Wait for the CI checks to pass (these build the package and run the ``test:`` section) and merge the pull request as a recipe maintainer.
+   The package appears on conda-forge shortly afterwards.
+
+If the bot's pull request does not appear, comment ``@conda-forge-admin, please update version`` on a feedstock issue or open the pull request manually.
+If the build breaks without any change to torchapp (e.g. because of a dependency update), comment ``@conda-forge-admin, please rerender`` on the pull request.
+Recipe maintainers are listed under ``extra: recipe-maintainers`` in ``recipe/meta.yaml``.
 
 Credits
 =======================
